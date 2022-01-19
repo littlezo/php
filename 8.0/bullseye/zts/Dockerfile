@@ -50,8 +50,6 @@ RUN set -eux; \
     chown www-data:www-data /app-src; \
     chmod 777 /app-src
 
-ENV PHP_EXTRA_CONFIGURE_ARGS --enable-zts --disable-cgi
-
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -64,9 +62,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F
 
-ENV PHP_VERSION 8.0.11
-ENV PHP_URL="https://www.php.net/distributions/php-8.0.11.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.11.tar.xz.asc"
-ENV PHP_SHA256="e3e5f764ae57b31eb65244a45512f0b22d7bef05f2052b23989c053901552e16"
+ENV PHP_VERSION 8.0.14
+ENV PHP_URL="https://www.php.net/distributions/php-8.0.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.14.tar.xz.asc"
+ENV PHP_SHA256="fbde8247ac200e4de73449d9fefc8b495d323b5be9c10cdb645fb431c91156e3"
 
 ENV APP_ROOT=/app-src \
     PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
@@ -220,6 +218,120 @@ RUN set -eux; \
     pecl update-channels; \
     pecl install redis ; \
     pecl install swoole ; \
+    rm -rf /tmp/pear ~/.pearrc; \
+    \
+    # smoke test
+    php --version \
+    savedAptMark="$(apt-mark showmanual)"; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+    libargon2-dev \
+    libcurl4-openssl-dev \
+    libonig-dev \
+    libreadline-dev \
+    libsodium-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    libxml2-dev \
+    zlib1g-dev \
+    ; \
+    \
+    export \
+    CFLAGS="$PHP_CFLAGS" \
+    CPPFLAGS="$PHP_CPPFLAGS" \
+    LDFLAGS="$PHP_LDFLAGS" \
+    ; \
+    docker-php-source extract; \
+    cd /usr/src/php; \
+    gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+    debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
+    # https://bugs.php.net/bug.php?id=74125
+    if [ ! -d /usr/include/curl ]; then \
+    ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
+    fi; \
+    ./configure \
+    --build="$gnuArch" \
+    --with-config-file-path="$PHP_INI_DIR" \
+    --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+    \
+    # make sure invalid --configure-flags are fatal errors instead of just warnings
+    --enable-option-checking=fatal \
+    \
+    # https://github.com/docker-library/php/issues/439
+    --with-mhash \
+    \
+    # https://github.com/docker-library/php/issues/822
+    --with-pic \
+    \
+    # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+    --enable-ftp \
+    # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
+    --enable-mbstring \
+    # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
+    --enable-mysqlnd \
+    # https://wiki.php.net/rfc/argon2_password_hash
+    --with-password-argon2 \
+    # https://wiki.php.net/rfc/libsodium
+    --with-sodium=shared \
+    # always build against system sqlite3 (https://github.com/php/php-src/commit/6083a387a81dbbd66d6316a3a12a63f06d5f7109)
+    --with-pdo-sqlite=/usr \
+    --with-sqlite3=/usr \
+    \
+    --with-curl \
+    --with-openssl \
+    --with-readline \
+    --with-zlib \
+    \
+    # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
+    --with-pear \
+    \
+    # bundled pcre does not support JIT on s390x
+    # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+    $(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
+    --with-libdir="lib/$debMultiarch" \
+    \
+    --disable-cgi \
+    \
+    # https://github.com/docker-library/php/pull/939#issuecomment-730501748
+    --enable-embed \
+    \
+    --enable-zts \
+    ; \
+    make -j "$(nproc)"; \
+    find -type f -name '*.a' -delete; \
+    make install; \
+    find \
+    /usr/local \
+    -type f \
+    -perm '/0111' \
+    -exec sh -euxc ' \
+    strip --strip-all "$@" || : \
+    ' -- '{}' + \
+    ; \
+    make clean; \
+    \
+    # https://github.com/docker-library/php/issues/692 (copy default example "php.ini" files somewhere easily discoverable)
+    cp -v php.ini-* "$PHP_INI_DIR/"; \
+    \
+    cd /; \
+    docker-php-source delete; \
+    \
+    # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+    apt-mark auto '.*' > /dev/null; \
+    [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
+    find /usr/local -type f -executable -exec ldd '{}' ';' \
+    | awk '/=>/ { print $(NF-1) }' \
+    | sort -u \
+    | xargs -r dpkg-query --search \
+    | cut -d: -f1 \
+    | sort -u \
+    | xargs -r apt-mark manual \
+    ; \
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+    rm -rf /var/lib/apt/lists/*; \
+    \
+    # update pecl channel definitions https://github.com/docker-library/php/issues/443
+    pecl update-channels; \
     rm -rf /tmp/pear ~/.pearrc; \
     \
     # smoke test
