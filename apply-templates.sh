@@ -41,7 +41,7 @@ for version; do
 	eval "variants=( $variants )"
 
 	for dir in "${variants[@]}"; do
-		suite="$(dirname "$dir")" # "buster", etc
+		suite="$(dirname "$dir")"    # "buster", etc
 		variant="$(basename "$dir")" # "cli", etc
 		export suite variant
 
@@ -54,8 +54,6 @@ for version; do
 		export from alpineVer
 
 		case "$variant" in
-			apache) cmd='["apache2-foreground"]' ;;
-			fpm) cmd='["php-fpm"]' ;;
 			*) cmd='["php", "-a"]' ;;
 		esac
 		export cmd
