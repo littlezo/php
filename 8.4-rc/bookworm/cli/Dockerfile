@@ -33,20 +33,40 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
+		apt-transport-https \
+		ca-certificates \
+		ncat \
 		ca-certificates \
 		curl \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
 
-ENV PHP_INI_DIR /usr/local/etc/php
+# ensure little user exists
+RUN set -eux; \
+	addgroup --gid 82 --system little; \
+	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
+
+
+ENV PHP_INI_DIR=/usr/local/etc/php \
+	APP_ROOT=/app-src \
+	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
+
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
+<<<<<<< HEAD:8.4-rc/bookworm/cli/Dockerfile
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d /var/www/html ]; \
 	mkdir -p /var/www/html; \
 	chown www-data:www-data /var/www/html; \
 	chmod 1777 /var/www/html
+=======
+	[ ! -d ${APP_ROOT} ]; \
+	mkdir -p ${APP_ROOT}; \
+	chown little:little ${APP_ROOT}; \
+	chmod 777 ${APP_ROOT}
+
+>>>>>>> b6080d7e (cli and zts):8.0/buster/zts/Dockerfile
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -63,6 +83,9 @@ ENV GPG_KEYS AFD8691FDAEDF03BDF6E460563F15A9B715376CA 9D7F99A0CB8F05C8A6958D6256
 ENV PHP_VERSION 8.4.0beta4
 ENV PHP_URL="https://downloads.php.net/~saki/php-8.4.0beta4.tar.xz" PHP_ASC_URL="https://downloads.php.net/~saki/php-8.4.0beta4.tar.xz.asc"
 ENV PHP_SHA256="bafb6f5c10a0b34ed5f2ff28eb12bc4154ffef4c04534c03e993e1c951fb9d22"
+
+ENV APP_ROOT=/app-src \
+    PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
 
 RUN set -eux; \
 	\
@@ -188,6 +211,7 @@ RUN set -eux; \
 	\
 # https://github.com/docker-library/php/issues/692 (copy default example "php.ini" files somewhere easily discoverable)
 	cp -v php.ini-* "$PHP_INI_DIR/"; \
+	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
 	\
 	cd /; \
 	docker-php-source delete; \
@@ -208,6 +232,7 @@ RUN set -eux; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
+	pecl install redis; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	\
 # smoke test
@@ -216,7 +241,27 @@ RUN set -eux; \
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
-RUN docker-php-ext-enable sodium
+RUN docker-php-ext-enable sodium; \
+    docker-php-ext-enable redis; \
+	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
+    sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+    sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+    sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+    sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+    sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+
+RUN set -eux; \
+    curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
+    chmod a+x /usr/local/bin/composer; \
+    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+
 
 ENTRYPOINT ["docker-php-entrypoint"]
+STOPSIGNAL SIGWINCH
+
+WORKDIR ${APP_ROOT}
+
+EXPOSE 80\
+	443
+
 CMD ["php", "-a"]

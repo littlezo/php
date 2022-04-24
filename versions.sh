@@ -3,14 +3,14 @@ set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-versions=( "$@" )
+versions=("$@")
 if [ ${#versions[@]} -eq 0 ]; then
-	versions=( */ )
+	versions=(*/)
 	json='{}'
 else
-	json="$(< versions.json)"
+	json="$(<versions.json)"
 fi
-versions=( "${versions[@]%/}" )
+versions=("${versions[@]%/}")
 
 for version in "${versions[@]}"; do
 	rcVersion="${version%-rc}"
@@ -44,11 +44,11 @@ for version in "${versions[@]}"; do
 		'
 	fi
 	IFS=$'\n'
-	possibles=( $(
-		curl -fsSL "$apiUrl" \
-			| jq --raw-output "$apiJqExpr | @sh" \
-			| sort -rV
-	) )
+	possibles=($(
+		curl -fsSL "$apiUrl" |
+			jq --raw-output "$apiJqExpr | @sh" |
+			sort -rV
+	))
 	unset IFS
 
 	if [ "${#possibles[@]}" -eq 0 ]; then
@@ -87,12 +87,21 @@ for version in "${versions[@]}"; do
 	for suite in \
 		bookworm \
 		bullseye \
+<<<<<<< HEAD
 		alpine3.20 \
 		alpine3.19 \
 	; do
 		for variant in cli apache fpm zts; do
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'apache' ]; then
+=======
+		buster \
+		alpine3.15; do
+		for variant in cli zts; do
+			if [[ "$suite" = alpine* ]]; then
+				if [ "$variant" = 'zts' ] && [[ "$rcVersion" != 7.* ]]; then
+					# https://github.com/docker-library/php/issues/1074
+>>>>>>> b6080d7e (cli and zts)
 					continue
 				fi
 			fi
@@ -123,4 +132,4 @@ for version in "${versions[@]}"; do
 	fi
 done
 
-jq <<<"$json" -S . > versions.json
+jq <<<"$json" -S . >versions.json
