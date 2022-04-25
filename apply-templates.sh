@@ -32,7 +32,7 @@ for version; do
 
 	rm -rf "$version"
 
-	if jq -e '.[env.version] | not' versions.json > /dev/null; then
+	if jq -e '.[env.version] | not' versions.json >/dev/null; then
 		echo "deleting $version ..."
 		continue
 	fi
@@ -54,7 +54,7 @@ for version; do
 		export from alpineVer
 
 		case "$variant" in
-			*) cmd='["php", "-a"]' ;;
+		*) cmd='["php", "-a"]' ;;
 		esac
 		export cmd
 
@@ -64,16 +64,13 @@ for version; do
 		{
 			generated_warning
 			gawk -f "$jqt" 'Dockerfile-linux.template'
-		} > "$version/$dir/Dockerfile"
+		} >"$version/$dir/Dockerfile"
 
 		cp -a \
 			docker-php-entrypoint \
 			docker-php-ext-* \
 			docker-php-source \
 			"$version/$dir/"
-		if [ "$variant" = 'apache' ]; then
-			cp -a apache2-foreground "$version/$dir/"
-		fi
 
 		cmd="$(jq <<<"$cmd" -r '.[0]')"
 		if [ "$cmd" != 'php' ]; then
