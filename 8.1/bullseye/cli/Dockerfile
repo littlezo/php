@@ -345,8 +345,13 @@ RUN set -eux; \
 <<<<<<< HEAD
 =======
 	pecl install redis; \
+<<<<<<< HEAD
 >>>>>>> b6080d7e (cli and zts)
+=======
+	 \
+>>>>>>> 7cf0064b (fix alpine build fail)
 	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*; \
 	\
 # smoke test
 	php --version

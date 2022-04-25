@@ -206,12 +206,12 @@ RUN set -eux; \
 	)"; \
 	apk add --no-cache $runDeps; \
 	\
-	apk del --no-network .build-deps; \
-	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 	pecl install redis; \
+	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*; \
 	\
 # smoke test
 	php --version

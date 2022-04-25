@@ -166,9 +166,14 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
+<<<<<<< HEAD:8.1/alpine3.19/cli/Dockerfile
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
+=======
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable.")
+		--disable-phpdbg \
+>>>>>>> 7cf0064b (fix alpine build fail):7.4/alpine3.15/zts/Dockerfile
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
@@ -206,12 +211,12 @@ RUN set -eux; \
 	)"; \
 	apk add --no-cache $runDeps; \
 	\
-	apk del --no-network .build-deps; \
-	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 	pecl install redis; \
+	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*; \
 	\
 # smoke test
 	php --version

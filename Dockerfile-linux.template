@@ -379,7 +379,7 @@ RUN set -eux; \
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
 {{ ) else ( -}}
-# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable.")
 		--disable-phpdbg \
 {{ ) end -}}
 		\
@@ -456,8 +456,6 @@ RUN set -eux; \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
 	apk add --no-cache $runDeps; \
-	\
-	apk del --no-network .build-deps; \
 {{ ) else ( -}}
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
@@ -477,7 +475,9 @@ RUN set -eux; \
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 	pecl install redis; \
+	{{ if is_alpine then "apk del --no-network .build-deps;" else "" end}} \
 	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*; \
 	\
 # smoke test
 	php --version
