@@ -47,12 +47,19 @@ jobs:
       - id: generate-jobs
         name: Generate Jobs
         run: |
+<<<<<<< HEAD
           strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
 
           EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
           echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
           jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
+=======
+          git clone --depth 1 https://github.com/littlezo/docker-php.git -b master ~/bashbrew
+          strategy="$(~/bashbrew/scripts/github-actions/generate.sh)"
+          jq . <<<"$strategy" # sanity check / debugging aid
+          echo "::set-output name=strategy::$strategy"
+>>>>>>> 47b88e83 (ci scripts)
 
   test:
     needs: generate-jobs
