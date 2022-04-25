@@ -10,12 +10,16 @@ on:
     branches:
       - master
       - main
+<<<<<<< HEAD
 >>>>>>> b9295610 (ci build and push)
 =======
     branches:
       - master
       - main
 >>>>>>> af34a869 (Update ci.yml)
+=======
+      - ci-dev
+>>>>>>> 40c11b30 (Update ci.yml)
   schedule:
     - cron: 0 0 * * 0
 
