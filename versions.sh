@@ -87,11 +87,11 @@ for version in "${versions[@]}"; do
 	for suite in \
 		bullseye \
 		buster \
+		alpine3.16 \
 		alpine3.15; do
 		for variant in cli zts; do
 			if [[ "$suite" = alpine* ]]; then
-				if [ "$variant" = 'zts' ] && [[ "$rcVersion" != 7.* ]]; then
-					# https://github.com/docker-library/php/issues/1074
+				if [ "$variant" = 'zts' ]; then
 					continue
 				fi
 			fi
@@ -104,16 +104,22 @@ for version in "${versions[@]}"; do
 
 	export fullVersion url ascUrl sha256
 	json="$(
-		jq <<<"$json" -c \
-			--argjson variants "$variants" \
-			'.[env.version] = {
+		jq <<<"$json" -c --argjson variants "$variants" '
+			.[env.version] = {
 				version: env.fullVersion,
 				url: env.url,
 				ascUrl: env.ascUrl,
 				sha256: env.sha256,
 				variants: $variants,
-			}'
+			}
+		'
 	)"
+
+	if [ "$version" = "$rcVersion" ]; then
+		json="$(jq <<<"$json" -c '
+			.[env.version + "-rc"] //= null
+		')"
+	fi
 done
 
 jq <<<"$json" -S . >versions.json

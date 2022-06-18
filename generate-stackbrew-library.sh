@@ -6,15 +6,6 @@ declare -A aliases=(
 	[8.1]='8 latest'
 )
 
-defaultDebianSuite='bullseye'
-declare -A debianSuites=(
-	#[7.4]='buster'
-)
-defaultAlpineVersion='3.15'
-declare -A alpineVersions=(
-	#[8.1]='3.15'
-)
-
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -114,6 +105,28 @@ for version; do
 		${aliases[$version]:-}
 	)
 
+	defaultDebianVariant="$(jq -r '
+		.[env.version].variants
+		| map(
+			split("/")[0]
+			| select(
+				startswith("alpine")
+				| not
+			)
+		)
+		| .[0]
+	' versions.json)"
+	defaultAlpineVariant="$(jq -r '
+		.[env.version].variants
+		| map(
+			split("/")[0]
+			| select(
+				startswith("alpine")
+			)
+		)
+		| .[0]
+	' versions.json)"
+
 	for dir in "${variants[@]}"; do
 		suite="$(dirname "$dir")"    # "buster", etc
 		variant="$(basename "$dir")" # "cli", etc
@@ -128,9 +141,9 @@ for version; do
 		fi
 
 		suiteVariantAliases=("${variantAliases[@]/%/-$suite}")
-		if [ "${suite#alpine}" = "${alpineVersions[$version]:-$defaultAlpineVersion}" ]; then
+		if [ "$suite" = "$defaultAlpineVariant" ]; then
 			variantAliases=("${variantAliases[@]/%/-alpine}")
-		elif [ "$suite" != "${debianSuites[$version]:-$defaultDebianSuite}" ]; then
+		elif [ "$suite" != "$defaultDebianVariant" ]; then
 			variantAliases=()
 		fi
 		variantAliases=("${suiteVariantAliases[@]}" ${variantAliases[@]+"${variantAliases[@]}"})
