@@ -35,6 +35,12 @@ for version; do
 			docker tag $tags littleof/php:7
 			docker push littleof/php:7
 		fi
+		if [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
+			docker tag $tags $shortTags
+			docker push $shortTags
+			docker push $versionTags-$variant
+			docker tag $tags littleof/php:$version-$variant
+		fi
 		if [[ "$version" == "8.1" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
 			docker tag $tags $shortTags
 			docker push $shortTags
