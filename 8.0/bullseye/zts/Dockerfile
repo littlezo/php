@@ -47,18 +47,16 @@ RUN set -eux; \
 	addgroup --gid 82 --system little; \
 	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
 
-
 ENV PHP_INI_DIR=/usr/local/etc/php \
 	APP_ROOT=/app-src \
-	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
-
+	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
+# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
-
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -75,9 +73,6 @@ ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B
 ENV PHP_VERSION 8.0.18
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.18.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.18.tar.xz.asc"
 ENV PHP_SHA256="db161652cacae4b31c347fbf2e17b80656473cb365f2bb3460c4552f5647e2e7"
-
-ENV APP_ROOT=/app-src \
-    PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
 
 RUN set -eux; \
 	\
@@ -175,7 +170,7 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
-# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable.")
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
@@ -236,7 +231,6 @@ RUN set -eux; \
 	\
 # smoke test
 	php --version
-
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
@@ -253,7 +247,6 @@ RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
     chmod a+x /usr/local/bin/composer; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH

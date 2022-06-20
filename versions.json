@@ -10,8 +10,13 @@
       "bullseye/zts",
       "buster/cli",
       "buster/zts",
+<<<<<<< HEAD
       "alpine3.15/cli",
       "alpine3.15/zts"
+=======
+      "alpine3.16/cli",
+      "alpine3.15/cli"
+>>>>>>> 959e5a5a (builder)
     ],
     "version": "7.4.29"
   },
@@ -24,9 +29,30 @@
       "bullseye/zts",
       "buster/cli",
       "buster/zts",
+<<<<<<< HEAD
       "alpine3.15/cli"
     ],
     "version": "8.0.18"
+=======
+      "alpine3.16/cli",
+      "alpine3.15/cli"
+    ],
+    "version": "8.0.20"
+  },
+  "8.0-rc": {
+    "ascUrl": "https://downloads.php.net/~pollita/php-8.0.20RC1.tar.xz.asc",
+    "sha256": "f6cdb3f90838d0a0215f92e3ce41c00934f36e9c6a3ab05491168ba5c5b6c8b4",
+    "url": "https://downloads.php.net/~pollita/php-8.0.20RC1.tar.xz",
+    "variants": [
+      "bullseye/cli",
+      "bullseye/zts",
+      "buster/cli",
+      "buster/zts",
+      "alpine3.16/cli",
+      "alpine3.15/cli"
+    ],
+    "version": "8.0.20RC1"
+>>>>>>> 959e5a5a (builder)
   },
 >>>>>>> b6080d7e (cli and zts)
   "8.1": {
@@ -41,35 +67,54 @@
       "bullseye/cli",
       "bullseye/zts",
 <<<<<<< HEAD
+<<<<<<< HEAD
       "alpine3.20/cli",
       "alpine3.20/fpm",
       "alpine3.20/zts",
       "alpine3.19/cli",
       "alpine3.19/fpm",
       "alpine3.19/zts"
+=======
+      "buster/cli",
+      "buster/zts",
+      "alpine3.16/cli",
+      "alpine3.15/cli"
+>>>>>>> 959e5a5a (builder)
     ],
     "version": "8.1.29"
   },
+<<<<<<< HEAD
   "8.1-rc": null,
   "8.2": {
     "ascUrl": "https://www.php.net/distributions/php-8.2.23.tar.xz.asc",
     "sha256": "81c5ae6ba44e262a076349ee54a2e468638a4571085d80bff37f6fd308e1d8d5",
     "url": "https://www.php.net/distributions/php-8.2.23.tar.xz",
+=======
+  "8.2-rc": {
+    "ascUrl": "https://downloads.php.net/~sergey/php-8.2.0alpha1.tar.xz.asc",
+    "sha256": "08917e5986424c664d1bdf9fefdbcee39724e959e848c77247bdc268499ec58a",
+    "url": "https://downloads.php.net/~sergey/php-8.2.0alpha1.tar.xz",
+>>>>>>> 959e5a5a (builder)
     "variants": [
       "bookworm/cli",
       "bookworm/apache",
       "bookworm/fpm",
       "bookworm/zts",
       "bullseye/cli",
-      "bullseye/apache",
-      "bullseye/fpm",
       "bullseye/zts",
+<<<<<<< HEAD
       "alpine3.20/cli",
       "alpine3.20/fpm",
       "alpine3.20/zts",
       "alpine3.19/cli",
       "alpine3.19/fpm",
       "alpine3.19/zts"
+=======
+      "buster/cli",
+      "buster/zts",
+      "alpine3.16/cli",
+      "alpine3.15/cli"
+>>>>>>> 959e5a5a (builder)
     ],
     "version": "8.2.23"
   },

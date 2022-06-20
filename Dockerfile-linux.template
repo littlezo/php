@@ -55,6 +55,7 @@ RUN apk add --no-cache \
 # ensure little user exists
 RUN set -eux; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 	adduser -u 82 -D -S -G www-data www-data
 # 82 is the standard uid/gid for "www-data" in Alpine
 # https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
@@ -62,6 +63,11 @@ RUN set -eux; \
 	addgroup -g 83 -S little; \
 	adduser -u 82 -D -S -G little little;
 >>>>>>> b6080d7e (cli and zts)
+=======
+	addgroup -Sg 83 little; \
+	adduser -u 82 -D -S  -s /sbin/nologin -G little -g little little
+# 82 is the standard uid/gid for "little" in Alpine
+>>>>>>> 959e5a5a (builder)
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
 {{ ) else ( -}}
@@ -84,13 +90,12 @@ RUN set -eux; \
 	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
 {{ ) end -}}
 
-
 ENV PHP_INI_DIR=/usr/local/etc/php \
 	APP_ROOT=/app-src \
-	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
-
+	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
+<<<<<<< HEAD
 <<<<<<< HEAD
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d /var/www/html ]; \
@@ -98,12 +103,16 @@ RUN set -eux; \
 	chown www-data:www-data /var/www/html; \
 	chmod 1777 /var/www/html
 =======
+=======
+# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+>>>>>>> 959e5a5a (builder)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 >>>>>>> b6080d7e (cli and zts)
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 RUN set -eux; \
@@ -168,6 +177,8 @@ RUN { \
 {{ ) else "" end -}}
 =======
 >>>>>>> b6080d7e (cli and zts)
+=======
+>>>>>>> 959e5a5a (builder)
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -222,9 +233,6 @@ ENV GPG_KEYS {{
 ENV PHP_VERSION {{ .version }}
 ENV PHP_URL="{{ .url }}" PHP_ASC_URL="{{ .ascUrl // "" }}"
 ENV PHP_SHA256="{{ .sha256 // "" }}"
-
-ENV APP_ROOT=/app-src \
-    PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
 
 RUN set -eux; \
 	\
@@ -379,7 +387,7 @@ RUN set -eux; \
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
 {{ ) else ( -}}
-# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable.")
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
 {{ ) end -}}
 		\
@@ -456,6 +464,13 @@ RUN set -eux; \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
 	apk add --no-cache $runDeps; \
+	apk add --no-cache --virtual .build-deps \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	autoconf; \
 {{ ) else ( -}}
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
@@ -481,7 +496,6 @@ RUN set -eux; \
 	\
 # smoke test
 	php --version
-
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
@@ -512,8 +526,11 @@ RUN set -eux; \
 RUN { echo '#!/bin/sh'; echo 'exec pkg-config "$@" freetype2'; } > /usr/local/bin/freetype-config && chmod +x /usr/local/bin/freetype-config
 
 {{ ) else "" end -}}
+<<<<<<< HEAD
 
 >>>>>>> b6080d7e (cli and zts)
+=======
+>>>>>>> 959e5a5a (builder)
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
 

@@ -47,13 +47,12 @@ RUN set -eux; \
 	addgroup --gid 82 --system little; \
 	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
 
-
 ENV PHP_INI_DIR=/usr/local/etc/php \
 	APP_ROOT=/app-src \
-	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
-
+	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
+<<<<<<< HEAD:8.4-rc/bookworm/zts/Dockerfile
 <<<<<<< HEAD:8.4-rc/bookworm/zts/Dockerfile
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d /var/www/html ]; \
@@ -61,13 +60,19 @@ RUN set -eux; \
 	chown www-data:www-data /var/www/html; \
 	chmod 1777 /var/www/html
 =======
+=======
+# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+>>>>>>> 959e5a5a (builder):8.0/buster/zts/Dockerfile
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 
+<<<<<<< HEAD:8.4-rc/bookworm/zts/Dockerfile
 >>>>>>> b6080d7e (cli and zts):8.1/buster/cli/Dockerfile
 
+=======
+>>>>>>> 959e5a5a (builder):8.0/buster/zts/Dockerfile
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -83,9 +88,6 @@ ENV GPG_KEYS AFD8691FDAEDF03BDF6E460563F15A9B715376CA 9D7F99A0CB8F05C8A6958D6256
 ENV PHP_VERSION 8.4.0beta4
 ENV PHP_URL="https://downloads.php.net/~saki/php-8.4.0beta4.tar.xz" PHP_ASC_URL="https://downloads.php.net/~saki/php-8.4.0beta4.tar.xz.asc"
 ENV PHP_SHA256="bafb6f5c10a0b34ed5f2ff28eb12bc4154ffef4c04534c03e993e1c951fb9d22"
-
-ENV APP_ROOT=/app-src \
-    PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
 
 RUN set -eux; \
 	\
@@ -184,9 +186,14 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
+<<<<<<< HEAD:8.4-rc/bookworm/zts/Dockerfile
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
+=======
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
+		--disable-phpdbg \
+>>>>>>> 959e5a5a (builder):8.0/buster/zts/Dockerfile
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
@@ -243,7 +250,6 @@ RUN set -eux; \
 	\
 # smoke test
 	php --version
-
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
@@ -260,7 +266,6 @@ RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
     chmod a+x /usr/local/bin/composer; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH

@@ -47,13 +47,12 @@ RUN set -eux; \
 	addgroup --gid 82 --system little; \
 	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
 
-
 ENV PHP_INI_DIR=/usr/local/etc/php \
 	APP_ROOT=/app-src \
-	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
-
+	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
+<<<<<<< HEAD:8.3/bullseye/zts/Dockerfile
 <<<<<<< HEAD:8.3/bullseye/zts/Dockerfile
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d /var/www/html ]; \
@@ -61,13 +60,19 @@ RUN set -eux; \
 	chown www-data:www-data /var/www/html; \
 	chmod 1777 /var/www/html
 =======
+=======
+# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+>>>>>>> 959e5a5a (builder):7.4/bullseye/zts/Dockerfile
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 
+<<<<<<< HEAD:8.3/bullseye/zts/Dockerfile
 >>>>>>> b6080d7e (cli and zts):7.4/bullseye/zts/Dockerfile
 
+=======
+>>>>>>> 959e5a5a (builder):7.4/bullseye/zts/Dockerfile
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -83,9 +88,6 @@ ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C
 ENV PHP_VERSION 8.3.11
 ENV PHP_URL="https://www.php.net/distributions/php-8.3.11.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.11.tar.xz.asc"
 ENV PHP_SHA256="b862b098a08ab9bf4b36ed12c7d0d9f65353656b36fb0e3c5344093aceb35802"
-
-ENV APP_ROOT=/app-src \
-    PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
 
 RUN set -eux; \
 	\
@@ -185,11 +187,15 @@ RUN set -eux; \
 		--with-zlib \
 		\
 <<<<<<< HEAD:8.3/bullseye/zts/Dockerfile
+<<<<<<< HEAD:8.3/bullseye/zts/Dockerfile
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
 =======
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable.")
+=======
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
+>>>>>>> 959e5a5a (builder):7.4/bullseye/zts/Dockerfile
 		--disable-phpdbg \
 >>>>>>> 7cf0064b (fix alpine build fail):7.4/bullseye/zts/Dockerfile
 		\
@@ -248,7 +254,6 @@ RUN set -eux; \
 	\
 # smoke test
 	php --version
-
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
@@ -265,7 +270,6 @@ RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
     chmod a+x /usr/local/bin/composer; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
