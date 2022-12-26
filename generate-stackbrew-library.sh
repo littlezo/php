@@ -56,8 +56,12 @@ getArches() {
 			xargs bashbrew cat --format '[{{ .RepoName }}:{{ .TagName }}]="{{ join " " .TagEntry.Architectures }}"'
 	) )"
 }
+<<<<<<< HEAD
 getArches 'php'
 
+=======
+getArches 'littleof/php'
+>>>>>>> 2863c5ab (up)
 cat <<-EOH
 	# this file is generated via https://github.com/docker-library/php/blob/$(fileCommit "$self")/$self
 
@@ -72,7 +76,7 @@ join() {
 	shift
 	local out
 	printf -v out "${sep//%/%%}%s" "$@"
-	echo littleof/"${out#$sep}"
+	echo "${out#$sep}"
 }
 
 for version; do
