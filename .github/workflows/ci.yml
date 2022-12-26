@@ -23,7 +23,7 @@ jobs:
       - id: generate-jobs
         name: Generate Jobs
         run: |
-          git clone --depth 1 https://github.com/littlezo/docker-php.git -b master ~/temp
+          git clone --depth 1 https://github.com/littlezo/docker-php.git -b main ~/temp
           mv ~/temp/scripts/github-actions/generate.sh $BASHBREW_SCRIPTS/github-actions/generate.sh
           # cat $BASHBREW_SCRIPTS/github-actions/generate.sh
           # strategy="$(~/temp/scripts/github-actions/generate.sh)"
