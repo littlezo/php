@@ -399,12 +399,18 @@ RUN set -eux; \
 # https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
 {{ if is_alpine then ( -}}
+<<<<<<< HEAD
 		$(test "$gnuArch" = 'riscv64-linux-musl' && echo '--without-pcre-jit') \
 {{ ) else ( -}}
 		$(test "$gnuArch" = 'riscv64-linux-gnu' && echo '--without-pcre-jit') \
 {{ ) end -}}
 {{ ) else "" end -}}
 {{ if is_alpine then "" else ( -}}
+=======
+		$(test "$gnuArch" = 's390x-linux-musl'; echo '--without-pcre-jit') \
+{{ ) else ( -}}
+		$(test "$gnuArch" = 's390x-linux-gnu'; echo '--without-pcre-jit') \
+>>>>>>> e93d3047 (fix: swoole build error)
 		--with-libdir="lib/$debMultiarch" \
 {{ ) end -}}
 {{ # https://github.com/docker-library/php/issues/280 -}}
@@ -500,13 +506,18 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
+<<<<<<< HEAD
     docker-php-ext-enable redis; \
+=======
+	docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+>>>>>>> e93d3047 (fix: swoole build error)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
 {{ if env.variant == "swoole" then ( -}}
 ENV EXTRA_EXT \
@@ -536,59 +547,48 @@ ENV EXTRA_LIBS \
 	{{ if is_alpine then "c-ares-dev" else "libc-ares-dev" end }} \
   zlib-dev
 
-	RUN set -eux; \
+RUN set -eux; \
 	{{ if is_alpine then ( -}}
-		runDeps="$( \
-			scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-				| tr ',' '\n' \
-				| sort -u \
-				| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-		)"; \
-		apk add --no-cache $runDeps; \
-		apk add --no-cache  --update --virtual .build-deps \
-		g++ \
-		gcc \
-		libc-dev \
-		make \
-		pkgconf \
-		autoconf $EXTRA_LIBS
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --no-cache $runDeps; \
+	apk add --no-cache  --update --virtual .build-deps \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	autoconf $EXTRA_LIBS
 	{{ ) else ( -}}
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-	find /usr/local -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { print $(NF-1) }' \
-		| sort -u \
-		| xargs -r dpkg-query --search \
-		| cut -d: -f1 \
-		| sort -u \
-		| xargs -r apt-mark manual \
-	; \
 	apt-get install -y --no-install-recommends $EXTRA_LIBS; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*
 	{{ ) end -}}
 
-	RUN \
-		set -ex && \
-		pecl channel-update pecl.php.net && \
-		docker-php-ext-install $EXTRA_EXT; \
-		docker-php-ext-enable redis && \
-		docker-php-ext-install sockets && \
-		docker-php-source extract && \
-		pecl install --configureoptions 'enable-mysqlnd="yes" enable-openssl="yes" \
-		enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes" \
-		enable-cares="yes" with-openssl-dir="/usr"' swoole; \
-		docker-php-ext-enable swoole; \
-		docker-php-source delete; \
+RUN set -ex; \
+	pecl channel-update pecl.php.net; \
+	docker-php-ext-install $EXTRA_EXT; \
+	docker-php-ext-enable redis; \
+	docker-php-ext-install sockets; \
+	docker-php-source extract; \
+	pecl install --configureoptions 'enable-mysqlnd="yes" enable-openssl="yes" \
+	enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes" \
+	enable-cares="yes" with-openssl-dir="/usr"' swoole; \
+	docker-php-ext-enable swoole; \
+	docker-php-source delete; \
 	{{ if is_alpine then "apk del --no-network .build-deps;" else "" end}} \
-		rm -rf /tmp/pear ~/.pearrc; \
-		rm -rf /tmp/*; \
+	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*
+
 {{ ) else "" end -}}
 RUN set -eux; \
-    curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
-    chmod a+x /usr/local/bin/composer; \
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
+	chmod a+x /usr/local/bin/composer; \
+	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 <<<<<<< HEAD
 =======
