@@ -25,33 +25,33 @@ for version; do
 		echo build $tags
 		docker build -t $tags -f "$version/$dir/"Dockerfile ./"$version/$dir/"
 		docker push $tags
-		# if [[ "$version" == "7.4" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-		# 	docker tag $tags $shortTags
-		# 	docker push $shortTags
-		# 	docker tag $tags $versionTags
-		# 	docker push $versionTags
-		# 	docker tag $tags littleof/php:$version
-		# 	docker push littleof/php:$version
-		# 	docker tag $tags littleof/php:7
-		# 	docker push littleof/php:7
-		# fi
-		# if [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-		# 	docker tag $tags $shortTags
-		# 	docker push $shortTags
-		# 	docker push $versionTags-$variant
-		# 	docker tag $tags littleof/php:$version-$variant
-		# fi
-		# if [[ "$version" == "8.2" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-		# 	docker tag $tags $shortTags
-		# 	docker push $shortTags
-		# 	docker tag $tags $versionTags
-		# 	docker push $versionTags
-		# 	docker tag $tags littleof/php:$version
-		# 	docker push littleof/php:$version
-		# 	docker tag $tags littleof/php:8
-		# 	docker push littleof/php:8
-		# 	docker tag $tags littleof/php:latest
-		# 	docker push littleof/php:latest
-		# fi
+		if [[ "$version" == "7.4" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
+			docker tag $tags $shortTags
+			docker push $shortTags
+			docker tag $tags $versionTags
+			docker push $versionTags
+			docker tag $tags littleof/php:$version
+			docker push littleof/php:$version
+			docker tag $tags littleof/php:7
+			docker push littleof/php:7
+		fi
+		if [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
+			docker tag $tags $shortTags
+			docker push $shortTags
+			docker push $versionTags-$variant
+			docker tag $tags littleof/php:$version-$variant
+		fi
+		if [[ "$version" == "8.2" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
+			docker tag $tags $shortTags
+			docker push $shortTags
+			docker tag $tags $versionTags
+			docker push $versionTags
+			docker tag $tags littleof/php:$version
+			docker push littleof/php:$version
+			docker tag $tags littleof/php:8
+			docker push littleof/php:8
+			docker tag $tags littleof/php:latest
+			docker push littleof/php:latest
+		fi
 	done
 done

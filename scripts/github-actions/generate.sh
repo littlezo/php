@@ -4,7 +4,7 @@ set -Eeuo pipefail
 image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
 
 [ -n "${GENERATE_STACKBREW_LIBRARY:-}" ] || [ -x ./generate-stackbrew-library.sh ] # sanity check
-
+echo $GENERATE_STACKBREW_LIBRARY
 tmp="$(mktemp -d)"
 trap "$(printf 'rm -rf %q' "$tmp")" EXIT
 
@@ -25,6 +25,7 @@ mkdir "$tmp/library"
 export BASHBREW_LIBRARY="$tmp/library"
 
 eval "${GENERATE_STACKBREW_LIBRARY:-./generate-stackbrew-library.sh}" > "$BASHBREW_LIBRARY/$image"
+echo $GENERATE_STACKBREW_LIBRARY
 
 # if we don't appear to be able to fetch the listed commits, they might live in a PR branch, so we should force them into the Bashbrew cache directly to allow it to do what it needs
 if ! bashbrew from "$image" &> /dev/null; then
