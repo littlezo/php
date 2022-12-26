@@ -8,33 +8,33 @@ image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
 tmp="$(mktemp -d)"
 trap "$(printf 'rm -rf %q' "$tmp")" EXIT
 
-if ! command -v bashbrew &>/dev/null; then
+if ! command -v bashbrew &> /dev/null; then
 	dir="$(readlink -f "$BASH_SOURCE")"
 	dir="$(dirname "$dir")"
 	dir="$(cd "$dir/../.." && pwd -P)"
 	if [ ! -x "$dir/bin/bashbrew" ]; then
 		echo >&2 'Building bashbrew ...'
-		"$dir/bashbrew.sh" --version >/dev/null
+		"$dir/bashbrew.sh" --version > /dev/null
 		"$dir/bin/bashbrew" --version >&2
 	fi
 	export PATH="$dir/bin:$PATH"
-	bashbrew --version >/dev/null
+	bashbrew --version > /dev/null
 fi
 
 mkdir "$tmp/library"
 export BASHBREW_LIBRARY="$tmp/library"
 
-eval "${GENERATE_STACKBREW_LIBRARY:-./generate-stackbrew-library.sh}" >"$BASHBREW_LIBRARY/$image"
+eval "${GENERATE_STACKBREW_LIBRARY:-./generate-stackbrew-library.sh}" > "$BASHBREW_LIBRARY/$image"
 
 # if we don't appear to be able to fetch the listed commits, they might live in a PR branch, so we should force them into the Bashbrew cache directly to allow it to do what it needs
-if ! bashbrew from "$image" &>/dev/null; then
+if ! bashbrew from "$image" &> /dev/null; then
 	bashbrewGit="${BASHBREW_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/bashbrew}/git"
 	if [ ! -d "$bashbrewGit" ]; then
 		# if we're here, it's because "bashbrew from" failed so our cache directory might not have been created
-		bashbrew from https://github.com/docker-library/official-images/raw/HEAD/library/hello-world:latest >/dev/null
+		bashbrew from https://github.com/docker-library/official-images/raw/HEAD/library/hello-world:latest > /dev/null
 	fi
-	git -C "$bashbrewGit" fetch --quiet --update-shallow "$PWD" HEAD >/dev/null
-	bashbrew from "$image" >/dev/null
+	git -C "$bashbrewGit" fetch --quiet --update-shallow "$PWD" HEAD > /dev/null
+	bashbrew from "$image" > /dev/null
 fi
 
 tags="$(bashbrew list --build-order --uniq "$image")"
@@ -55,6 +55,7 @@ for tag in $tags; do
 				"tags": {{- json ($.Tags namespace false $e) -}},
 				"directory": {{- json ($e.ArchDirectory $arch) -}},
 				"file": {{- json ($e.ArchFile $arch) -}},
+				"builder": {{- json ($e.ArchBuilder $arch) -}},
 				"constraints": {{- json $e.Constraints -}},
 				"froms": {{- json ($.ArchDockerFroms $arch $e) -}}
 			{{- "}" -}}
@@ -77,7 +78,15 @@ for tag in $tags; do
 				runs: {
 					build: (
 						[
-							"docker build"
+							# https://github.com/docker-library/bashbrew/pull/43
+							if .builder == "classic" or .builder == "" then
+								"DOCKER_BUILDKIT=0 docker build"
+							elif .builder == "buildkit" then
+								"docker buildx build --progress plain --build-arg BUILDKIT_SYNTAX=\"$BASHBREW_BUILDKIT_SYNTAX\""
+							# TODO elif .builder == "oci-import" then ????
+							else
+								"echo >&2 " + ("error: unknown/unsupported builder: " + .builder | @sh) + "\nexit 1\n#"
+							end
 						]
 						+ (
 							.tags
@@ -96,15 +105,27 @@ for tag in $tags; do
 						| join(" ")
 					),
 					history: ("docker history " + (.tags[0] | @sh)),
-					test: ("~/oi/test/run.sh " + (.tags[0] | @sh)),
+					test: (
+						[
+							"set -- " + (.tags[0] | @sh),
+							# https://github.com/docker-library/bashbrew/issues/46#issuecomment-1152567694 (allow local test config / tests)
+							"if [ -s ./.test/config.sh ]; then set -- --config ~/oi/test/config.sh --config ./.test/config.sh \"$@\"; fi",
+							"~/oi/test/run.sh \"$@\""
+						] | join("\n")
+					),
 				},
 			}
 		'
 	)"
 
-	parent="$(bashbrew parents "$bashbrewImage" | tail -1)" # if there ever exists an image with TWO parents in the same repo, this will break :)
-	if [ -n "$parent" ]; then
-		parentBashbrewImage="${parent##*/}"                     # account for BASHBREW_NAMESPACE being set
+	if parent="$(bashbrew parents --depth=1 "$bashbrewImage" | grep "^${tag%%:*}:")" && [ -n "$parent" ]; then
+		if [ "$(wc -l <<<"$parent")" -ne 1 ]; then
+			echo >&2 "error: '$tag' has multiple parents in the same repository and this script can't handle that yet!"
+			echo >&2 "$parent"
+			exit 1
+		fi
+		parent="$(bashbrew parents "$bashbrewImage" | grep "^${tag%%:*}:" | tail -1)" # get the "ultimate" this-repo parent
+		parentBashbrewImage="${parent##*/}" # account for BASHBREW_NAMESPACE being set
 		parent="$(bashbrew list --uniq "$parentBashbrewImage")" # normalize
 		parentMeta="${metas["$parent"]}"
 		parentMeta="$(jq -c --argjson meta "$meta" '
@@ -125,7 +146,7 @@ for tag in $tags; do
 		metas["$parent"]="$parentMeta"
 	else
 		metas["$tag"]="$meta"
-		order+=("$tag")
+		order+=( "$tag" )
 	fi
 done
 
@@ -158,6 +179,10 @@ strategy="$(
 						end
 					),
 					"git clone --depth 1 https://github.com/docker-library/official-images.git -b master ~/oi",
+
+					# https://github.com/docker-library/bashbrew/pull/43
+					"echo BASHBREW_BUILDKIT_SYNTAX=\"$(< ~/oi/.bashbrew-buildkit-syntax)\" >> \"$GITHUB_ENV\"",
+
 					"# create a dummy empty image/layer so we can --filter since= later to get a meaningful image list",
 					"{ echo FROM " + (
 						if .os | startswith("windows-") then
@@ -165,45 +190,33 @@ strategy="$(
 						else
 							"busybox:latest"
 						end
-					) + "; echo RUN :; } | docker build --no-cache --tag image-list-marker -",
-					(
-						if (env.BASHBREW_GENERATE_SKIP_PGP_PROXY) or (.os | startswith("windows-")) then
-							empty
-						else
-							(
-								"# PGP Happy Eyeballs",
-								"git clone --depth 1 https://github.com/tianon/pgp-happy-eyeballs.git ~/phe",
-								"~/phe/hack-my-builds.sh",
-								"rm -rf ~/phe"
-							)
-						end
-					)
+					) + "; echo RUN :; } | docker build --no-cache --tag image-list-marker -"
 				] | join("\n")),
 				pull: ([ .meta.froms[] | select(. != "scratch") | "docker pull " + @sh ] | join("\n")),
 				# build
 				# history
 				# test
 				images: "docker image ls --filter since=image-list-marker",
-                build: (
-                    [
-                        "docker push"
-                    ]
-                    + (
-                        .tags
-                        | map(
-                            "--tag littleof" + (. | @sh)
-                        )
-                    )
-                    + if .file != "Dockerfile" then
-                        [ "--file", ((.directory + "/" + .file) | @sh) ]
-                    else
-                        []
-                    end
-                    + [
-                        (.directory | @sh)
-                    ]
-                    | join(" ")
-                ),
+				build: (
+						[
+								"docker push"
+						]
+						+ (
+								.tags
+								| map(
+										"--tag littleof" + (. | @sh)
+								)
+						)
+						+ if .file != "Dockerfile" then
+								[ "--file", ((.directory + "/" + .file) | @sh) ]
+						else
+								[]
+						end
+						+ [
+								(.directory | @sh)
+						]
+						| join(" ")
+				),
 			}
 		' <<<"${metas["$tag"]}"
 	done | jq -cs '
