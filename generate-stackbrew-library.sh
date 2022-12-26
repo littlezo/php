@@ -53,7 +53,7 @@ getArches() {
 	) )"
 }
 getArches 'php'
-
+echo $parentRepoToArches
 cat <<-EOH
 # this file is generated via https://github.com/docker-library/php/blob/$(fileCommit "$self")/$self
 
