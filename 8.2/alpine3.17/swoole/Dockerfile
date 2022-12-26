@@ -239,20 +239,19 @@ ENV EXTRA_LIBS \
   libpq-dev \
   libxml2-dev \
   libzip-dev \
-  curl-dev \
-  linux-headers \
-  postgresql-dev \
-  openssl-dev \
-  pcre-dev \
-  pcre2-dev \
-  libintl \
-  gettext-dev \
+	curl-dev \
+	linux-headers \
+	openssl-dev \
+	pcre-dev \
+	pcre2-dev \
+	libintl \
+	gettext-dev \
 	tidyhtml-dev \
 	c-ares-dev \
-  zlib-dev
+	zlib-dev
 
 RUN set -eux; \
-		runDeps="$( \
+	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 			| tr ',' '\n' \
 			| sort -u \
@@ -266,7 +265,7 @@ RUN set -eux; \
 	make \
 	pkgconf \
 	autoconf $EXTRA_LIBS
-	
+
 RUN set -ex; \
 	pecl channel-update pecl.php.net; \
 	docker-php-ext-install $EXTRA_EXT; \
@@ -278,6 +277,15 @@ RUN set -ex; \
 	enable-cares="yes" with-openssl-dir="/usr"' swoole; \
 	docker-php-ext-enable swoole; \
 	docker-php-source delete; \
+	php --version; \
+	php -m; \
+	{ \
+	echo "[swoole]"; \
+	echo "extension=swoole"; \
+	echo "swoole.unixsock_buffer_size=512M"; \
+	echo "swoole.use_shortname=Off"; \
+	echo "swoole.enable_preemptive_scheduler=On"; \
+	} | tee /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
 	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*
