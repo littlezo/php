@@ -61,8 +61,10 @@ jobs:
           strategy="$(~/bashbrew/scripts/github-actions/generate.sh)"
 =======
           git clone --depth 1 https://github.com/littlezo/docker-php.git -b master ~/temp
-          strategy="$(~/temp/scripts/github-actions/generate.sh)"
-          # strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+          mv ~/temp/scripts/github-actions/generate.sh $BASHBREW_SCRIPTS/github-actions/generate.sh
+          cat $BASHBREW_SCRIPTS/github-actions/generate.sh
+          # strategy="$(~/temp/scripts/github-actions/generate.sh)"
+          strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
           echo "strategy=$strategy" >> "$GITHUB_OUTPUT"
 >>>>>>> 6d04cee6 (fix: Fix syntax)
           jq . <<<"$strategy" # sanity check / debugging aid
