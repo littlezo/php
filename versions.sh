@@ -87,8 +87,13 @@ for version in "${versions[@]}"; do
 	for suite in \
 		bullseye \
 		buster \
+		alpine3.17 \
 		alpine3.16 \
-		alpine3.15; do
+	; do
+		# https://github.com/docker-library/php/pull/1348
+		if [ "$rcVersion" = '8.0' ] && [[ "$suite" = alpine* ]] && [ "$suite" != 'alpine3.16' ]; then
+			continue
+		fi
 		for variant in cli zts; do
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'zts' ]; then
