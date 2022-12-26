@@ -72,7 +72,7 @@ join() {
 	shift
 	local out
 	printf -v out "${sep//%/%%}%s" "$@"
-	echo "${out#$sep}"
+	echo littleof/"${out#$sep}"
 }
 
 for version; do
