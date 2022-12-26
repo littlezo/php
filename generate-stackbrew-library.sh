@@ -55,6 +55,7 @@ getArches() {
 <<<<<<< HEAD
 <<<<<<< HEAD
 getArches 'php'
+<<<<<<< HEAD
 
 =======
 getArches 'littleof/php'
@@ -65,6 +66,9 @@ cat <<-EOH
 getArches 'php'
 >>>>>>> 60f9f684 (up)
 
+=======
+echo $parentRepoToArches
+>>>>>>> 5dd26455 (up)
 cat <<-EOH
 # this file is generated via https://github.com/docker-library/php/blob/$(fileCommit "$self")/$self
 
