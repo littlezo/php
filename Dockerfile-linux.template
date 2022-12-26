@@ -541,20 +541,26 @@ ENV EXTRA_LIBS \
   libpq-dev \
   libxml2-dev \
   libzip-dev \
-  curl-dev \
-  linux-headers \
-  postgresql-dev \
-  openssl-dev \
-  pcre-dev \
-  pcre2-dev \
-  libintl \
-  gettext-dev \
+{{ if is_alpine then ( -}}
+	curl-dev \
+	linux-headers \
+	openssl-dev \
+	pcre-dev \
+	pcre2-dev \
+	libintl \
+	gettext-dev \
+{{ ) else ( -}}
+	libpcre3 \
+	libpcre3-dev\
+	libssl-dev \
+	libcurl4-openssl-dev \
+{{ ) end -}}
 	{{ if is_alpine then "tidyhtml-dev" else "libtidy-dev" end }} \
 	{{ if is_alpine then "c-ares-dev" else "libc-ares-dev" end }} \
-  zlib-dev
+	{{ if is_alpine then "zlib-dev" else "libzip-dev" end }}
 
 RUN set -eux; \
-	{{ if is_alpine then ( -}}
+{{ if is_alpine then ( -}}
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 			| tr ',' '\n' \
@@ -569,11 +575,12 @@ RUN set -eux; \
 	make \
 	pkgconf \
 	autoconf $EXTRA_LIBS
-	{{ ) else ( -}}
+{{ ) else ( -}}
+	apt-get update; \
 	apt-get install -y --no-install-recommends $EXTRA_LIBS; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*
-	{{ ) end -}}
+{{ ) end -}}
 
 RUN set -ex; \
 	pecl channel-update pecl.php.net; \
@@ -586,11 +593,20 @@ RUN set -ex; \
 	enable-cares="yes" with-openssl-dir="/usr"' swoole; \
 	docker-php-ext-enable swoole; \
 	docker-php-source delete; \
+	php --version; \
+	php -m; \
+	{ \
+	echo "[swoole]"; \
+	echo "extension=swoole"; \
+	echo "swoole.unixsock_buffer_size=512M"; \
+	echo "swoole.use_shortname=Off"; \
+	echo "swoole.enable_preemptive_scheduler=On"; \
+	} | tee /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
 	{{ if is_alpine then "apk del --no-network .build-deps;" else "" end}} \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*
-
 {{ ) else "" end -}}
+
 RUN set -eux; \
 	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
 	chmod a+x /usr/local/bin/composer; \
