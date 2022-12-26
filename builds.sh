@@ -26,6 +26,9 @@ for version; do
 		docker build -t $tags -f "$version/$dir/"Dockerfile ./"$version/$dir/"
 		docker push $tags
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3faf28cf (up)
 		if [[ "$version" == "7.4" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
 			docker tag $tags $shortTags
 			docker push $shortTags
@@ -42,7 +45,11 @@ for version; do
 			docker push $versionTags-$variant
 			docker tag $tags littleof/php:$version-$variant
 		fi
+<<<<<<< HEAD
 		if [[ "$version" == "8.1" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
+=======
+		if [[ "$version" == "8.2" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
+>>>>>>> 3faf28cf (up)
 			docker tag $tags $shortTags
 			docker push $shortTags
 			docker tag $tags $versionTags
@@ -54,6 +61,7 @@ for version; do
 			docker tag $tags littleof/php:latest
 			docker push littleof/php:latest
 		fi
+<<<<<<< HEAD
 =======
 		# if [[ "$version" == "7.4" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
 		# 	docker tag $tags $shortTags
@@ -84,5 +92,7 @@ for version; do
 		# 	docker push littleof/php:latest
 		# fi
 >>>>>>> e93d3047 (fix: swoole build error)
+=======
+>>>>>>> 3faf28cf (up)
 	done
 done
