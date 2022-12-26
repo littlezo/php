@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
-echo $GENERATE_STACKBREW_LIBRARY;
+
 [ -n "${GENERATE_STACKBREW_LIBRARY:-}" ] || [ -x ./generate-stackbrew-library.sh ] # sanity check
 
 tmp="$(mktemp -d)"
