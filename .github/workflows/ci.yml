@@ -52,6 +52,7 @@ jobs:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
           strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
 
           EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
@@ -67,9 +68,14 @@ jobs:
           git clone --depth 1 https://github.com/littlezo/docker-php.git -b main ~/temp
 >>>>>>> 42128cd8 (up)
           mv ~/temp/scripts/github-actions/generate.sh $BASHBREW_SCRIPTS/github-actions/generate.sh
+=======
+          # git clone --depth 1 https://github.com/littlezo/docker-php.git -b main ~/temp
+          # mv ~/temp/scripts/github-actions/generate.sh $BASHBREW_SCRIPTS/github-actions/generate.sh
+>>>>>>> 3d351472 (up)
           # cat $BASHBREW_SCRIPTS/github-actions/generate.sh
           # strategy="$(~/temp/scripts/github-actions/generate.sh)"
           strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+          wget -qO "$strategy" 'https://raw.githubusercontent.com/littlezo/php/main/scripts/github-actions/generate.sh'
           echo "strategy=$strategy" >> "$GITHUB_OUTPUT"
 >>>>>>> 6d04cee6 (fix: Fix syntax)
           jq . <<<"$strategy" # sanity check / debugging aid
