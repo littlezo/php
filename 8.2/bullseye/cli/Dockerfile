@@ -193,8 +193,12 @@ RUN set -eux; \
 =======
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+<<<<<<< HEAD
 		$(test "$gnuArch" = 's390x-linux-gnu'; echo '--without-pcre-jit') \
 >>>>>>> e93d3047 (fix: swoole build error)
+=======
+		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
+>>>>>>> 6d04cee6 (fix: Fix syntax)
 		--with-libdir="lib/$debMultiarch" \
 		\
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748

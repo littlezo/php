@@ -174,8 +174,12 @@ RUN set -eux; \
 =======
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+<<<<<<< HEAD:8.2/alpine3.19/cli/Dockerfile
 		$(test "$gnuArch" = 's390x-linux-musl'; echo '--without-pcre-jit') \
 >>>>>>> e93d3047 (fix: swoole build error):8.2/alpine3.17/cli/Dockerfile
+=======
+		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
+>>>>>>> 6d04cee6 (fix: Fix syntax):8.2/alpine3.17/cli/Dockerfile
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \

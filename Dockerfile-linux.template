@@ -400,6 +400,7 @@ RUN set -eux; \
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
 {{ if is_alpine then ( -}}
 <<<<<<< HEAD
+<<<<<<< HEAD
 		$(test "$gnuArch" = 'riscv64-linux-musl' && echo '--without-pcre-jit') \
 {{ ) else ( -}}
 		$(test "$gnuArch" = 'riscv64-linux-gnu' && echo '--without-pcre-jit') \
@@ -411,6 +412,11 @@ RUN set -eux; \
 {{ ) else ( -}}
 		$(test "$gnuArch" = 's390x-linux-gnu'; echo '--without-pcre-jit') \
 >>>>>>> e93d3047 (fix: swoole build error)
+=======
+		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
+{{ ) else ( -}}
+		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
+>>>>>>> 6d04cee6 (fix: Fix syntax)
 		--with-libdir="lib/$debMultiarch" \
 {{ ) end -}}
 {{ # https://github.com/docker-library/php/issues/280 -}}
