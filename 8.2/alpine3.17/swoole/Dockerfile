@@ -1,50 +1,25 @@
-{{
-	def version_id:
-		# https://www.php.net/phpversion
-		# $version_id = $major_version * 10000 + $minor_version * 100 + $release_version;
-		sub("[a-zA-Z].*$"; "")
-		| split(".")
-		| (
-			(.[0] // 0 | tonumber) * 10000
-			+ (.[1] // 0 | tonumber) * 100
-			+ (.[2] // 0 | tonumber)
-		)
-	;
-	def is_alpine:
-		env.from | startswith("alpine")
--}}
-FROM {{ env.from }}
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
 
-{{ if is_alpine then "" else ( -}}
-# prevent Debian's PHP packages from being installed
-# https://github.com/docker-library/php/pull/542
-RUN set -eux; \
-	{ \
-		echo 'Package: php*'; \
-		echo 'Pin: release *'; \
-		echo 'Pin-Priority: -1'; \
-	} > /etc/apt/preferences.d/no-debian-php
+FROM alpine:3.17
 
-{{ ) end -}}
 # dependencies required for running "phpize"
-{{ if is_alpine then ( -}}
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
-{{ ) else ( -}}
-# (see persistent deps below)
-{{ ) end -}}
 ENV PHPIZE_DEPS \
 		autoconf \
-		dpkg-dev {{ if is_alpine then "dpkg " else "" end }}\
+		dpkg-dev dpkg \
 		file \
 		g++ \
 		gcc \
 		libc-dev \
 		make \
-		{{ if is_alpine then "pkgconf" else "pkg-config" end }} \
+		pkgconf \
 		re2c
 
 # persistent / runtime deps
-{{ if is_alpine then ( -}}
 RUN apk add --no-cache \
 		ca-certificates \
 		curl \
@@ -62,25 +37,6 @@ RUN set -eux; \
 # https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
-{{ ) else ( -}}
-RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		$PHPIZE_DEPS \
-		apt-transport-https \
-		ca-certificates \
-		ncat \
-		ca-certificates \
-		curl \
-		xz-utils \
-	; \
-	rm -rf /var/lib/apt/lists/*
-
-# ensure little user exists
-RUN set -eux; \
-	addgroup --gid 82 --system little; \
-	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
-{{ ) end -}}
 
 ENV PHP_INI_DIR=/usr/local/etc/php \
 	APP_ROOT=/app-src \
@@ -103,53 +59,15 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-ENV GPG_KEYS {{
-	{
-		# https://www.php.net/gpg-keys.php
-		# https://www.php.net/downloads.php
+ENV GPG_KEYS 39B641343D8C104B2B146DC3F9C39DC0B9698544 E60913E4DF209907D8E30D96659A97C9CF2A795A 1198C0117593497A5EC5C199286AF1F9897469DC
 
-		"8.2": [
-			# https://wiki.php.net/todo/php82#release_managers
-			# https://www.php.net/gpg-keys.php#gpg-8.2
-			"39B6 4134 3D8C 104B 2B14  6DC3 F9C3 9DC0 B969 8544", # ramsey
-			"E609 13E4 DF20 9907 D8E3  0D96 659A 97C9 CF2A 795A", # sergey
-			"1198 C011 7593 497A 5EC5  C199 286A F1F9 8974 69DC"  # pierrick
-		],
-
-		"8.1": [
-			# https://wiki.php.net/todo/php81#release_managers
-			# https://www.php.net/gpg-keys.php#gpg-8.1
-			"5289 95BF EDFB A719 1D46  839E F9BA 0ADA 31CB D89E", # krakjoe
-			"39B6 4134 3D8C 104B 2B14  6DC3 F9C3 9DC0 B969 8544", # ramsey
-			"F1F6 9223 8FBC 1666 E5A5  CCD4 199F 9DFE F6FF BAFD"  # patrickallaert
-		],
-
-		"8.0": [
-			# https://wiki.php.net/todo/php80#release_managers
-			# https://www.php.net/gpg-keys.php#gpg-8.0
-			"1729 F839 38DA 44E2 7BA0  F4D3 DBDB 3974 70D1 2172", # pollita
-			"BFDD D286 4282 4F81 18EF  7790 9B67 A5C1 2229 118F", # carusogabriel
-			"2C16 C765 DBE5 4A08 8130  F1BC 4B9B 5F60 0B55 F3B4"  # carusogabriel
-		],
-	}[env.version | rtrimstr("-rc")] // error("missing GPG keys for " + env.version)
-	| map(gsub(" "; ""))
-	| join(" ")
-}}
-
-ENV PHP_VERSION {{ .version }}
-ENV PHP_URL="{{ .url }}" PHP_ASC_URL="{{ .ascUrl // "" }}"
-ENV PHP_SHA256="{{ .sha256 // "" }}"
+ENV PHP_VERSION 8.2.0
+ENV PHP_URL="https://www.php.net/distributions/php-8.2.0.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.0.tar.xz.asc"
+ENV PHP_SHA256="6ea4c2dfb532950fd712aa2a08c1412a6a81cd1334dd0b0bf88a8e44c2b3a943"
 
 RUN set -eux; \
 	\
-{{ if is_alpine then ( -}}
 	apk add --no-cache --virtual .fetch-deps gnupg; \
-{{ ) else ( -}}
-	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends gnupg dirmngr; \
-	rm -rf /var/lib/apt/lists/*; \
-{{ ) end -}}
 	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
@@ -171,69 +89,29 @@ RUN set -eux; \
 		rm -rf "$GNUPGHOME"; \
 	fi; \
 	\
-{{ if is_alpine then ( -}}
 	apk del --no-network .fetch-deps
-{{ ) else ( -}}
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark > /dev/null; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
-{{ ) end -}}
 
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
-{{ if is_alpine then ( -}}
 	apk add --no-cache --virtual .build-deps \
-{{ ) else ( -}}
-	\
-	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-{{ ) end -}}
-{{
-	[
-		[ if is_alpine then
-			# alpine packages
-			"$PHPIZE_DEPS",
-			"argon2-dev",
-			"coreutils",
-			"curl-dev",
-			"gnu-libiconv-dev", # https://www.php.net/manual/en/intro.iconv.php "it'd be a good idea to install the GNU libiconv library"
-			"libsodium-dev",
-			"libxml2-dev",
-			"openssl-dev",
-			"readline-dev",
-			"sqlite-dev",
-			# https://github.com/docker-library/php/issues/888
-			"linux-headers",
-			# oniguruma is part of mbstring in php 7.4+
-			"oniguruma-dev"
-		else
-			# debian packages
-			"libargon2-dev",
-			"libcurl4-openssl-dev",
-			"libreadline-dev",
-			"libsodium-dev",
-			"libsqlite3-dev",
-			"libssl-dev",
-			"libxml2-dev",
-			"zlib1g-dev",
-			# oniguruma is part of mbstring in php 7.4+
-			"libonig-dev"
-		end ] | sort[] | (
--}}
-		{{ . }} \
-{{
-		)
-	] | add
--}}
+		$PHPIZE_DEPS \
+		argon2-dev \
+		coreutils \
+		curl-dev \
+		gnu-libiconv-dev \
+		libsodium-dev \
+		libxml2-dev \
+		linux-headers \
+		oniguruma-dev \
+		openssl-dev \
+		readline-dev \
+		sqlite-dev \
 	; \
 	\
-{{ if is_alpine then ( -}}
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
 	rm -vf /usr/include/iconv.h; \
 	\
-{{ ) else "" end -}}
 	export \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
@@ -242,13 +120,6 @@ RUN set -eux; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
-{{ if is_alpine then "" else ( -}}
-	debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
-# https://bugs.php.net/bug.php?id=74125
-	if [ ! -d /usr/include/curl ]; then \
-		ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
-	fi; \
-{{ ) end -}}
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
@@ -278,47 +149,22 @@ RUN set -eux; \
 		--with-sqlite3=/usr \
 		\
 		--with-curl \
-		--with-iconv{{ if is_alpine then "=/usr" else "" end }} \
+		--with-iconv=/usr \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
 		\
-{{ if env.variant == "cli" then ( -}}
-# https://github.com/docker-library/php/pull/1259
-		--enable-phpdbg \
-		--enable-phpdbg-readline \
-{{ ) else ( -}}
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
-{{ ) end -}}
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
-{{ if is_alpine then ( -}}
 		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
-{{ ) else ( -}}
-		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
-		--with-libdir="lib/$debMultiarch" \
-{{ ) end -}}
-{{ # https://github.com/docker-library/php/issues/280 -}}
-{{ if env.variant == "cli" then "" else ( -}}
 		\
 		--disable-cgi \
-{{ ) end -}}
-{{ if (env.variant == "zts") or (env.variant == "cli" and (is_alpine | not)) then ( -}}
-		\
-# https://github.com/docker-library/php/pull/939#issuecomment-730501748
-		--enable-embed \
-{{ ) else "" end -}}
-{{ if env.variant == "zts" then ( -}}
-		\
-		--enable-zts \
-# https://externals.io/message/118859
-		--disable-zend-signals \
-{{ ) else "" end -}}
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -340,7 +186,6 @@ RUN set -eux; \
 	cd /; \
 	docker-php-source delete; \
 	\
-{{ if is_alpine then ( -}}
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 			| tr ',' '\n' \
@@ -355,27 +200,12 @@ RUN set -eux; \
 	make \
 	pkgconf \
 	autoconf; \
-{{ ) else ( -}}
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-	find /usr/local -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { print $(NF-1) }' \
-		| sort -u \
-		| xargs -r dpkg-query --search \
-		| cut -d: -f1 \
-		| sort -u \
-		| xargs -r apt-mark manual \
-	; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*; \
-{{ ) end -}}
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
 	pecl install ds; \
-	{{ if is_alpine then "apk del --no-network .build-deps;" else "" end}} \
+	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
 	\
@@ -394,7 +224,6 @@ RUN docker-php-ext-enable sodium; \
     sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
-{{ if env.variant == "swoole" then ( -}}
 ENV EXTRA_EXT \
   bcmath bz2 calendar exif ffi gd gettext intl \
   mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
@@ -402,11 +231,11 @@ ENV EXTRA_EXT \
 
 ENV EXTRA_LIBS \
   autoconf \
-	{{ if is_alpine then "libbz2" else "libbz2-dev" end }} \
+	libbz2 \
   libffi-dev \
-	{{ if is_alpine then "zlib-dev" else "zlib1g-dev" end }} \
+	zlib-dev \
   libpng-dev \
-	{{ if is_alpine then "icu-dev" else "libicu-dev" end }} \
+	icu-dev \
   libpq-dev \
   libxml2-dev \
   libzip-dev \
@@ -418,13 +247,12 @@ ENV EXTRA_LIBS \
   pcre2-dev \
   libintl \
   gettext-dev \
-	{{ if is_alpine then "tidyhtml-dev" else "libtidy-dev" end }} \
-	{{ if is_alpine then "c-ares-dev" else "libc-ares-dev" end }} \
+	tidyhtml-dev \
+	c-ares-dev \
   zlib-dev
 
 	RUN set -eux; \
-	{{ if is_alpine then ( -}}
-		runDeps="$( \
+			runDeps="$( \
 			scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 				| tr ',' '\n' \
 				| sort -u \
@@ -438,23 +266,7 @@ ENV EXTRA_LIBS \
 		make \
 		pkgconf \
 		autoconf $EXTRA_LIBS
-	{{ ) else ( -}}
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-	find /usr/local -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { print $(NF-1) }' \
-		| sort -u \
-		| xargs -r dpkg-query --search \
-		| cut -d: -f1 \
-		| sort -u \
-		| xargs -r apt-mark manual \
-	; \
-	apt-get install -y --no-install-recommends $EXTRA_LIBS; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*
-	{{ ) end -}}
-
+	
 	RUN \
 		set -ex && \
 		pecl channel-update pecl.php.net && \
@@ -467,10 +279,9 @@ ENV EXTRA_LIBS \
 		enable-cares="yes" with-openssl-dir="/usr"' swoole; \
 		docker-php-ext-enable swoole; \
 		docker-php-source delete; \
-	{{ if is_alpine then "apk del --no-network .build-deps;" else "" end}} \
+	apk del --no-network .build-deps; \
 		rm -rf /tmp/pear ~/.pearrc; \
 		rm -rf /tmp/*; \
-{{ ) else "" end -}}
 RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
     chmod a+x /usr/local/bin/composer; \
@@ -484,4 +295,4 @@ WORKDIR ${APP_ROOT}
 EXPOSE 80\
 	443
 
-CMD {{ env.cmd }}
+CMD ["php", "-a"]

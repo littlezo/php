@@ -94,7 +94,7 @@ for version in "${versions[@]}"; do
 		if [ "$rcVersion" = '8.0' ] && [[ "$suite" = alpine* ]] && [ "$suite" != 'alpine3.16' ]; then
 			continue
 		fi
-		for variant in cli zts; do
+		for variant in cli zts swoole; do
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'zts' ]; then
 					continue
