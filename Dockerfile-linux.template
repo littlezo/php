@@ -298,9 +298,9 @@ RUN set -eux; \
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
 {{ if is_alpine then ( -}}
-		$(test "$gnuArch" = 's390x-linux-musl'; echo '--without-pcre-jit') \
+		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
 {{ ) else ( -}}
-		$(test "$gnuArch" = 's390x-linux-gnu'; echo '--without-pcre-jit') \
+		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
 {{ ) end -}}
 {{ # https://github.com/docker-library/php/issues/280 -}}
