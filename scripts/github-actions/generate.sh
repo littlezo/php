@@ -5,6 +5,7 @@ image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
 
 [ -n "${GENERATE_STACKBREW_LIBRARY:-}" ] || [ -x ./generate-stackbrew-library.sh ] # sanity check
 echo $GENERATE_STACKBREW_LIBRARY
+pwd
 tmp="$(mktemp -d)"
 trap "$(printf 'rm -rf %q' "$tmp")" EXIT
 
