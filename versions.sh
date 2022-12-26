@@ -91,6 +91,7 @@ for version in "${versions[@]}"; do
 		alpine3.20 \
 		alpine3.19 \
 	; do
+<<<<<<< HEAD
 		for variant in cli apache fpm zts; do
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'apache' ]; then
@@ -98,6 +99,13 @@ for version in "${versions[@]}"; do
 		buster \
 		alpine3.15; do
 		for variant in cli zts; do
+=======
+		# https://github.com/docker-library/php/pull/1348
+		if [ "$rcVersion" = '8.0' ] && [[ "$suite" = alpine* ]] && [ "$suite" != 'alpine3.16' ]; then
+			continue
+		fi
+		for variant in cli zts swoole; do
+>>>>>>> 1e7ad040 (feat: swoole)
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'zts' ] && [[ "$rcVersion" != 7.* ]]; then
 					# https://github.com/docker-library/php/issues/1074

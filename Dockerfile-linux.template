@@ -508,6 +508,83 @@ RUN docker-php-ext-enable sodium; \
     sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
+{{ if env.variant == "swoole" then ( -}}
+ENV EXTRA_EXT \
+  bcmath bz2 calendar exif ffi gd gettext intl \
+  mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
+  sockets sysvmsg sysvsem sysvshm tidy zip
+
+ENV EXTRA_LIBS \
+  autoconf \
+	{{ if is_alpine then "libbz2" else "libbz2-dev" end }} \
+  libffi-dev \
+	{{ if is_alpine then "zlib-dev" else "zlib1g-dev" end }} \
+  libpng-dev \
+	{{ if is_alpine then "icu-dev" else "libicu-dev" end }} \
+  libpq-dev \
+  libxml2-dev \
+  libzip-dev \
+  curl-dev \
+  linux-headers \
+  postgresql-dev \
+  openssl-dev \
+  pcre-dev \
+  pcre2-dev \
+  libintl \
+  gettext-dev \
+	{{ if is_alpine then "tidyhtml-dev" else "libtidy-dev" end }} \
+	{{ if is_alpine then "c-ares-dev" else "libc-ares-dev" end }} \
+  zlib-dev
+
+	RUN set -eux; \
+	{{ if is_alpine then ( -}}
+		runDeps="$( \
+			scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
+				| tr ',' '\n' \
+				| sort -u \
+				| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+		)"; \
+		apk add --no-cache $runDeps; \
+		apk add --no-cache  --update --virtual .build-deps \
+		g++ \
+		gcc \
+		libc-dev \
+		make \
+		pkgconf \
+		autoconf $EXTRA_LIBS
+	{{ ) else ( -}}
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+	apt-mark auto '.*' > /dev/null; \
+	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
+	find /usr/local -type f -executable -exec ldd '{}' ';' \
+		| awk '/=>/ { print $(NF-1) }' \
+		| sort -u \
+		| xargs -r dpkg-query --search \
+		| cut -d: -f1 \
+		| sort -u \
+		| xargs -r apt-mark manual \
+	; \
+	apt-get install -y --no-install-recommends $EXTRA_LIBS; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*
+	{{ ) end -}}
+
+	RUN \
+		set -ex && \
+		pecl channel-update pecl.php.net && \
+		docker-php-ext-install $EXTRA_EXT; \
+		docker-php-ext-enable redis && \
+		docker-php-ext-install sockets && \
+		docker-php-source extract && \
+		pecl install --configureoptions 'enable-mysqlnd="yes" enable-openssl="yes" \
+		enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes" \
+		enable-cares="yes" with-openssl-dir="/usr"' swoole; \
+		docker-php-ext-enable swoole; \
+		docker-php-source delete; \
+	{{ if is_alpine then "apk del --no-network .build-deps;" else "" end}} \
+		rm -rf /tmp/pear ~/.pearrc; \
+		rm -rf /tmp/*; \
+{{ ) else "" end -}}
 RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
     chmod a+x /usr/local/bin/composer; \

@@ -7,6 +7,7 @@
     "url": "https://www.php.net/distributions/php-7.4.29.tar.xz",
     "variants": [
       "bullseye/cli",
+<<<<<<< HEAD
       "bullseye/zts",
       "buster/cli",
       "buster/zts",
@@ -17,6 +18,11 @@
       "alpine3.16/cli",
       "alpine3.15/cli"
 >>>>>>> 959e5a5a (builder)
+=======
+      "bullseye/swoole",
+      "alpine3.17/cli",
+      "alpine3.17/swoole"
+>>>>>>> 1e7ad040 (feat: swoole)
     ],
     "version": "7.4.29"
   },
@@ -26,11 +32,17 @@
     "url": "https://www.php.net/distributions/php-8.0.18.tar.xz",
     "variants": [
       "bullseye/cli",
+<<<<<<< HEAD
       "bullseye/zts",
       "buster/cli",
       "buster/zts",
 <<<<<<< HEAD
       "alpine3.15/cli"
+=======
+      "bullseye/swoole",
+      "alpine3.17/cli",
+      "alpine3.17/swoole"
+>>>>>>> 1e7ad040 (feat: swoole)
     ],
     "version": "8.0.18"
 =======
