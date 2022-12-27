@@ -104,6 +104,7 @@ for version in "${versions[@]}"; do
 		if [ "$rcVersion" = '8.0' ] && [[ "$suite" = alpine* ]] && [ "$suite" != 'alpine3.16' ]; then
 			continue
 		fi
+<<<<<<< HEAD
 		for variant in cli zts swoole; do
 >>>>>>> 1e7ad040 (feat: swoole)
 			if [[ "$suite" = alpine* ]]; then
@@ -113,6 +114,14 @@ for version in "${versions[@]}"; do
 					continue
 				fi
 			fi
+=======
+		for variant in cli swoole zts; do
+			# if [[ "$suite" = alpine* ]]; then
+			# 	if [ "$variant" = 'zts' ]; then
+			# 		continue
+			# 	fi
+			# fi
+>>>>>>> 7b53e81b (adder 8,0)
 			export suite variant
 			variants="$(jq <<<"$variants" -c '. + [ env.suite + "/" + env.variant ]')"
 		done
