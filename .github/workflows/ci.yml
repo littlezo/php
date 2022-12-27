@@ -2,7 +2,11 @@ name: GitHub CI
 
 on:
   pull_request:
+    env:
+      GITHUB_REPOSITORY: littlezo/php
   push:
+    env:
+      GITHUB_REPOSITORY: littlezo/php
     branches:
       - main
   schedule:
