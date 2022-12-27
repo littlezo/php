@@ -4,8 +4,6 @@ set -Eeuo pipefail
 image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
 
 [ -n "${GENERATE_STACKBREW_LIBRARY:-}" ] || [ -x ./generate-stackbrew-library.sh ] # sanity check
-echo $GENERATE_STACKBREW_LIBRARY
-pwd
 tmp="$(mktemp -d)"
 trap "$(printf 'rm -rf %q' "$tmp")" EXIT
 
@@ -26,8 +24,6 @@ mkdir "$tmp/library"
 export BASHBREW_LIBRARY="$tmp/library"
 
 eval "${GENERATE_STACKBREW_LIBRARY:-./generate-stackbrew-library.sh}" > "$BASHBREW_LIBRARY/$image"
-echo $GENERATE_STACKBREW_LIBRARY
-
 # if we don't appear to be able to fetch the listed commits, they might live in a PR branch, so we should force them into the Bashbrew cache directly to allow it to do what it needs
 if ! bashbrew from "$image" &> /dev/null; then
 	bashbrewGit="${BASHBREW_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/bashbrew}/git"
@@ -93,7 +89,7 @@ for tag in $tags; do
 						+ (
 							.tags
 							| map(
-								"--tag littleof" + (. | @sh)
+								"--tag " + (. | @sh)
 							)
 						)
 						+ if .file != "Dockerfile" then
@@ -199,26 +195,6 @@ strategy="$(
 				# history
 				# test
 				images: "docker image ls --filter since=image-list-marker",
-				build: (
-						[
-								"docker push"
-						]
-						+ (
-								.tags
-								| map(
-										"--tag littleof" + (. | @sh)
-								)
-						)
-						+ if .file != "Dockerfile" then
-								[ "--file", ((.directory + "/" + .file) | @sh) ]
-						else
-								[]
-						end
-						+ [
-								(.directory | @sh)
-						]
-						| join(" ")
-				),
 			}
 		' <<<"${metas["$tag"]}"
 	done | jq -cs '

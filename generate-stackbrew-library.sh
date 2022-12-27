@@ -49,7 +49,7 @@ getArches() {
 				}
 			' '{}' + \
 			| sort -u \
-			| xargs bashbrew cat --format 'littlerof/[{{ .RepoName }}:{{ .TagName }}]="{{ join " " .TagEntry.Architectures }}"'
+			| xargs bashbrew cat --format '[{{ .RepoName }}:{{ .TagName }}]="{{ join " " .TagEntry.Architectures }}"'
 	) )"
 }
 <<<<<<< HEAD

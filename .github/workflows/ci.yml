@@ -1,12 +1,21 @@
 name: GitHub CI
 
 on:
+  env:
+    GITHUB_REPOSITORY: littlezo/php
   pull_request:
+    env:
+      GITHUB_REPOSITORY: littlezo/php
   push:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   workflow_dispatch:
 =======
+=======
+    env:
+      GITHUB_REPOSITORY: littlezo/php
+>>>>>>> 08047ab9 (up)
     branches:
       - master
       - main
