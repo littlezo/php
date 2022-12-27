@@ -94,12 +94,12 @@ for version in "${versions[@]}"; do
 		if [ "$rcVersion" = '8.0' ] && [[ "$suite" = alpine* ]] && [ "$suite" != 'alpine3.16' ]; then
 			continue
 		fi
-		for variant in cli zts swoole; do
-			if [[ "$suite" = alpine* ]]; then
-				if [ "$variant" = 'zts' ]; then
-					continue
-				fi
-			fi
+		for variant in cli swoole zts; do
+			# if [[ "$suite" = alpine* ]]; then
+			# 	if [ "$variant" = 'zts' ]; then
+			# 		continue
+			# 	fi
+			# fi
 			export suite variant
 			variants="$(jq <<<"$variants" -c '. + [ env.suite + "/" + env.variant ]')"
 		done

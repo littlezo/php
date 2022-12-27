@@ -1,4 +1,16 @@
 {
+  "8.0": {
+    "ascUrl": "https://www.php.net/distributions/php-8.0.26.tar.xz.asc",
+    "sha256": "0765bfbe640dba37ccc36d2bc7c7b7ba3d2c3381c9cd4305f66eca83e82a40b3",
+    "url": "https://www.php.net/distributions/php-8.0.26.tar.xz",
+    "variants": [
+      "bullseye/cli",
+      "bullseye/swoole",
+      "alpine3.16/cli",
+      "alpine3.16/swoole"
+    ],
+    "version": "8.0.26"
+  },
   "8.1": {
     "ascUrl": "https://www.php.net/distributions/php-8.1.13.tar.xz.asc",
     "sha256": "b15ef0ccdd6760825604b3c4e3e73558dcf87c75ef1d68ef4289d8fd261ac856",
