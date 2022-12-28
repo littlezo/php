@@ -86,7 +86,17 @@ RUN set -eux; \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
-
+# RUN set -eux; \
+# { \
+# 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+# } | tee /etc/apt/sources.list
 # ensure little user exists
 RUN set -eux; \
 	addgroup --gid 82 --system little; \

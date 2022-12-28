@@ -20,13 +20,16 @@ join() {
 }
 
 for version; do
+{
 	rcVersion="${version%-rc}"
 	export version rcVersion
 
 	if ! fullVersion="$(jq -er '.[env.version] | if . then .version else empty end' versions.json)"; then
 		continue
 	fi
-
+	# if [  "$version" != "8.0" ]; then
+	# 	continue
+	# fi
 	if [ "$rcVersion" != "$version" ] && rcFullVersion="$(jq -er '.[env.rcVersion] | if . then .version else empty end' versions.json)"; then
 		# if this is a "-rc" release, let's make sure the release it contains isn't already GA (and thus something we should not publish anymore)
 		latestVersion="$({ echo "$fullVersion"; echo "$rcFullVersion"; } | sort -V | tail -1)"
@@ -68,6 +71,7 @@ for version; do
 	' versions.json)"
 
 	for dir in "${variants[@]}"; do
+	{
 		suite="$(dirname "$dir")" # "buster", etc
 		variant="$(basename "$dir")" # "cli", etc
 <<<<<<< HEAD
@@ -179,6 +183,13 @@ for version; do
 		done
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
+<<<<<<< HEAD
 >>>>>>> 2549d2b2 (up)
+=======
+	}&
+>>>>>>> 58413dc3 (up)
 	done
+	wait
+}
 done
+# wait

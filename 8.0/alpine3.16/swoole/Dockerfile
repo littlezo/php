@@ -4,48 +4,42 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM debian:bullseye-slim
-
-# prevent Debian's PHP packages from being installed
-# https://github.com/docker-library/php/pull/542
-RUN set -eux; \
-	{ \
-		echo 'Package: php*'; \
-		echo 'Pin: release *'; \
-		echo 'Pin-Priority: -1'; \
-	} > /etc/apt/preferences.d/no-debian-php
+FROM alpine:3.16
 
 # dependencies required for running "phpize"
-# (see persistent deps below)
+# these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 ENV PHPIZE_DEPS \
 		autoconf \
-		dpkg-dev \
+		dpkg-dev dpkg \
 		file \
 		g++ \
 		gcc \
 		libc-dev \
 		make \
-		pkg-config \
+		pkgconf \
 		re2c
 
 # persistent / runtime deps
 RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		$PHPIZE_DEPS \
-		apt-transport-https \
-		ca-certificates \
-		ncat \
+	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+RUN apk add --no-cache \
 		ca-certificates \
 		curl \
-		xz-utils \
-	; \
-	rm -rf /var/lib/apt/lists/*
+		tar \
+		xz \
+# https://github.com/docker-library/php/issues/494
+		openssl
 
 # ensure little user exists
 RUN set -eux; \
-	addgroup --gid 82 --system little; \
-	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
+	addgroup -Sg 83 little; \
+	adduser -u 82 -D -S  -s /sbin/nologin -G little -g little little
+#	adduser -u 82 -D -S -G little little
+# 82 is the standard uid/gid for "little" in Alpine
+# https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
+# https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
+# https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
 
 ENV PHP_INI_DIR=/usr/local/etc/php \
 	APP_ROOT=/app-src \
@@ -68,26 +62,15 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-<<<<<<< HEAD
-ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F
-
-ENV PHP_VERSION 8.0.18
-ENV PHP_URL="https://www.php.net/distributions/php-8.0.18.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.18.tar.xz.asc"
-ENV PHP_SHA256="db161652cacae4b31c347fbf2e17b80656473cb365f2bb3460c4552f5647e2e7"
-=======
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
 
 ENV PHP_VERSION 8.0.26
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.26.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.26.tar.xz.asc"
 ENV PHP_SHA256="0765bfbe640dba37ccc36d2bc7c7b7ba3d2c3381c9cd4305f66eca83e82a40b3"
->>>>>>> 58413dc3 (up)
 
 RUN set -eux; \
 	\
-	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends gnupg dirmngr; \
-	rm -rf /var/lib/apt/lists/*; \
+	apk add --no-cache --virtual .fetch-deps gnupg; \
 	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
@@ -109,27 +92,28 @@ RUN set -eux; \
 		rm -rf "$GNUPGHOME"; \
 	fi; \
 	\
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark > /dev/null; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+	apk del --no-network .fetch-deps
 
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
-	\
-	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		libargon2-dev \
-		libcurl4-openssl-dev \
-		libonig-dev \
-		libreadline-dev \
+	apk add --no-cache --virtual .build-deps \
+		$PHPIZE_DEPS \
+		argon2-dev \
+		coreutils \
+		curl-dev \
+		gnu-libiconv-dev \
 		libsodium-dev \
-		libsqlite3-dev \
-		libssl-dev \
 		libxml2-dev \
-		zlib1g-dev \
+		linux-headers \
+		oniguruma-dev \
+		openssl-dev \
+		readline-dev \
+		sqlite-dev \
 	; \
+	\
+# make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
+	rm -vf /usr/include/iconv.h; \
 	\
 	export \
 		CFLAGS="$PHP_CFLAGS" \
@@ -139,11 +123,6 @@ RUN set -eux; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
-	debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
-# https://bugs.php.net/bug.php?id=74125
-	if [ ! -d /usr/include/curl ]; then \
-		ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
-	fi; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
@@ -173,25 +152,22 @@ RUN set -eux; \
 		--with-sqlite3=/usr \
 		\
 		--with-curl \
-		--with-iconv \
+		--with-iconv=/usr \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
 		\
-# https://github.com/docker-library/php/pull/1259
-		--enable-phpdbg \
-		--enable-phpdbg-readline \
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
+		--disable-phpdbg \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
-		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
-		--with-libdir="lib/$debMultiarch" \
+		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
 		\
-# https://github.com/docker-library/php/pull/939#issuecomment-730501748
-		--enable-embed \
+		--disable-cgi \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -213,29 +189,26 @@ RUN set -eux; \
 	cd /; \
 	docker-php-source delete; \
 	\
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-	find /usr/local -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { print $(NF-1) }' \
-		| sort -u \
-		| xargs -r dpkg-query --search \
-		| cut -d: -f1 \
-		| sort -u \
-		| xargs -r apt-mark manual \
-	; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*; \
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --no-cache $runDeps; \
+	apk add --no-cache --virtual .build-deps \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	autoconf; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
-<<<<<<< HEAD
-	pecl install redis; \
-=======
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
 	pecl install ds; \
->>>>>>> 58413dc3 (up)
-	 \
+	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
 	\
@@ -245,20 +218,6 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
-<<<<<<< HEAD
-    docker-php-ext-enable redis; \
-	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
-
-RUN set -eux; \
-    curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
-    chmod a+x /usr/local/bin/composer; \
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-=======
 	docker-php-ext-enable redis; \
 	docker-php-ext-enable ds; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
@@ -268,12 +227,76 @@ RUN set -eux; \
 	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
+ENV EXTRA_EXT \
+  bcmath bz2 calendar exif ffi gd gettext intl \
+  mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
+  sockets sysvmsg sysvsem sysvshm tidy zip
+
+ENV EXTRA_LIBS \
+  autoconf \
+	libbz2 \
+  libffi-dev \
+	zlib-dev \
+  libpng-dev \
+	icu-dev \
+  libpq-dev \
+  libxml2-dev \
+  libzip-dev \
+	curl-dev \
+	linux-headers \
+	openssl-dev \
+	pcre-dev \
+	pcre2-dev \
+	libintl \
+	gettext-dev \
+	tidyhtml-dev \
+	c-ares-dev \
+	zlib-dev
+
+RUN set -eux; \
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --no-cache $runDeps; \
+	apk add --no-cache  --update --virtual .build-deps \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	autoconf $EXTRA_LIBS
+
+RUN set -ex; \
+	pecl channel-update pecl.php.net; \
+	docker-php-ext-install $EXTRA_EXT; \
+	docker-php-ext-enable redis; \
+	docker-php-ext-install sockets; \
+	docker-php-source extract; \
+	pecl install --configureoptions 'enable-mysqlnd="yes" enable-openssl="yes" \
+	enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes" \
+	enable-cares="yes" with-openssl-dir="/usr"' swoole; \
+	docker-php-ext-enable swoole; \
+	docker-php-source delete; \
+	php --version; \
+	php -m; \
+	{ \
+	echo "[swoole]"; \
+	echo "extension=swoole"; \
+	echo "swoole.unixsock_buffer_size=512M"; \
+	echo "swoole.use_shortname=Off"; \
+	echo "swoole.enable_preemptive_scheduler=On"; \
+	} | tee /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
+	apk del --no-network .build-deps; \
+	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*
 
 RUN set -eux; \
 	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
 	chmod a+x /usr/local/bin/composer; \
 	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
->>>>>>> 58413dc3 (up)
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH

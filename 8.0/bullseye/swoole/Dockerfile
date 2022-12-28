@@ -68,19 +68,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-<<<<<<< HEAD
-ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F
-
-ENV PHP_VERSION 8.0.18
-ENV PHP_URL="https://www.php.net/distributions/php-8.0.18.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.18.tar.xz.asc"
-ENV PHP_SHA256="db161652cacae4b31c347fbf2e17b80656473cb365f2bb3460c4552f5647e2e7"
-=======
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
 
 ENV PHP_VERSION 8.0.26
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.26.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.26.tar.xz.asc"
 ENV PHP_SHA256="0765bfbe640dba37ccc36d2bc7c7b7ba3d2c3381c9cd4305f66eca83e82a40b3"
->>>>>>> 58413dc3 (up)
 
 RUN set -eux; \
 	\
@@ -178,9 +170,8 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
-# https://github.com/docker-library/php/pull/1259
-		--enable-phpdbg \
-		--enable-phpdbg-readline \
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
+		--disable-phpdbg \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
@@ -190,8 +181,7 @@ RUN set -eux; \
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
 		\
-# https://github.com/docker-library/php/pull/939#issuecomment-730501748
-		--enable-embed \
+		--disable-cgi \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -229,12 +219,8 @@ RUN set -eux; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
-<<<<<<< HEAD
-	pecl install redis; \
-=======
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
 	pecl install ds; \
->>>>>>> 58413dc3 (up)
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -245,20 +231,6 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
-<<<<<<< HEAD
-    docker-php-ext-enable redis; \
-	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
-
-RUN set -eux; \
-    curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
-    chmod a+x /usr/local/bin/composer; \
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-=======
 	docker-php-ext-enable redis; \
 	docker-php-ext-enable ds; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
@@ -268,12 +240,63 @@ RUN set -eux; \
 	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
+ENV EXTRA_EXT \
+  bcmath bz2 calendar exif ffi gd gettext intl \
+  mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
+  sockets sysvmsg sysvsem sysvshm tidy zip
+
+ENV EXTRA_LIBS \
+  autoconf \
+	libbz2-dev \
+  libffi-dev \
+	zlib1g-dev \
+  libpng-dev \
+	libicu-dev \
+  libpq-dev \
+  libxml2-dev \
+  libzip-dev \
+	libpcre3 \
+	libpcre3-dev\
+	libssl-dev \
+	libcurl4-openssl-dev \
+	libtidy-dev \
+	libc-ares-dev \
+	libzip-dev
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends $EXTRA_LIBS; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*
+
+RUN set -ex; \
+	pecl channel-update pecl.php.net; \
+	docker-php-ext-install $EXTRA_EXT; \
+	docker-php-ext-enable redis; \
+	docker-php-ext-install sockets; \
+	docker-php-source extract; \
+	pecl install --configureoptions 'enable-mysqlnd="yes" enable-openssl="yes" \
+	enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes" \
+	enable-cares="yes" with-openssl-dir="/usr"' swoole; \
+	docker-php-ext-enable swoole; \
+	docker-php-source delete; \
+	php --version; \
+	php -m; \
+	{ \
+	echo "[swoole]"; \
+	echo "extension=swoole"; \
+	echo "swoole.unixsock_buffer_size=512M"; \
+	echo "swoole.use_shortname=Off"; \
+	echo "swoole.enable_preemptive_scheduler=On"; \
+	} | tee /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
+	 \
+	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*
 
 RUN set -eux; \
 	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
 	chmod a+x /usr/local/bin/composer; \
 	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
->>>>>>> 58413dc3 (up)
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
