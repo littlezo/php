@@ -177,8 +177,8 @@ for version; do
 		for ver in ${variantAliases[@]}; do
 		{
 			echo build "littleof/php:$ver"
-			docker build -t "littleof/php:$ver" -f "$dir/"Dockerfile ./"$dir"
-			docker push "littleof/php:$ver"
+			echo docker build -t "littleof/php:$ver" -f "$dir/"Dockerfile ./"$dir"
+			echo docker push "littleof/php:$ver"
 		}&
 		done
 		# echo  $(join ', ' "${variantAliases[@]}")
