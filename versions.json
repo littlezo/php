@@ -1,38 +1,43 @@
 {
   "8.0": {
-    "ascUrl": "https://www.php.net/distributions/php-8.0.26.tar.xz.asc",
-    "sha256": "0765bfbe640dba37ccc36d2bc7c7b7ba3d2c3381c9cd4305f66eca83e82a40b3",
-    "url": "https://www.php.net/distributions/php-8.0.26.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.0.27.tar.xz.asc",
+    "sha256": "f942cbfe2f7bacbb8039fb79bbec41c76ea779ac5c8157f21e1e0c1b28a5fc3a",
+    "url": "https://www.php.net/distributions/php-8.0.27.tar.xz",
     "variants": [
       "bullseye/cli",
       "bullseye/swoole",
       "alpine3.16/cli",
       "alpine3.16/swoole"
     ],
-    "version": "8.0.26"
+    "version": "8.0.27"
   },
+  "8.0-rc": null,
   "8.1": {
-    "ascUrl": "https://www.php.net/distributions/php-8.1.13.tar.xz.asc",
-    "sha256": "b15ef0ccdd6760825604b3c4e3e73558dcf87c75ef1d68ef4289d8fd261ac856",
-    "url": "https://www.php.net/distributions/php-8.1.13.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.1.14.tar.xz.asc",
+    "sha256": "e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a",
+    "url": "https://www.php.net/distributions/php-8.1.14.tar.xz",
     "variants": [
       "bullseye/cli",
       "bullseye/swoole",
+      "bullseye/swow",
       "alpine3.17/cli",
-      "alpine3.17/swoole"
+      "alpine3.17/swoole",
+      "alpine3.17/swow"
     ],
-    "version": "8.1.13"
+    "version": "8.1.14"
   },
+  "8.1-rc": null,
   "8.2": {
-    "ascUrl": "https://www.php.net/distributions/php-8.2.0.tar.xz.asc",
-    "sha256": "6ea4c2dfb532950fd712aa2a08c1412a6a81cd1334dd0b0bf88a8e44c2b3a943",
-    "url": "https://www.php.net/distributions/php-8.2.0.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.2.1.tar.xz.asc",
+    "sha256": "650d3bd7a056cabf07f6a0f6f1dd8ba45cd369574bbeaa36de7d1ece212c17af",
+    "url": "https://www.php.net/distributions/php-8.2.1.tar.xz",
     "variants": [
       "bullseye/cli",
       "bullseye/swoole",
       "alpine3.17/cli",
       "alpine3.17/swoole"
     ],
-    "version": "8.2.0"
-  }
+    "version": "8.2.1"
+  },
+  "8.2-rc": null
 }

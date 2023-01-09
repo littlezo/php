@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.16
+FROM alpine:3.17
 
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
@@ -62,11 +62,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
+ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
-ENV PHP_VERSION 8.0.27
-ENV PHP_URL="https://www.php.net/distributions/php-8.0.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.27.tar.xz.asc"
-ENV PHP_SHA256="f942cbfe2f7bacbb8039fb79bbec41c76ea779ac5c8157f21e1e0c1b28a5fc3a"
+ENV PHP_VERSION 8.1.14
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.14.tar.xz.asc"
+ENV PHP_SHA256="e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a"
 
 RUN set -eux; \
 	\
@@ -242,6 +242,9 @@ ENV EXTRA_LIBS \
   libpq-dev \
   libxml2-dev \
   libzip-dev \
+	openssl \
+	git \
+	bash \
 	curl-dev \
 	linux-headers \
 	openssl-dev \
@@ -275,20 +278,28 @@ RUN set -ex; \
 	docker-php-ext-enable redis; \
 	docker-php-ext-install sockets; \
 	docker-php-source extract; \
-	pecl install --configureoptions 'enable-mysqlnd="yes" enable-openssl="yes" \
-	enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes" \
-	enable-cares="yes" with-openssl-dir="/usr"' swoole; \
-	docker-php-ext-enable swoole; \
 	docker-php-source delete; \
+	# download
+ 	cd /tmp; \
+	curl -SL "https://github.com/swow/swow/archive/${SW_VERSION}.tar.gz" -o swow.tar.gz; \
+	ls -alh; \
+	# php extension:swow
+	cd /tmp; \
+	mkdir -p swow; \
+	tar -xf swow.tar.gz -C swow --strip-components=1; \
+	( \
+			cd swow/ext; \
+			phpize; \
+			./configure --enable-swow --enable-swow-ssl --enable-swow-curl; \
+			make -s -j$(nproc); \
+			make install \
+	); \
+	echo "memory_limit=1G" >  /usr/local/etc/php/conf.d/00-default.ini; \
+	echo "opcache.enable_cli = 'On'" >>  /usr/local/etc/php/conf.d/50-opcache.ini; \
+	echo "extension=swow.so" > /usr/local/etc/php/conf.d/docker-php-ext-swow.ini; \
 	php --version; \
 	php -m; \
-	{ \
-	echo "[swoole]"; \
-	echo "extension=swoole"; \
-	echo "swoole.unixsock_buffer_size=512M"; \
-	echo "swoole.use_shortname=Off"; \
-	echo "swoole.enable_preemptive_scheduler=On"; \
-	} | tee /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
+	php --ri swow; \
 	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*
