@@ -104,10 +104,9 @@ for version; do
 		done
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
-	}
-	# &
+	}&
 	done
-	# wait
+	wait
 }
 done
 # wait
