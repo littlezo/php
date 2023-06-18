@@ -27,7 +27,7 @@ for version; do
 	if ! fullVersion="$(jq -er '.[env.version] | if . then .version else empty end' versions.json)"; then
 		continue
 	fi
-	# if [  "$version" != "8.0" ]; then
+	# if [  "$version" != "8.1" ]; then
 	# 	continue
 	# fi
 	if [ "$rcVersion" != "$version" ] && rcFullVersion="$(jq -er '.[env.rcVersion] | if . then .version else empty end' versions.json)"; then
@@ -104,9 +104,10 @@ for version; do
 		done
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
-	}&
+	}
+	# &
 	done
-	wait
+	# wait
 }
 done
 # wait
