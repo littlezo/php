@@ -27,7 +27,7 @@ for version; do
 	if ! fullVersion="$(jq -er '.[env.version] | if . then .version else empty end' versions.json)"; then
 		continue
 	fi
-	# if [  "$version" != "8.0" ]; then
+	# if [  "$version" != "8.1" ]; then
 	# 	continue
 	# fi
 	if [ "$rcVersion" != "$version" ] && rcFullVersion="$(jq -er '.[env.rcVersion] | if . then .version else empty end' versions.json)"; then
@@ -184,12 +184,17 @@ for version; do
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 2549d2b2 (up)
 =======
 	}&
 >>>>>>> 58413dc3 (up)
+=======
+	}
+	# &
+>>>>>>> 7a6e3eed (feat: docker login)
 	done
-	wait
+	# wait
 }
 done
 # wait
