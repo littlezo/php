@@ -185,6 +185,7 @@ for version; do
 		wait
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 2549d2b2 (up)
 =======
 	}&
@@ -193,8 +194,11 @@ for version; do
 	}
 	# &
 >>>>>>> 7a6e3eed (feat: docker login)
+=======
+	}&
+>>>>>>> da7cf35b (up)
 	done
-	# wait
+	wait
 }
 done
 # wait
