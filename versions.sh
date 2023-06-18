@@ -50,13 +50,13 @@ for version in "${versions[@]}"; do
 			sort -rV
 	))
 	unset IFS
-
 	if [ "${#possibles[@]}" -eq 0 ]; then
 		if [ "$rcVersion" = "$version" ]; then
 			echo >&2
 			echo >&2 "error: unable to determine available releases of $version"
 			echo >&2
-			exit 1
+			continue
+			# exit 1
 		else
 			echo >&2 "warning: skipping/removing '$version' (does not appear to exist upstream)"
 			json="$(jq <<<"$json" -c '.[env.version] = null')"
@@ -85,8 +85,10 @@ for version in "${versions[@]}"; do
 	variants='[]'
 	# order here controls the order of the library/ file
 	for suite in \
+		bookworm \
 		bullseye \
 		buster \
+		alpine3.18 \
 		alpine3.17 \
 		alpine3.16 \
 	; do
@@ -94,9 +96,21 @@ for version in "${versions[@]}"; do
 		if [ "$rcVersion" = '8.0' ] && [[ "$suite" = alpine* ]] && [ "$suite" != 'alpine3.16' ]; then
 			continue
 		fi
+		# 8.0 doesn't support OpenSSL 3, which is the only version in bookworm
+		# only keep two variants of Debian per version of php
+		if [ "$rcVersion" = '8.0' ] && [ "$suite" = 'bookworm' ]; then
+			continue
+		elif [ "$rcVersion" != '8.0' ] && [ "$suite" = 'buster' ]; then
+			continue
+		fi
+		# https://github.com/docker-library/php/pull/1405
+		# 8.1 is temporary: https://github.com/docker-library/official-images/pull/14735 (should remove Alpine 3.16 support once Nextcloud 25 is EOL ~Oct 2023)
+		if [ "$suite" = 'alpine3.16' ] && [ "$rcVersion" != '8.0' ] && [ "$rcVersion" != '8.1' ]; then
+			continue
+		fi
 		for variant in cli swoole zts; do
 			# if [[ "$suite" = alpine* ]]; then
-			# 	if [ "$variant" = 'zts' ]; then
+			# 	if [ "$variant" = 'apache' ]; then
 			# 		continue
 			# 	fi
 			# fi

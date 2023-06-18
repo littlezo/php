@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.17
+FROM alpine:3.18
 
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
@@ -62,11 +62,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
+ENV GPG_KEYS 39B641343D8C104B2B146DC3F9C39DC0B9698544 E60913E4DF209907D8E30D96659A97C9CF2A795A 1198C0117593497A5EC5C199286AF1F9897469DC
 
-ENV PHP_VERSION 8.1.14
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.14.tar.xz.asc"
-ENV PHP_SHA256="e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a"
+ENV PHP_VERSION 8.2.7
+ENV PHP_URL="https://www.php.net/distributions/php-8.2.7.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.7.tar.xz.asc"
+ENV PHP_SHA256="4b9fb3dcd7184fe7582d7e44544ec7c5153852a2528de3b6754791258ffbdfa0"
 
 RUN set -eux; \
 	\
@@ -168,6 +168,14 @@ RUN set -eux; \
 		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
 		\
 		--disable-cgi \
+		\
+# https://github.com/docker-library/php/pull/939#issuecomment-730501748
+		--enable-embed \
+		\
+		--enable-zts \
+# https://externals.io/message/118859
+		--disable-zend-signals \
+		--enable-zend-max-execution-timers \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -227,82 +235,6 @@ RUN docker-php-ext-enable sodium; \
 	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
-ENV EXTRA_EXT \
-  bcmath bz2 calendar exif ffi gd gettext intl \
-  mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
-  sockets sysvmsg sysvsem sysvshm tidy zip
-
-ENV EXTRA_LIBS \
-  autoconf \
-	libbz2 \
-  libffi-dev \
-	zlib-dev \
-  libpng-dev \
-	icu-dev \
-  libpq-dev \
-  libxml2-dev \
-  libzip-dev \
-	openssl \
-	git \
-	bash \
-	curl-dev \
-	linux-headers \
-	openssl-dev \
-	pcre-dev \
-	pcre2-dev \
-	libintl \
-	gettext-dev \
-	tidyhtml-dev \
-	c-ares-dev \
-	zlib-dev
-
-RUN set -eux; \
-	runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)"; \
-	apk add --no-cache $runDeps; \
-	apk add --no-cache  --update --virtual .build-deps \
-	g++ \
-	gcc \
-	libc-dev \
-	make \
-	pkgconf \
-	autoconf $EXTRA_LIBS
-
-RUN set -ex; \
-	pecl channel-update pecl.php.net; \
-	docker-php-ext-install $EXTRA_EXT; \
-	docker-php-ext-enable redis; \
-	docker-php-ext-install sockets; \
-	docker-php-source extract; \
-	docker-php-source delete; \
-	# download
- 	cd /tmp; \
-	curl -SL "https://github.com/swow/swow/archive/${SW_VERSION}.tar.gz" -o swow.tar.gz; \
-	ls -alh; \
-	# php extension:swow
-	cd /tmp; \
-	mkdir -p swow; \
-	tar -xf swow.tar.gz -C swow --strip-components=1; \
-	( \
-			cd swow/ext; \
-			phpize; \
-			./configure --enable-swow --enable-swow-ssl --enable-swow-curl; \
-			make -s -j$(nproc); \
-			make install \
-	); \
-	echo "memory_limit=1G" >  /usr/local/etc/php/conf.d/00-default.ini; \
-	echo "opcache.enable_cli = 'On'" >>  /usr/local/etc/php/conf.d/50-opcache.ini; \
-	echo "extension=swow.so" > /usr/local/etc/php/conf.d/docker-php-ext-swow.ini; \
-	php --version; \
-	php -m; \
-	php --ri swow; \
-	apk del --no-network .build-deps; \
-	rm -rf /tmp/pear ~/.pearrc; \
-	rm -rf /tmp/*
 
 RUN set -eux; \
 	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \

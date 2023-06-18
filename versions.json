@@ -1,43 +1,65 @@
 {
   "8.0": {
-    "ascUrl": "https://www.php.net/distributions/php-8.0.27.tar.xz.asc",
-    "sha256": "f942cbfe2f7bacbb8039fb79bbec41c76ea779ac5c8157f21e1e0c1b28a5fc3a",
-    "url": "https://www.php.net/distributions/php-8.0.27.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.0.29.tar.xz.asc",
+    "sha256": "14db2fbf26c07d0eb2c9fab25dbde7e27726a3e88452cca671f0896bbb683ca9",
+    "url": "https://www.php.net/distributions/php-8.0.29.tar.xz",
     "variants": [
       "bullseye/cli",
       "bullseye/swoole",
+      "bullseye/zts",
+      "buster/cli",
+      "buster/swoole",
+      "buster/zts",
       "alpine3.16/cli",
-      "alpine3.16/swoole"
+      "alpine3.16/swoole",
+      "alpine3.16/zts"
     ],
-    "version": "8.0.27"
+    "version": "8.0.29"
   },
   "8.0-rc": null,
   "8.1": {
-    "ascUrl": "https://www.php.net/distributions/php-8.1.14.tar.xz.asc",
-    "sha256": "e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a",
-    "url": "https://www.php.net/distributions/php-8.1.14.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.1.20.tar.xz.asc",
+    "sha256": "4c9973f599e93ed5e8ce2b45ce1d41bb8fb54ce642824fd23e56b52fd75029a6",
+    "url": "https://www.php.net/distributions/php-8.1.20.tar.xz",
     "variants": [
+      "bookworm/cli",
+      "bookworm/swoole",
+      "bookworm/zts",
       "bullseye/cli",
       "bullseye/swoole",
-      "bullseye/swow",
+      "bullseye/zts",
+      "alpine3.18/cli",
+      "alpine3.18/swoole",
+      "alpine3.18/zts",
       "alpine3.17/cli",
       "alpine3.17/swoole",
-      "alpine3.17/swow"
+      "alpine3.17/zts",
+      "alpine3.16/cli",
+      "alpine3.16/swoole",
+      "alpine3.16/zts"
     ],
-    "version": "8.1.14"
+    "version": "8.1.20"
   },
   "8.1-rc": null,
   "8.2": {
-    "ascUrl": "https://www.php.net/distributions/php-8.2.1.tar.xz.asc",
-    "sha256": "650d3bd7a056cabf07f6a0f6f1dd8ba45cd369574bbeaa36de7d1ece212c17af",
-    "url": "https://www.php.net/distributions/php-8.2.1.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.2.7.tar.xz.asc",
+    "sha256": "4b9fb3dcd7184fe7582d7e44544ec7c5153852a2528de3b6754791258ffbdfa0",
+    "url": "https://www.php.net/distributions/php-8.2.7.tar.xz",
     "variants": [
+      "bookworm/cli",
+      "bookworm/swoole",
+      "bookworm/zts",
       "bullseye/cli",
       "bullseye/swoole",
+      "bullseye/zts",
+      "alpine3.18/cli",
+      "alpine3.18/swoole",
+      "alpine3.18/zts",
       "alpine3.17/cli",
-      "alpine3.17/swoole"
+      "alpine3.17/swoole",
+      "alpine3.17/zts"
     ],
-    "version": "8.2.1"
+    "version": "8.2.7"
   },
   "8.2-rc": null
 }
