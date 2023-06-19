@@ -10,9 +10,9 @@ on:
 env:
   NAMESOACE: forlong
     # ${{ secrets.NAMESOACE }}
-  USERNAME: ${{ secrets.USERNAME }}
-  PASSWORD: ${{ secrets.PASSWORD }}
-  HOST: ${{ secrets.HOST }}
+  # USERNAME: ${{ USERNAME }}
+  PASSWORD: ${{ PASSWORD }}
+  # HOST: ${{ secrets.HOST }}
 jobs:
 
   build:
