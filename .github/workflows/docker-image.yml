@@ -11,7 +11,7 @@ env:
   NAMESOACE: forlong
     # ${{ secrets.NAMESOACE }}
   # USERNAME: ${{ USERNAME }}
-  PASSWORD: ${{ PASSWORD }}
+  PASSWORD: ${{ secrets.PASSWORD }}
   # HOST: ${{ secrets.HOST }}
 jobs:
 
