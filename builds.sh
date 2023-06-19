@@ -188,6 +188,7 @@ for version; do
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 2549d2b2 (up)
 =======
 	}&
@@ -205,8 +206,11 @@ for version; do
 =======
 	}&
 >>>>>>> 47c52ab7 (feat:ci)
+=======
+	}
+>>>>>>> 51ad4bed (fix: 优化构建)
 	done
-	wait
-}&
+	# wait
+}
 done
-wait
+# wait
