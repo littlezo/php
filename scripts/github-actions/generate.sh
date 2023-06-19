@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
-
+# image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
+image=php
 [ -n "${GENERATE_STACKBREW_LIBRARY:-}" ] || [ -x ./generate-stackbrew-library.sh ] # sanity check
 tmp="$(mktemp -d)"
 trap "$(printf 'rm -rf %q' "$tmp")" EXIT
