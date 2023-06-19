@@ -4,7 +4,7 @@ set -Eeuo pipefail
 declare -A aliases=(
 	[8.2]='8 latest'
 )
-
+NAMESPACE='forlong'
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -178,7 +178,9 @@ for version; do
 		{
 			echo build "$NAMESPACE/php:$ver"
 			docker build -t "$NAMESPACE/php:$ver" -f "$dir/"Dockerfile ./"$dir"
+			docker tag "$NAMESPACE/php:$ver" "$HOST/$NAMESPACE/php:$ver"
 			docker push "$HOST/$NAMESPACE/php:$ver"
+			docker image ls
 		}
 		done
 <<<<<<< HEAD
