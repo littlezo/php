@@ -8,11 +8,10 @@ on:
   schedule:
     - cron: 0 0 * * 0
 env:
-  NAMESOACE: forlong
-    # ${{ secrets.NAMESOACE }}
-  # USERNAME: ${{ USERNAME }}
+  NAMESOACE: ${{ vars.NAMESOACE }}
+  USERNAME: ${{ vars.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
-  # HOST: ${{ secrets.HOST }}
+  HOST: ${{ vars.HOST }}
 jobs:
 
   build:
