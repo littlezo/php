@@ -179,8 +179,9 @@ for version; do
 			echo build "$NAMESPACE/php:$ver"
 			docker build -t "$NAMESPACE/php:$ver" -f "$dir/"Dockerfile ./"$dir"
 			docker push "$HOST/$NAMESPACE/php:$ver"
-		}&
+		}
 		done
+<<<<<<< HEAD
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
 <<<<<<< HEAD
@@ -194,6 +195,9 @@ for version; do
 	}&
 >>>>>>> 58413dc3 (up)
 =======
+=======
+		echo  $(join ', ' "${variantAliases[@]}")
+>>>>>>> 3527f237 (feat: 优化构建)
 	}
 	# &
 >>>>>>> 7a6e3eed (feat: docker login)
@@ -210,7 +214,6 @@ for version; do
 	}
 >>>>>>> 51ad4bed (fix: 优化构建)
 	done
-	# wait
-}
+}&
 done
-# wait
+wait
