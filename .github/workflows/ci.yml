@@ -1,55 +1,31 @@
-name: GitHub CI
+name: Docker Image CI
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   schedule:
     - cron: 0 0 * * 0
 env:
-  USERNAME: ${{ secrets.USERNAME }}
+  NAMESPACE: ${{ vars.NAMESPACE }}
+  USERNAME: ${{ vars.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
-  HOST: ${{ secrets.HOST }}
-defaults:
-  run:
-    shell: 'bash -Eeuo pipefail -x {0}'
-
+  HOST: ${{ vars.HOST }}
 jobs:
-
-  generate-jobs:
-    name: Generate Jobs
+  build:
     runs-on: ubuntu-latest
-    outputs:
-      strategy: ${{ steps.generate-jobs.outputs.strategy }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: docker-library/bashbrew@HEAD
-      - id: generate-jobs
-        name: Generate Jobs
-        run: |
-          strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
-          echo "strategy=$strategy" >> "$GITHUB_OUTPUT"
-          jq . <<<"$strategy" # sanity check / debugging aid
-
-  test:
-    needs: generate-jobs
-    strategy: ${{ fromJson(needs.generate-jobs.outputs.strategy) }}
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Prepare Environment
-        run: ${{ matrix.runs.prepare }}
-      - name: Pull Dependencies
-        run: ${{ matrix.runs.pull }}
-      - name: Build ${{ matrix.name }}
-        run: ${{ matrix.runs.build }}
-      - name: History ${{ matrix.name }}
-        run: ${{ matrix.runs.history }}
-      - name: Test ${{ matrix.name }}
-        run: ${{ matrix.runs.test }}
-      - name: '"docker images"'
-        run: ${{ matrix.runs.images }}
+    - uses: actions/checkout@v3
+    - name: Apply Templates
+      run: ./apply-templates.sh
+    - name: Check Git Status
+      run: |
+        status="$(git status --short)"
+        [ -z "$status" ]
+    - name: Docker Hub ACR LOGIN
+      run: docker login --username ${{ vars.USERNAME }} --password ${{ secrets.PASSWORD }}  ${{ vars.HOST }}
+    - name: Update the Docker image Version
+      run:  ./update.sh
+    - name: Build the Docker image
+      run:  ./builds.sh
