@@ -4,7 +4,6 @@ set -Eeuo pipefail
 declare -A aliases=(
 	[8.2]='8 latest'
 )
-NAMESPACE='forlong'
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
