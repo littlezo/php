@@ -8,6 +8,8 @@ on:
   schedule:
     - cron: 0 0 * * 0
 env:
+  NAMESOACE: forlong
+    # ${{ secrets.NAMESOACE }}
   USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
   HOST: ${{ secrets.HOST }}
@@ -19,9 +21,16 @@ jobs:
     outputs:
       strategy: ${{ steps.generate-jobs.outputs.strategy }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Docker Hub ACR LOGIN
-      run: docker login --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}  ${{ secrets.HOST }}
+    - uses: actions/checkout@v3
+    - name: Apply Templates
+      run: ./apply-templates.sh
+    - name: Check Git Status
+      run: |
+        status="$(git status --short)"
+        [ -z "$status" ]
+    # - name: Docker Hub ACR LOGIN
+    #   run: docker login --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}  ${{ secrets.HOST }}
     - name: Build the Docker image
-      run: ./builds.sh
+      run:  |
+        ./docker-login.sh
+        ./builds.sh
