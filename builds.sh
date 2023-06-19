@@ -97,14 +97,14 @@ for version; do
 		# variantArches="${parentRepoToArches[$variantParent]}"
 		for ver in ${variantAliases[@]}; do
 		{
-			echo build "littleof/php:$ver"
-			docker build -t "littleof/php:$ver" -f "$dir/"Dockerfile ./"$dir"
-			docker push "littleof/php:$ver"
-		}&
+			echo build "$NAMESOACE/php:$ver"
+			docker build -t "$NAMESOACE/php:$ver" -f "$dir/"Dockerfile ./"$dir"
+			docker push "$NAMESOACE/php:$ver"
+		}
 		done
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
-	}&
+	}
 	done
 	wait
 }
