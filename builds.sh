@@ -100,13 +100,11 @@ for version; do
 			echo build "$NAMESPACE/php:$ver"
 			docker build -t "$NAMESPACE/php:$ver" -f "$dir/"Dockerfile ./"$dir"
 			docker push "$HOST/$NAMESPACE/php:$ver"
-		}&
+		}
 		done
-		# echo  $(join ', ' "${variantAliases[@]}")
-		wait
+		echo  $(join ', ' "${variantAliases[@]}")
 	}
 	done
-	# wait
-}
+}&
 done
-# wait
+wait
