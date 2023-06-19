@@ -2,9 +2,10 @@ name: GitHub CI
 
 on:
   pull_request:
-    env:
-      GITHUB_REPOSITORY: littlezo/php
+    branches:
+      - main
   push:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -14,6 +15,8 @@ on:
     env:
       GITHUB_REPOSITORY: littlezo/php
 >>>>>>> 08047ab9 (up)
+=======
+>>>>>>> dbb40abb (up)
     branches:
       - master
       - main
@@ -47,21 +50,39 @@ permissions:
 >>>>>>> 04f37363 (up)
 =======
 env:
+<<<<<<< HEAD
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 >>>>>>> 970a9c65 (up)
+=======
+  USERNAME: ${{ secrets.USERNAME }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+  HOST: ${{ secrets.HOST }}
+defaults:
+  run:
+    shell: 'bash -Eeuo pipefail -x {0}'
+
+>>>>>>> dbb40abb (up)
 jobs:
-  build:
-    name: Build PHP
+
+  generate-jobs:
+    name: Generate Jobs
     runs-on: ubuntu-latest
+    outputs:
+      strategy: ${{ steps.generate-jobs.outputs.strategy }}
     steps:
 <<<<<<< HEAD
+<<<<<<< HEAD
       - uses: actions/checkout@v4
+=======
+      - uses: actions/checkout@v3
+>>>>>>> dbb40abb (up)
       - uses: docker-library/bashbrew@HEAD
       - id: generate-jobs
         name: Generate Jobs
         run: |
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -96,6 +117,11 @@ jobs:
           jq . <<<"$strategy" # sanity check / debugging aid
           echo "::set-output name=strategy::$strategy"
 >>>>>>> 47b88e83 (ci scripts)
+=======
+          strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+          echo "strategy=$strategy" >> "$GITHUB_OUTPUT"
+          jq . <<<"$strategy" # sanity check / debugging aid
+>>>>>>> dbb40abb (up)
 
   test:
     needs: generate-jobs
@@ -103,6 +129,7 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
+<<<<<<< HEAD
 <<<<<<< HEAD
       - uses: actions/checkout@v4
 =======
@@ -113,6 +140,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - uses: actions/checkout@v3
 >>>>>>> 6d04cee6 (fix: Fix syntax)
+=======
+      - uses: actions/checkout@v3
+>>>>>>> dbb40abb (up)
       - name: Prepare Environment
         run: ${{ matrix.runs.prepare }}
       - name: Pull Dependencies
@@ -125,6 +155,7 @@ jobs:
         run: ${{ matrix.runs.test }}
       - name: '"docker images"'
         run: ${{ matrix.runs.images }}
+<<<<<<< HEAD
       - name: Push images ${{ matrix.name }}
         run: ${{ matrix.runs.push }}
 =======
@@ -137,3 +168,5 @@ jobs:
       - name: Build or Push
         run: ./builds.sh
 >>>>>>> 970a9c65 (up)
+=======
+>>>>>>> dbb40abb (up)
