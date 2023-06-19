@@ -178,11 +178,12 @@ for version; do
 		{
 			echo build "$NAMESOACE/php:$ver"
 			docker build -t "$NAMESOACE/php:$ver" -f "$dir/"Dockerfile ./"$dir"
-			docker push "$NAMESOACE/php:$ver"
-		}
+			docker push "$HOST/$NAMESOACE/php:$ver"
+		}&
 		done
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -201,8 +202,11 @@ for version; do
 =======
 	}
 >>>>>>> cf9523ad (up)
+=======
+	}&
+>>>>>>> 47c52ab7 (feat:ci)
 	done
 	wait
-}
+}&
 done
-# wait
+wait
