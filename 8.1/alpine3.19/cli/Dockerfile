@@ -4,6 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
 FROM alpine:3.19
 
 # dependencies required for running "phpize"
@@ -248,3 +249,5 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+=======
+>>>>>>> 68507dcf (up)

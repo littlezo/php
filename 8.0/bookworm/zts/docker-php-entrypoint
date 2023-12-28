@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+# first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+<<<<<<< HEAD:8.3/bullseye/apache/docker-php-entrypoint
+	set -- apache2-foreground "$@"
+=======
+	set -- php "$@"
+>>>>>>> 68507dcf (up):8.0/bookworm/zts/docker-php-entrypoint
+fi
+
+exec "$@"

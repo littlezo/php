@@ -4,6 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -530,3 +531,5 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+=======
+>>>>>>> 68507dcf (up)

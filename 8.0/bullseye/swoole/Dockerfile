@@ -4,6 +4,8 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
+<<<<<<<< HEAD:8.0/bullseye/swoole/Dockerfile
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -317,3 +319,7 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+========
+>>>>>>>> 68507dcf (up):8.1/bookworm/swoole/Dockerfile
+=======
+>>>>>>> 68507dcf (up)

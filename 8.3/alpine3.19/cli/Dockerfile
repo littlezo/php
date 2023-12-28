@@ -4,6 +4,8 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
+<<<<<<<< HEAD:8.3/alpine3.19/cli/Dockerfile
 FROM alpine:3.19
 
 # dependencies required for running "phpize"
@@ -262,3 +264,7 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+========
+>>>>>>>> 68507dcf (up):8.3/alpine3.18/zts/Dockerfile
+=======
+>>>>>>> 68507dcf (up)

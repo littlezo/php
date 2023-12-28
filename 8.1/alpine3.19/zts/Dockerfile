@@ -4,6 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
 FROM alpine:3.19
 
 # dependencies required for running "phpize"
@@ -215,3 +216,5 @@ RUN docker-php-ext-enable sodium
 
 ENTRYPOINT ["docker-php-entrypoint"]
 CMD ["php", "-a"]
+=======
+>>>>>>> 68507dcf (up)

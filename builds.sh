@@ -4,9 +4,9 @@ set -Eeuo pipefail
 declare -A aliases=(
 	[8.2]='8 latest'
 )
+echo $NAMESPACE
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
-
 if [ "$#" -eq 0 ]; then
 	versions="$(jq -r 'to_entries | map(if .value then .key | @sh else empty end) | join(" ")' versions.json)"
 	eval "set -- $versions"
