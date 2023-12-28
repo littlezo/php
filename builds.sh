@@ -5,6 +5,8 @@ declare -A aliases=(
 	[8.2]='8 latest'
 )
 echo $NAMESPACE
+echo $DH_NAMESPACE
+cat ~/.docker/config.json
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 if [ "$#" -eq 0 ]; then
