@@ -29,8 +29,10 @@ generated_warning() {
 
 for version; do
 	export version
-
-	rm -rf "$version"
+	if [ -d $version ]; then
+		rm -rf "$version"
+    # echo "文件夹存在"
+	fi
 
 	if jq -e '.[env.version] | not' versions.json >/dev/null; then
 		echo "deleting $version ..."

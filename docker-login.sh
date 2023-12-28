@@ -6,5 +6,5 @@ docker logout index.docker.io
 echo $USERNAME
 echo $PASSWORD
 echo $HOST
-
+echo $NAMESPACE
 docker login -u $USERNAME -p $PASSWORD $HOST
