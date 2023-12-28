@@ -12,10 +12,10 @@ env:
   USERNAME: ${{ vars.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
   HOST: ${{ vars.HOST }}
-  DOCKER_NAMESPACE: ${{ vars.DH_NAMESPACE }}
-  DOCKER_USERNAME: ${{ vars.DH_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DH_PASSWORD }}
-  DOCKER_HOST: ${{ vars.DH_HOST }}
+  DH_NAMESPACE: ${{ vars.DH_NAMESPACE }}
+  DH_USERNAME: ${{ vars.DH_USERNAME }}
+  DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
+  # DH_HOST: ${{ vars.DH_HOST }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
     - name: ACR LOGIN
       run: docker login --username ${{ vars.USERNAME }} --password ${{ secrets.PASSWORD }}  ${{ vars.HOST }}
     - name: Docker Hub LOGIN
-      run: docker login --username ${{ vars.DH_USERNAME }} --password ${{ secrets.DH_PASSWORD }}  ${{ vars.DH_HOST }}
+      run: docker login --username ${{ vars.DH_USERNAME }} --password ${{ secrets.DH_PASSWORD }}
     - name: Update the Docker image Version
       run:  ./update.sh
     - name: Build the Docker image
