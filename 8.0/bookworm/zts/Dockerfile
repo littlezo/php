@@ -4,8 +4,12 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
 <<<<<<< HEAD:8.3/bullseye/apache/Dockerfile
 FROM debian:bullseye-slim
+=======
+FROM debian:bookworm-slim
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 # prevent Debian's PHP packages from being installed
 # https://github.com/docker-library/php/pull/542
@@ -34,11 +38,18 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
+<<<<<<< HEAD
+=======
+		apt-transport-https \
+		ca-certificates \
+		ncat \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		ca-certificates \
 		curl \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
+<<<<<<< HEAD
 
 ENV PHP_INI_DIR /usr/local/etc/php
 RUN set -eux; \
@@ -106,6 +117,34 @@ RUN { \
 		echo '</Directory>'; \
 	} | tee "$APACHE_CONFDIR/conf-available/docker-php.conf" \
 	&& a2enconf docker-php
+=======
+# RUN set -eux; \
+# { \
+# 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+# } | tee /etc/apt/sources.list
+# ensure little user exists
+RUN set -eux; \
+	addgroup --gid 82 --system little; \
+	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
+
+ENV PHP_INI_DIR=/usr/local/etc/php \
+	APP_ROOT=/app-src \
+	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
+RUN set -eux; \
+	mkdir -p "$PHP_INI_DIR/conf.d"; \
+# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+	[ ! -d ${APP_ROOT} ]; \
+	mkdir -p ${APP_ROOT}; \
+	chown little:little ${APP_ROOT}; \
+	chmod 777 ${APP_ROOT}
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -117,11 +156,19 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
+<<<<<<< HEAD
 ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
 
 ENV PHP_VERSION 8.3.11
 ENV PHP_URL="https://www.php.net/distributions/php-8.3.11.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.11.tar.xz.asc"
 ENV PHP_SHA256="b862b098a08ab9bf4b36ed12c7d0d9f65353656b36fb0e3c5344093aceb35802"
+=======
+ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
+
+ENV PHP_VERSION 8.0.30
+ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
+ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
@@ -161,7 +208,10 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+<<<<<<< HEAD
 		apache2-dev \
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		libargon2-dev \
 		libcurl4-openssl-dev \
 		libonig-dev \
@@ -203,6 +253,11 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
+<<<<<<< HEAD
+=======
+# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+		--enable-ftp \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
@@ -221,17 +276,37 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
+<<<<<<< HEAD
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
+=======
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+<<<<<<< HEAD
 		--with-libdir="lib/$debMultiarch" \
 		\
 		--disable-cgi \
 		\
 		--with-apxs2 \
+=======
+# bundled pcre does not support JIT on s390x
+# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
+		--with-libdir="lib/$debMultiarch" \
+		\
+# https://github.com/docker-library/php/pull/939#issuecomment-730501748
+		--enable-embed \
+		\
+		--enable-zts \
+# https://externals.io/message/118859
+		--disable-zend-signals \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -248,6 +323,10 @@ RUN set -eux; \
 	\
 # https://github.com/docker-library/php/issues/692 (copy default example "php.ini" files somewhere easily discoverable)
 	cp -v php.ini-* "$PHP_INI_DIR/"; \
+<<<<<<< HEAD
+=======
+	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	\
 	cd /; \
 	docker-php-source delete; \
@@ -256,7 +335,11 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
+<<<<<<< HEAD
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -268,6 +351,7 @@ RUN set -eux; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
+<<<<<<< HEAD
 	rm -rf /tmp/pear ~/.pearrc; \
 	\
 # smoke test
@@ -289,3 +373,41 @@ EXPOSE 80
 CMD ["apache2-foreground"]
 =======
 >>>>>>> 68507dcf (up):8.0/bookworm/zts/Dockerfile
+=======
+	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+	pecl install ds; \
+	 \
+	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*; \
+	\
+# smoke test
+	php --version
+COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
+
+# sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
+RUN docker-php-ext-enable sodium; \
+	docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+
+
+RUN set -eux; \
+	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
+	chmod a+x /usr/local/bin/composer; \
+	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+
+ENTRYPOINT ["docker-php-entrypoint"]
+STOPSIGNAL SIGWINCH
+
+WORKDIR ${APP_ROOT}
+
+EXPOSE 80\
+	443
+
+CMD ["php", "-a"]
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)

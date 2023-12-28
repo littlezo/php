@@ -5,6 +5,9 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -81,15 +84,25 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 39B641343D8C104B2B146DC3F9C39DC0B9698544 E60913E4DF209907D8E30D96659A97C9CF2A795A 1198C0117593497A5EC5C199286AF1F9897469DC
 
+<<<<<<< HEAD
 ENV PHP_VERSION 8.2.1
 ENV PHP_URL="https://www.php.net/distributions/php-8.2.1.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.1.tar.xz.asc"
 ENV PHP_SHA256="650d3bd7a056cabf07f6a0f6f1dd8ba45cd369574bbeaa36de7d1ece212c17af"
+=======
+ENV PHP_VERSION 8.2.14
+ENV PHP_URL="https://www.php.net/distributions/php-8.2.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.14.tar.xz.asc"
+ENV PHP_SHA256="763ecd39fcf51c3815af6ef6e43fa9aa0d0bd8e5a615009e5f4780c92705f583"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
+<<<<<<< HEAD
 	apt-get install -y --no-install-recommends gnupg dirmngr; \
+=======
+	apt-get install -y --no-install-recommends gnupg; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
@@ -138,6 +151,12 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+<<<<<<< HEAD
+=======
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -218,7 +237,11 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
+<<<<<<< HEAD
 		| awk '/=>/ { print $(NF-1) }' \
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -318,5 +341,8 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)

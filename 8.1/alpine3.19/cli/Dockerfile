@@ -5,6 +5,9 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM alpine:3.19
 
 # dependencies required for running "phpize"
@@ -21,6 +24,12 @@ ENV PHPIZE_DEPS \
 		re2c
 
 # persistent / runtime deps
+<<<<<<< HEAD
+=======
+RUN set -eux; \
+	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 RUN apk add --no-cache \
 		ca-certificates \
 		curl \
@@ -30,6 +39,7 @@ RUN apk add --no-cache \
 
 # ensure little user exists
 RUN set -eux; \
+<<<<<<< HEAD
 	addgroup -g 83 -S little; \
 	adduser -u 82 -D -S -G little little;
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
@@ -49,13 +59,32 @@ RUN set -eux; \
 	chown www-data:www-data /var/www/html; \
 	chmod 1777 /var/www/html
 =======
+=======
+	addgroup -Sg 83 little; \
+	adduser -u 82 -D -S  -s /sbin/nologin -G little -g little little
+#	adduser -u 82 -D -S -G little little
+# 82 is the standard uid/gid for "little" in Alpine
+# https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
+# https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
+# https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
+
+ENV PHP_INI_DIR=/usr/local/etc/php \
+	APP_ROOT=/app-src \
+	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
+RUN set -eux; \
+	mkdir -p "$PHP_INI_DIR/conf.d"; \
+# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 
+<<<<<<< HEAD
 >>>>>>> b6080d7e (cli and zts):7.4/alpine3.15/zts/Dockerfile
 
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -68,12 +97,18 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
+<<<<<<< HEAD
 ENV PHP_VERSION 8.1.29
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.29.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.29.tar.xz.asc"
 ENV PHP_SHA256="288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536"
 
 ENV APP_ROOT=/app-src \
     PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:${APP_ROOT}:${APP_ROOT}/bin
+=======
+ENV PHP_VERSION 8.1.27
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
+ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
@@ -147,7 +182,11 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
+<<<<<<< HEAD
 # --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
+=======
+# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
@@ -167,6 +206,7 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
+<<<<<<< HEAD
 <<<<<<< HEAD:8.1/alpine3.19/cli/Dockerfile
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
@@ -175,14 +215,25 @@ RUN set -eux; \
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable.")
 		--disable-phpdbg \
 >>>>>>> 7cf0064b (fix alpine build fail):7.4/alpine3.15/zts/Dockerfile
+=======
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+<<<<<<< HEAD
 # bundled pcre does not support JIT on riscv64 until 10.41 (php 8.3+)
 # https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
 		$(test "$gnuArch" = 'riscv64-linux-musl' && echo '--without-pcre-jit') \
+=======
+# bundled pcre does not support JIT on s390x
+# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -211,21 +262,40 @@ RUN set -eux; \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
 	apk add --no-cache $runDeps; \
+<<<<<<< HEAD
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 	pecl install redis; \
+=======
+	apk add --no-cache --virtual .build-deps \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	autoconf; \
+	\
+# update pecl channel definitions https://github.com/docker-library/php/issues/443
+	pecl update-channels; \
+	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+	pecl install ds; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
 	\
 # smoke test
 	php --version
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
+<<<<<<< HEAD
     docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
@@ -239,6 +309,22 @@ RUN set -eux; \
     chmod a+x /usr/local/bin/composer; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
+=======
+	docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+
+
+RUN set -eux; \
+	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
+	chmod a+x /usr/local/bin/composer; \
+	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
@@ -249,5 +335,8 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)

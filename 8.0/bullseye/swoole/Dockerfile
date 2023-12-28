@@ -5,7 +5,10 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<<< HEAD:8.0/bullseye/swoole/Dockerfile
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -82,15 +85,25 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
 
+<<<<<<< HEAD
 ENV PHP_VERSION 8.0.27
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.27.tar.xz.asc"
 ENV PHP_SHA256="f942cbfe2f7bacbb8039fb79bbec41c76ea779ac5c8157f21e1e0c1b28a5fc3a"
+=======
+ENV PHP_VERSION 8.0.30
+ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
+ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
+<<<<<<< HEAD
 	apt-get install -y --no-install-recommends gnupg dirmngr; \
+=======
+	apt-get install -y --no-install-recommends gnupg; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
@@ -139,6 +152,12 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+<<<<<<< HEAD
+=======
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -219,7 +238,11 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
+<<<<<<< HEAD
 		| awk '/=>/ { print $(NF-1) }' \
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -319,7 +342,10 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 ========
 >>>>>>>> 68507dcf (up):8.1/bookworm/swoole/Dockerfile
 =======
 >>>>>>> 68507dcf (up)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)

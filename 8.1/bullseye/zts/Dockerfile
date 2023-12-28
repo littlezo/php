@@ -5,6 +5,9 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -42,7 +45,21 @@ RUN set -eux; \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
+<<<<<<< HEAD
 
+=======
+# RUN set -eux; \
+# { \
+# 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+# } | tee /etc/apt/sources.list
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # ensure little user exists
 RUN set -eux; \
 	addgroup --gid 82 --system little; \
@@ -55,6 +72,7 @@ RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d /var/www/html ]; \
 	mkdir -p /var/www/html; \
@@ -64,16 +82,22 @@ RUN set -eux; \
 =======
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 >>>>>>> 959e5a5a (builder)
+=======
+# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> b6080d7e (cli and zts)
 
 =======
 >>>>>>> 959e5a5a (builder)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -86,9 +110,15 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
+<<<<<<< HEAD
 ENV PHP_VERSION 8.1.29
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.29.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.29.tar.xz.asc"
 ENV PHP_SHA256="288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536"
+=======
+ENV PHP_VERSION 8.1.27
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
+ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
@@ -169,7 +199,11 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
+<<<<<<< HEAD
 # --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
+=======
+# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
@@ -191,6 +225,7 @@ RUN set -eux; \
 		\
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
@@ -201,14 +236,25 @@ RUN set -eux; \
 >>>>>>> 959e5a5a (builder)
 		--disable-phpdbg \
 >>>>>>> 7cf0064b (fix alpine build fail)
+=======
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+<<<<<<< HEAD
 # bundled pcre does not support JIT on riscv64 until 10.41 (php 8.3+)
 # https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
 		$(test "$gnuArch" = 'riscv64-linux-gnu' && echo '--without-pcre-jit') \
+=======
+# bundled pcre does not support JIT on s390x
+# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		--with-libdir="lib/$debMultiarch" \
 		\
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748
@@ -243,7 +289,11 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
+<<<<<<< HEAD
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -255,7 +305,12 @@ RUN set -eux; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
+<<<<<<< HEAD
 	pecl install redis; \
+=======
+	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+	pecl install ds; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -266,6 +321,7 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
+<<<<<<< HEAD
     docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
@@ -278,6 +334,22 @@ RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
     chmod a+x /usr/local/bin/composer; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+=======
+	docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+
+
+RUN set -eux; \
+	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
+	chmod a+x /usr/local/bin/composer; \
+	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
@@ -288,5 +360,8 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)

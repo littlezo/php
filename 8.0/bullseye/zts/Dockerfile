@@ -5,6 +5,9 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -42,7 +45,21 @@ RUN set -eux; \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
+<<<<<<< HEAD
 
+=======
+# RUN set -eux; \
+# { \
+# 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+# } | tee /etc/apt/sources.list
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # ensure little user exists
 RUN set -eux; \
 	addgroup --gid 82 --system little; \
@@ -69,17 +86,29 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
+<<<<<<< HEAD
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F
 
 ENV PHP_VERSION 8.0.18
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.18.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.18.tar.xz.asc"
 ENV PHP_SHA256="db161652cacae4b31c347fbf2e17b80656473cb365f2bb3460c4552f5647e2e7"
+=======
+ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
+
+ENV PHP_VERSION 8.0.30
+ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
+ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
+<<<<<<< HEAD
 	apt-get install -y --no-install-recommends gnupg dirmngr; \
+=======
+	apt-get install -y --no-install-recommends gnupg; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
@@ -128,6 +157,12 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+<<<<<<< HEAD
+=======
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -171,8 +206,14 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
+<<<<<<< HEAD
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
+=======
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
@@ -182,12 +223,20 @@ RUN set -eux; \
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
 		\
+<<<<<<< HEAD
 		--disable-cgi \
 		\
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748
 		--enable-embed \
 		\
 		--enable-zts \
+<<<<<<< HEAD
+=======
+# https://externals.io/message/118859
+		--disable-zend-signals \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -213,7 +262,11 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
+<<<<<<< HEAD
 		| awk '/=>/ { print $(NF-1) }' \
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -225,7 +278,12 @@ RUN set -eux; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
+<<<<<<< HEAD
 	pecl install redis; \
+=======
+	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+	pecl install ds; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -236,6 +294,7 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
+<<<<<<< HEAD
     docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
@@ -248,6 +307,22 @@ RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
     chmod a+x /usr/local/bin/composer; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+=======
+	docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+
+
+RUN set -eux; \
+	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
+	chmod a+x /usr/local/bin/composer; \
+	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
@@ -258,5 +333,8 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)

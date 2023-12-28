@@ -5,7 +5,10 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<<< HEAD:8.3/alpine3.19/cli/Dockerfile
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM alpine:3.19
 
 # dependencies required for running "phpize"
@@ -36,7 +39,13 @@ RUN apk add --no-cache \
 RUN set -eux; \
 	addgroup -Sg 83 little; \
 	adduser -u 82 -D -S  -s /sbin/nologin -G little -g little little
+<<<<<<< HEAD
 # 82 is the standard uid/gid for "little" in Alpine
+=======
+#	adduser -u 82 -D -S -G little little
+# 82 is the standard uid/gid for "little" in Alpine
+# https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
 
@@ -46,17 +55,23 @@ ENV PHP_INI_DIR=/usr/local/etc/php \
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+<<<<<<< HEAD
 <<<<<<< HEAD:8.3/alpine3.19/cli/Dockerfile
 	[ ! -d /var/www/html ]; \
 	mkdir -p /var/www/html; \
 	chown www-data:www-data /var/www/html; \
 	chmod 1777 /var/www/html
 =======
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
+<<<<<<< HEAD
 >>>>>>> 959e5a5a (builder):8.0/alpine3.16/cli/Dockerfile
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -70,6 +85,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
 
+<<<<<<< HEAD
 <<<<<<< HEAD:8.3/alpine3.19/cli/Dockerfile
 ENV PHP_VERSION 8.3.11
 ENV PHP_URL="https://www.php.net/distributions/php-8.3.11.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.11.tar.xz.asc"
@@ -79,6 +95,11 @@ ENV PHP_VERSION 8.1.14
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.14.tar.xz.asc"
 ENV PHP_SHA256="e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a"
 >>>>>>> 970a9c65 (up):8.1/alpine3.17/cli/Dockerfile
+=======
+ENV PHP_VERSION 8.3.1
+ENV PHP_URL="https://www.php.net/distributions/php-8.3.1.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.1.tar.xz.asc"
+ENV PHP_SHA256="56445b1771b2ba5b7573453f9e8a9451e2d810b1741a352fa05259733b1e9758"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
@@ -152,6 +173,11 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
+<<<<<<< HEAD
+=======
+# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+		--enable-ftp \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
@@ -177,6 +203,7 @@ RUN set -eux; \
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+<<<<<<< HEAD
 <<<<<<< HEAD:8.3/alpine3.19/cli/Dockerfile
 =======
 # bundled pcre does not support JIT on s390x
@@ -187,6 +214,11 @@ RUN set -eux; \
 =======
 		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
 >>>>>>> 6d04cee6 (fix: Fix syntax):8.1/alpine3.17/cli/Dockerfile
+=======
+# bundled pcre does not support JIT on s390x
+# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -225,7 +257,12 @@ RUN set -eux; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
+<<<<<<< HEAD
 	pecl install redis; \
+=======
+	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+	pecl install ds; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -236,12 +273,17 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
+<<<<<<< HEAD
 <<<<<<< HEAD:8.3/alpine3.19/cli/Dockerfile
     docker-php-ext-enable redis; \
 =======
 	docker-php-ext-enable redis; \
 	docker-php-ext-enable ds; \
 >>>>>>> e93d3047 (fix: swoole build error):8.1/alpine3.17/cli/Dockerfile
+=======
+	docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
@@ -264,7 +306,10 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 ========
 >>>>>>>> 68507dcf (up):8.3/alpine3.18/zts/Dockerfile
 =======
 >>>>>>> 68507dcf (up)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)

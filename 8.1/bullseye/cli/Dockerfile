@@ -5,6 +5,9 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -57,6 +60,7 @@ RUN set -eux; \
 RUN set -eux; \
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d /var/www/html ]; \
@@ -72,6 +76,8 @@ RUN set -eux; \
     chmod 777 /var/www/html
 >>>>>>> 15050091 (8.1)
 =======
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	addgroup --gid 82 --system little; \
 	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
 
@@ -87,10 +93,13 @@ RUN set -eux; \
 	chmod 777 ${APP_ROOT}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> b6080d7e (cli and zts)
 
 =======
 >>>>>>> 959e5a5a (builder)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -105,6 +114,7 @@ ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV PHP_VERSION 8.1.29
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.29.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.29.tar.xz.asc"
 ENV PHP_SHA256="288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536"
@@ -113,6 +123,11 @@ ENV PHP_VERSION 8.1.14
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.14.tar.xz.asc"
 ENV PHP_SHA256="e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a"
 >>>>>>> 970a9c65 (up)
+=======
+ENV PHP_VERSION 8.1.27
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
+ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
@@ -144,6 +159,7 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	apt-mark manual $savedAptMark > /dev/null; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+<<<<<<< HEAD
 =======
 ENV PHP_VERSION 8.1.1
 # ENV PHP_URL="https://www.php.net/distributions/php-8.1.1.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.1.tar.xz.asc"
@@ -213,14 +229,19 @@ RUN set -eux; \
 	apt-mark manual $savedAptMark > /dev/null; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 >>>>>>> b6080d7e (cli and zts)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b6080d7e (cli and zts)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
@@ -241,11 +262,17 @@ RUN set -eux; \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
 <<<<<<< HEAD
+<<<<<<< HEAD
 # https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
 		PHP_UNAME='Linux - Docker' \
 =======
 >>>>>>> b6080d7e (cli and zts)
+=======
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -270,10 +297,14 @@ RUN set -eux; \
 		--with-pic \
 		\
 <<<<<<< HEAD
+<<<<<<< HEAD
 # --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
 =======
 # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
 >>>>>>> b6080d7e (cli and zts)
+=======
+# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
@@ -301,6 +332,7 @@ RUN set -eux; \
 		--with-pear \
 		\
 <<<<<<< HEAD
+<<<<<<< HEAD
 # bundled pcre does not support JIT on riscv64 until 10.41 (php 8.3+)
 # https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
@@ -318,6 +350,11 @@ RUN set -eux; \
 =======
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 >>>>>>> 6d04cee6 (fix: Fix syntax)
+=======
+# bundled pcre does not support JIT on s390x
+# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		--with-libdir="lib/$debMultiarch" \
 		\
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748
@@ -339,9 +376,13 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/692 (copy default example "php.ini" files somewhere easily discoverable)
 	cp -v php.ini-* "$PHP_INI_DIR/"; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
 >>>>>>> b6080d7e (cli and zts)
+=======
+	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	\
 	cd /; \
 	docker-php-source delete; \
@@ -351,10 +392,14 @@ RUN set -eux; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
 <<<<<<< HEAD
+<<<<<<< HEAD
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 =======
 		| awk '/=>/ { print $(NF-1) }' \
 >>>>>>> b6080d7e (cli and zts)
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -367,6 +412,7 @@ RUN set -eux; \
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	pecl install redis; \
 <<<<<<< HEAD
@@ -374,11 +420,17 @@ RUN set -eux; \
 =======
 	 \
 >>>>>>> 7cf0064b (fix alpine build fail)
+=======
+	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+	pecl install ds; \
+	 \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
 	\
 # smoke test
 	php --version
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -499,16 +551,23 @@ RUN set -eux; \
 
 =======
 >>>>>>> 959e5a5a (builder)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
+<<<<<<< HEAD
 <<<<<<< HEAD
     docker-php-ext-enable redis; \
 =======
 	docker-php-ext-enable redis; \
 	docker-php-ext-enable ds; \
 >>>>>>> e93d3047 (fix: swoole build error)
+=======
+	docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
@@ -531,5 +590,8 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)

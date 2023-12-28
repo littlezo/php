@@ -5,6 +5,9 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -64,17 +67,23 @@ ENV PHP_INI_DIR=/usr/local/etc/php \
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+<<<<<<< HEAD
 <<<<<<< HEAD:8.2/bullseye/cli/Dockerfile
 	[ ! -d /var/www/html ]; \
 	mkdir -p /var/www/html; \
 	chown www-data:www-data /var/www/html; \
 	chmod 1777 /var/www/html
 =======
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
+<<<<<<< HEAD
 >>>>>>> 959e5a5a (builder):8.2-rc/bullseye/cli/Dockerfile
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -89,6 +98,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 ENV GPG_KEYS 39B641343D8C104B2B146DC3F9C39DC0B9698544 E60913E4DF209907D8E30D96659A97C9CF2A795A 1198C0117593497A5EC5C199286AF1F9897469DC
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV PHP_VERSION 8.2.23
 ENV PHP_URL="https://www.php.net/distributions/php-8.2.23.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.23.tar.xz.asc"
 ENV PHP_SHA256="81c5ae6ba44e262a076349ee54a2e468638a4571085d80bff37f6fd308e1d8d5"
@@ -97,6 +107,11 @@ ENV PHP_VERSION 8.2.1
 ENV PHP_URL="https://www.php.net/distributions/php-8.2.1.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.1.tar.xz.asc"
 ENV PHP_SHA256="650d3bd7a056cabf07f6a0f6f1dd8ba45cd369574bbeaa36de7d1ece212c17af"
 >>>>>>> 970a9c65 (up)
+=======
+ENV PHP_VERSION 8.2.14
+ENV PHP_URL="https://www.php.net/distributions/php-8.2.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.14.tar.xz.asc"
+ENV PHP_SHA256="763ecd39fcf51c3815af6ef6e43fa9aa0d0bd8e5a615009e5f4780c92705f583"
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 RUN set -eux; \
 	\
@@ -177,6 +192,11 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
+<<<<<<< HEAD
+=======
+# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+		--enable-ftp \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
@@ -203,6 +223,7 @@ RUN set -eux; \
 		--with-pear \
 		\
 <<<<<<< HEAD
+<<<<<<< HEAD
 # bundled pcre does not support JIT on riscv64 until 10.41 (php 8.3+)
 # https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
@@ -216,6 +237,11 @@ RUN set -eux; \
 =======
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 >>>>>>> 6d04cee6 (fix: Fix syntax)
+=======
+# bundled pcre does not support JIT on s390x
+# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		--with-libdir="lib/$debMultiarch" \
 		\
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748
@@ -245,7 +271,11 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
+<<<<<<< HEAD
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -257,7 +287,12 @@ RUN set -eux; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
+<<<<<<< HEAD
 	pecl install redis; \
+=======
+	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+	pecl install ds; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -269,11 +304,16 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
 <<<<<<< HEAD
+<<<<<<< HEAD
     docker-php-ext-enable redis; \
 =======
 	docker-php-ext-enable redis; \
 	docker-php-ext-enable ds; \
 >>>>>>> e93d3047 (fix: swoole build error)
+=======
+	docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
@@ -296,5 +336,8 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up)
+=======
+>>>>>>> 0e455fac (fix: 8.0 gpg keys)
