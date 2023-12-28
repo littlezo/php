@@ -182,7 +182,6 @@ for version; do
 			docker push "$HOST/$NAMESPACE/php:$ver"
 			docker tag $IMAGE "$DH_HOST/$DH_NAMESPACE/php:$ver"
 			docker push "$DH_HOST/$DH_NAMESPACE/php:$ver"
-
 		}
 		done
 <<<<<<< HEAD

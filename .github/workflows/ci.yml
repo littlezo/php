@@ -74,6 +74,7 @@ defaults:
   PASSWORD: ${{ secrets.PASSWORD }}
   HOST: ${{ vars.HOST }}
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 22795eec (feat:ci)
 =======
   DOCKER_NAMESPACE: ${{ vars.DH_NAMESPACE }}
@@ -81,6 +82,12 @@ defaults:
   DOCKER_PASSWORD: ${{ secrets.DH_PASSWORD }}
   DOCKER_HOST: ${{ vars.DH_HOST }}
 >>>>>>> e3b15287 (feat: add push docker hub)
+=======
+  DH_NAMESPACE: ${{ vars.DH_NAMESPACE }}
+  DH_USERNAME: ${{ vars.DH_USERNAME }}
+  DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
+  # DH_HOST: ${{ vars.DH_HOST }}
+>>>>>>> 49915668 (fix:env)
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -193,7 +200,7 @@ jobs:
     - name: ACR LOGIN
       run: docker login --username ${{ vars.USERNAME }} --password ${{ secrets.PASSWORD }}  ${{ vars.HOST }}
     - name: Docker Hub LOGIN
-      run: docker login --username ${{ vars.DH_USERNAME }} --password ${{ secrets.DH_PASSWORD }}  ${{ vars.DH_HOST }}
+      run: docker login --username ${{ vars.DH_USERNAME }} --password ${{ secrets.DH_PASSWORD }}
     - name: Update the Docker image Version
       run:  ./update.sh
     - name: Build the Docker image
