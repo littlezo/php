@@ -175,11 +175,14 @@ for version; do
 		# variantArches="${parentRepoToArches[$variantParent]}"
 		for ver in ${variantAliases[@]}; do
 		{
-			echo build "$NAMESPACE/php:$ver"
-			docker build -t "$NAMESPACE/php:$ver" -f "$dir/"Dockerfile ./"$dir"
-			docker tag "$NAMESPACE/php:$ver" "$HOST/$NAMESPACE/php:$ver"
+			IMAGE="php:$ver"
+			echo build $IMAGE
+			docker build -t $IMAGE -f "$dir/"Dockerfile ./"$dir"
+			docker tag $IMAGE "$HOST/$NAMESPACE/php:$ver"
 			docker push "$HOST/$NAMESPACE/php:$ver"
-			docker image ls
+			docker tag $IMAGE "$DH_HOST/$DH_NAMESPACE/php:$ver"
+			docker push "$DH_HOST/$DH_NAMESPACE/php:$ver"
+
 		}
 		done
 <<<<<<< HEAD
@@ -198,6 +201,7 @@ for version; do
 =======
 =======
 		echo  $(join ', ' "${variantAliases[@]}")
+<<<<<<< HEAD
 >>>>>>> 3527f237 (feat: 优化构建)
 	}
 	# &
@@ -214,7 +218,11 @@ for version; do
 =======
 	}
 >>>>>>> 51ad4bed (fix: 优化构建)
+=======
+	}&
+>>>>>>> e3b15287 (feat: add push docker hub)
 	done
 }&
 done
 wait
+docker image ls
