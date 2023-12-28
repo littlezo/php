@@ -26,10 +26,9 @@ RUN set -eux; \
 RUN apk add --no-cache \
 		ca-certificates \
 		curl \
+		openssl \
 		tar \
-		xz \
-# https://github.com/docker-library/php/issues/494
-		openssl
+		xz
 
 # ensure little user exists
 RUN set -eux; \
@@ -64,9 +63,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 39B641343D8C104B2B146DC3F9C39DC0B9698544 E60913E4DF209907D8E30D96659A97C9CF2A795A 1198C0117593497A5EC5C199286AF1F9897469DC
 
-ENV PHP_VERSION 8.2.7
-ENV PHP_URL="https://www.php.net/distributions/php-8.2.7.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.7.tar.xz.asc"
-ENV PHP_SHA256="4b9fb3dcd7184fe7582d7e44544ec7c5153852a2528de3b6754791258ffbdfa0"
+ENV PHP_VERSION 8.2.14
+ENV PHP_URL="https://www.php.net/distributions/php-8.2.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.14.tar.xz.asc"
+ENV PHP_SHA256="763ecd39fcf51c3815af6ef6e43fa9aa0d0bd8e5a615009e5f4780c92705f583"
 
 RUN set -eux; \
 	\
@@ -119,6 +118,9 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -157,8 +159,9 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
-# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
-		--disable-phpdbg \
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
@@ -166,8 +169,6 @@ RUN set -eux; \
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
 		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
-		\
-		--disable-cgi \
 		\
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748
 		--enable-embed \

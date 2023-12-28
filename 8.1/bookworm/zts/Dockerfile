@@ -80,9 +80,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
-ENV PHP_VERSION 8.1.20
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.20.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.20.tar.xz.asc"
-ENV PHP_SHA256="4c9973f599e93ed5e8ce2b45ce1d41bb8fb54ce642824fd23e56b52fd75029a6"
+ENV PHP_VERSION 8.1.27
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
+ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
 
 RUN set -eux; \
 	\
@@ -137,6 +137,9 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -180,8 +183,9 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
-# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
-		--disable-phpdbg \
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
@@ -190,8 +194,6 @@ RUN set -eux; \
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
-		\
-		--disable-cgi \
 		\
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748
 		--enable-embed \

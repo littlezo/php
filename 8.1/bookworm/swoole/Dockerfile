@@ -63,10 +63,77 @@ ENV PHP_INI_DIR=/usr/local/etc/php \
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+<<<<<<< HEAD:8.1/bookworm/swoole/Dockerfile
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
+=======
+	[ ! -d /var/www/html ]; \
+	mkdir -p /var/www/html; \
+	chown www-data:www-data /var/www/html; \
+	chmod 1777 /var/www/html
+
+ENV APACHE_CONFDIR /etc/apache2
+ENV APACHE_ENVVARS $APACHE_CONFDIR/envvars
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends apache2; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
+# generically convert lines like
+#   export APACHE_RUN_USER=www-data
+# into
+#   : ${APACHE_RUN_USER:=www-data}
+#   export APACHE_RUN_USER
+# so that they can be overridden at runtime ("-e APACHE_RUN_USER=...")
+	sed -ri 's/^export ([^=]+)=(.*)$/: ${\1:=\2}\nexport \1/' "$APACHE_ENVVARS"; \
+	\
+# setup directories and permissions
+	. "$APACHE_ENVVARS"; \
+	for dir in \
+		"$APACHE_LOCK_DIR" \
+		"$APACHE_RUN_DIR" \
+		"$APACHE_LOG_DIR" \
+# https://salsa.debian.org/apache-team/apache2/-/commit/b97ca8714890ead1ba6c095699dde752e8433205
+		"$APACHE_RUN_DIR/socks" \
+	; do \
+		rm -rvf "$dir"; \
+		mkdir -p "$dir"; \
+		chown "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$dir"; \
+# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
+		chmod 1777 "$dir"; \
+	done; \
+	\
+# delete the "index.html" that installing Apache drops in here
+	rm -rvf /var/www/html/*; \
+	\
+# logs should go to stdout / stderr
+	ln -sfT /dev/stderr "$APACHE_LOG_DIR/error.log"; \
+	ln -sfT /dev/stdout "$APACHE_LOG_DIR/access.log"; \
+	ln -sfT /dev/stdout "$APACHE_LOG_DIR/other_vhosts_access.log"; \
+	chown -R --no-dereference "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APACHE_LOG_DIR"
+
+# Apache + PHP requires preforking Apache for best results
+RUN a2dismod mpm_event && a2enmod mpm_prefork
+
+# PHP files should be handled by PHP, and should be preferred over any other file type
+RUN { \
+		echo '<FilesMatch \.php$>'; \
+		echo '\tSetHandler application/x-httpd-php'; \
+		echo '</FilesMatch>'; \
+		echo; \
+		echo 'DirectoryIndex disabled'; \
+		echo 'DirectoryIndex index.php index.html'; \
+		echo; \
+		echo '<Directory /var/www/>'; \
+		echo '\tOptions -Indexes'; \
+		echo '\tAllowOverride All'; \
+		echo '</Directory>'; \
+	} | tee "$APACHE_CONFDIR/conf-available/docker-php.conf" \
+	&& a2enconf docker-php
+>>>>>>> upstream/master:8.1/bookworm/apache/Dockerfile
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -80,9 +147,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
-ENV PHP_VERSION 8.1.20
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.20.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.20.tar.xz.asc"
-ENV PHP_SHA256="4c9973f599e93ed5e8ce2b45ce1d41bb8fb54ce642824fd23e56b52fd75029a6"
+ENV PHP_VERSION 8.1.27
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
+ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
 
 RUN set -eux; \
 	\
@@ -137,6 +204,9 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
