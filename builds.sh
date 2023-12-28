@@ -185,6 +185,7 @@ for version; do
 		}
 		done
 <<<<<<< HEAD
+<<<<<<< HEAD
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
 <<<<<<< HEAD
@@ -220,6 +221,10 @@ for version; do
 =======
 	}&
 >>>>>>> e3b15287 (feat: add push docker hub)
+=======
+		echo  $(join ', ' "${variantAliases[@]}")
+	}
+>>>>>>> c1ae64c6 (fix: build shell)
 	done
 }&
 done
