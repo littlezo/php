@@ -85,6 +85,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV PHP_VERSION 8.1.14
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.14.tar.xz.asc"
 ENV PHP_SHA256="e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a"
@@ -93,6 +94,11 @@ ENV PHP_VERSION 8.1.27
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
 ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+ENV PHP_VERSION 8.1.28
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.28.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.28.tar.xz.asc"
+ENV PHP_SHA256="95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080"
+>>>>>>> d0053071 (feat: up)
 
 RUN set -eux; \
 	\
@@ -180,7 +186,7 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
-# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+# --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
 		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
@@ -238,10 +244,14 @@ RUN set -eux; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
 <<<<<<< HEAD
+<<<<<<< HEAD
 		| awk '/=>/ { print $(NF-1) }' \
 =======
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+>>>>>>> d0053071 (feat: up)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \

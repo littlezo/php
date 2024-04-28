@@ -181,9 +181,9 @@ RUN set -eux; \
 =======
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
-ENV PHP_VERSION 8.1.27
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
-ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
+ENV PHP_VERSION 8.1.28
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.28.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.28.tar.xz.asc"
+ENV PHP_SHA256="95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080"
 
 RUN set -eux; \
 	\
@@ -292,8 +292,12 @@ RUN set -eux; \
 		--with-pic \
 		\
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+=======
+# --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
+>>>>>>> d0053071 (feat: up)
 		--enable-ftp \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)

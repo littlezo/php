@@ -86,6 +86,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:8.3/alpine3.19/cli/Dockerfile
 ENV PHP_VERSION 8.3.11
 ENV PHP_URL="https://www.php.net/distributions/php-8.3.11.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.11.tar.xz.asc"
@@ -100,6 +101,11 @@ ENV PHP_VERSION 8.3.1
 ENV PHP_URL="https://www.php.net/distributions/php-8.3.1.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.1.tar.xz.asc"
 ENV PHP_SHA256="56445b1771b2ba5b7573453f9e8a9451e2d810b1741a352fa05259733b1e9758"
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+ENV PHP_VERSION 8.3.6
+ENV PHP_URL="https://www.php.net/distributions/php-8.3.6.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.6.tar.xz.asc"
+ENV PHP_SHA256="53c8386b2123af97626d3438b3e4058e0c5914cb74b048a6676c57ac647f5eae"
+>>>>>>> d0053071 (feat: up)
 
 RUN set -eux; \
 	\
@@ -174,10 +180,13 @@ RUN set -eux; \
 		--with-pic \
 		\
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
 		--enable-ftp \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> d0053071 (feat: up)
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)

@@ -62,7 +62,8 @@ for version; do
 
 		echo "processing $version/$dir ..."
 		mkdir -p "$version/$dir"
-
+		echo "$version/$dir"
+		echo $jqt
 		{
 			generated_warning
 			gawk -f "$jqt" 'Dockerfile-linux.template'
