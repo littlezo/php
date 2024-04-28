@@ -15,7 +15,7 @@ env:
   DH_NAMESPACE: ${{ vars.DH_NAMESPACE }}
   DH_USERNAME: ${{ vars.DH_USERNAME }}
   DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
-  # DH_HOST: ${{ vars.DH_HOST }}
+  DH_HOST: ${{ vars.DH_HOST }}
 jobs:
   build:
     runs-on: ubuntu-latest
