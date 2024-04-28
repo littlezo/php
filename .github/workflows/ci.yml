@@ -86,8 +86,12 @@ defaults:
   DH_NAMESPACE: ${{ vars.DH_NAMESPACE }}
   DH_USERNAME: ${{ vars.DH_USERNAME }}
   DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
+<<<<<<< HEAD
   # DH_HOST: ${{ vars.DH_HOST }}
 >>>>>>> 49915668 (fix:env)
+=======
+  DH_HOST: ${{ vars.DH_HOST }}
+>>>>>>> 3e9e06f2 (ci)
 jobs:
   build:
     runs-on: ubuntu-latest
