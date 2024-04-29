@@ -4,6 +4,7 @@ set -e
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:8.3/bullseye/apache/docker-php-entrypoint
 	set -- apache2-foreground "$@"
 =======
@@ -12,6 +13,9 @@ if [ "${1#-}" != "$1" ]; then
 =======
 	set -- php "$@"
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
+=======
+	set -- php "$@"
+>>>>>>> 770142cb (feat: 8.0 latest release)
 fi
 
 exec "$@"
