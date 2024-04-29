@@ -55,6 +55,7 @@ permissions:
 env:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -92,6 +93,16 @@ defaults:
 =======
   DH_HOST: ${{ vars.DH_HOST }}
 >>>>>>> 3e9e06f2 (ci)
+=======
+  ACR_NAMESPACE: ${{ vars.ACR_NAMESPACE }}
+  ACR_USERNAME: ${{ vars.ACR_USERNAME }}
+  ACR_TOKEN: ${{ secrets.ACR_TOKEN }}
+  ACR_REGISTRY: ${{ vars.ACR_REGISTRY }}
+  GH_NAMESPACE: ${{ github.repository }}
+  GH_USERNAME: ${{ github.actor }}
+  GH_PASSWORD: ${{ secrets.PKGS_TOKEN }}
+  GH_REGISTRY: ghcr.io
+>>>>>>> b4f3c4ec (feat: Pusher Github Container registry)
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -201,12 +212,12 @@ jobs:
       run: |
         status="$(git status --short)"
         [ -z "$status" ]
-    - name: ACR LOGIN
-      run: docker login --username ${{ vars.USERNAME }} --password ${{ secrets.PASSWORD }}  ${{ vars.HOST }}
-    - name: Docker Hub LOGIN
-      run: docker login --username ${{ vars.DH_USERNAME }} --password ${{ secrets.DH_PASSWORD }}
+    - name: Login to the Aliyun ACR registry
+      run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
+    - name: Login to the Github Container registry
+      run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
     - name: Update the Docker image Version
       run:  ./update.sh
-    - name: Build the Docker image
+    - name: Build the Docker image and Publish to the Registry
       run:  ./builds.sh
 >>>>>>> 22795eec (feat:ci)

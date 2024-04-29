@@ -4,8 +4,8 @@ set -Eeuo pipefail
 declare -A aliases=(
 	[8.2]='8 latest'
 )
-echo $NAMESPACE
-echo $DH_NAMESPACE
+echo $ACR_NAMESPACE
+echo $GH_NAMESPACE
 cat ~/.docker/config.json
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
@@ -180,10 +180,10 @@ for version; do
 			IMAGE="php:$ver"
 			echo build $IMAGE
 			docker build -t $IMAGE -f "$dir/"Dockerfile ./"$dir"
-			docker tag $IMAGE "$HOST/$NAMESPACE/php:$ver"
-			docker push "$HOST/$NAMESPACE/php:$ver"
-			docker tag $IMAGE "$DH_HOST/$DH_NAMESPACE/php:$ver"
-			docker push "$DH_HOST/$DH_NAMESPACE/php:$ver"
+			docker tag $IMAGE "$ACR_REGISTRY/$ACR_NAMESPACE/php:$ver"
+			docker push "$ACR_REGISTRY/$ACR_NAMESPACE/php:$ver"
+			docker tag $IMAGE "$GH_REGISTRY/$GH_NAMESPACE/php:$ver"
+			docker push "$GH_REGISTRY/$GH_NAMESPACE/php:$ver"
 		}
 		done
 <<<<<<< HEAD
