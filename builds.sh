@@ -190,6 +190,7 @@ for version; do
 		done
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		# echo  $(join ', ' "${variantAliases[@]}")
 		wait
 <<<<<<< HEAD
@@ -233,6 +234,10 @@ for version; do
 =======
 	}&
 >>>>>>> 8a1c3aeb (feat parallel suite build Update Release join build)
+=======
+		echo  $(join ', ' "${variantAliases[@]}")
+	}
+>>>>>>> 0a9ad1ea (fix)
 	done
 }&
 done
