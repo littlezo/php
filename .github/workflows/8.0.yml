@@ -31,5 +31,5 @@ jobs:
       run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
     - name: Update the Docker image Version
       run:  ./update.sh
-    - name: Build the Docker image and Publish to the Registry
-      run:  ./builds.sh
+    - name: Build 8.0 the Docker image and Publish to the Registry
+      run:  ./builds.sh 8.0
