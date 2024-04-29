@@ -8,14 +8,14 @@ on:
   schedule:
     - cron: 0 0 * * 0
 env:
-  NAMESPACE: ${{ vars.NAMESPACE }}
-  USERNAME: ${{ vars.USERNAME }}
-  PASSWORD: ${{ secrets.PASSWORD }}
-  HOST: ${{ vars.HOST }}
-  DH_NAMESPACE: ${{ vars.DH_NAMESPACE }}
-  DH_USERNAME: ${{ vars.DH_USERNAME }}
-  DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
-  DH_HOST: ${{ vars.DH_HOST }}
+  ACR_NAMESPACE: ${{ vars.ACR_NAMESPACE }}
+  ACR_USERNAME: ${{ vars.ACR_USERNAME }}
+  ACR_TOKEN: ${{ secrets.ACR_TOKEN }}
+  ACR_REGISTRY: ${{ vars.ACR_REGISTRY }}
+  GH_NAMESPACE: ${{ github.repository }}
+  GH_USERNAME: ${{ github.actor }}
+  GH_PASSWORD: ${{ secrets.PKGS_TOKEN }}
+  GH_REGISTRY: ghcr.io
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,11 +25,11 @@ jobs:
       run: |
         status="$(git status --short)"
         [ -z "$status" ]
-    - name: ACR LOGIN
-      run: docker login --username ${{ vars.USERNAME }} --password ${{ secrets.PASSWORD }}  ${{ vars.HOST }}
-    - name: Docker Hub LOGIN
-      run: docker login --username ${{ vars.DH_USERNAME }} --password ${{ secrets.DH_PASSWORD }}
+    - name: Login to the Aliyun ACR registry
+      run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
+    - name: Login to the Github Container registry
+      run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
     - name: Update the Docker image Version
       run:  ./update.sh
-    - name: Build the Docker image
+    - name: Build the Docker image and Publish to the Registry
       run:  ./builds.sh
