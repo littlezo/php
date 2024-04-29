@@ -218,6 +218,11 @@ jobs:
       run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
     - name: Update the Docker image Version
       run:  ./update.sh
+<<<<<<< HEAD:.github/workflows/ci.yml
     - name: Build the Docker image and Publish to the Registry
       run:  ./builds.sh
 >>>>>>> 22795eec (feat:ci)
+=======
+    - name: Build 8.0 the Docker image and Publish to the Registry
+      run:  ./builds.sh 8.0
+>>>>>>> 4ccc68df (feat: slicing version build):.github/workflows/8.0.yml

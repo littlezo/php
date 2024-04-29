@@ -4,9 +4,11 @@ set -Eeuo pipefail
 declare -A aliases=(
 	[8.2]='8 latest'
 )
+
 echo $ACR_NAMESPACE
 echo $GH_NAMESPACE
 cat ~/.docker/config.json
+var_when=${1:-null}
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 if [ "$#" -eq 0 ]; then
@@ -24,13 +26,13 @@ for version; do
 {
 	rcVersion="${version%-rc}"
 	export version rcVersion
-
+	if [[ "$var_when" != "null" && "$version" != "$var_when" ]]; then
+		echo "Version mismatch. Exiting..."
+		exit 1
+	fi
 	if ! fullVersion="$(jq -er '.[env.version] | if . then .version else empty end' versions.json)"; then
 		continue
 	fi
-	# if [  "$version" != "8.1" ]; then
-	# 	continue
-	# fi
 	if [ "$rcVersion" != "$version" ] && rcFullVersion="$(jq -er '.[env.rcVersion] | if . then .version else empty end' versions.json)"; then
 		# if this is a "-rc" release, let's make sure the release it contains isn't already GA (and thus something we should not publish anymore)
 		latestVersion="$({ echo "$fullVersion"; echo "$rcFullVersion"; } | sort -V | tail -1)"
