@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   "7.4": {
     "ascUrl": "https://www.php.net/distributions/php-7.4.29.tar.xz.asc",
@@ -47,6 +48,8 @@
   },
   "8.0-rc": null,
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
+=======
+>>>>>>> 6cc84377 (feat: remove 8.0)
   "8.1": {
 <<<<<<< HEAD
 <<<<<<< HEAD
