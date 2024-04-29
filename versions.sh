@@ -89,17 +89,8 @@ for version in "${versions[@]}"; do
 		bullseye \
 		alpine3.19 \
 		alpine3.18 \
-		alpine3.16 \
 	; do
 		for variant in cli swoole zts; do
-			if [[ "$version" == "8.0" && !("$suite" == "bullseye" || "$suite" == "alpine3.16") ]]; then
-				echo "Skipping $version $suite"
-				continue
-			fi
-			if [[ "$version" != "8.0" &&  "$suite" == "alpine3.16" ]]; then
-				echo "Skipping $version $suite"
-				continue
-			fi
 			export suite variant
 			variants="$(jq <<<"$variants" -c '. + [ env.suite + "/" + env.variant ]')"
 		done

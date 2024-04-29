@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI 8.1
 
 on:
   push:
