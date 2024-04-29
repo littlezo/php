@@ -1,12 +1,16 @@
 name: Docker Image CI 8.3
 
 on:
+  workflow_run:
+    workflows: ["Update Release"]
+    types:
+      - completed
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  schedule:
-    - cron: 0 0 * * 0
+  # schedule:
+    # - cron: 0 0 * * 0
 env:
   ACR_NAMESPACE: ${{ vars.ACR_NAMESPACE }}
   ACR_USERNAME: ${{ vars.ACR_USERNAME }}
@@ -24,7 +28,10 @@ jobs:
     - name: Check Git Status
       run: |
         status="$(git status --short)"
-        [ -z "$status" ]
+        if [ -z "$status" ]; then
+          echo "No new commits, skipping build."
+          exit 0
+        fi
     - name: Login to the Aliyun ACR registry
       run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
     - name: Login to the Github Container registry

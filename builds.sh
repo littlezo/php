@@ -227,8 +227,12 @@ for version; do
 >>>>>>> e3b15287 (feat: add push docker hub)
 =======
 		echo  $(join ', ' "${variantAliases[@]}")
+<<<<<<< HEAD
 	}
 >>>>>>> c1ae64c6 (fix: build shell)
+=======
+	}&
+>>>>>>> 8a1c3aeb (feat parallel suite build Update Release join build)
 	done
 }&
 done
