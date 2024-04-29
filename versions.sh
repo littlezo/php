@@ -95,6 +95,7 @@ for version in "${versions[@]}"; do
 		alpine3.18 \
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		alpine3.16 \
 >>>>>>> 8b7004a0 (fix 8.0 latest eol release)
 =======
@@ -102,6 +103,8 @@ for version in "${versions[@]}"; do
 =======
 		alpine3.16 \
 >>>>>>> 94ac709b (Update 8.0)
+=======
+>>>>>>> 8d656cb0 (Remove 8.0 release EOL)
 	; do
 <<<<<<< HEAD
 		for variant in cli apache fpm zts; do
@@ -131,6 +134,7 @@ for version in "${versions[@]}"; do
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			# if [[ "$suite" = alpine* ]]; then
 			# 	if [ "$variant" = 'zts' ]; then
 			# 		continue
@@ -154,6 +158,16 @@ for version in "${versions[@]}"; do
 >>>>>>> 18f9a930 (remove 8.0 eol)
 =======
 >>>>>>> 94ac709b (Update 8.0)
+=======
+			# if [[ "$version" == "8.0" && !("$suite" == "bullseye" || "$suite" == "alpine3.16") ]]; then
+			# 	echo "Skipping $version $suite"
+			# 	continue
+			# fi
+			# if [[ "$version" != "8.0" &&  "$suite" == "alpine3.16" ]]; then
+			# 	echo "Skipping $version $suite"
+			# 	continue
+			# fi
+>>>>>>> 8d656cb0 (Remove 8.0 release EOL)
 			export suite variant
 			variants="$(jq <<<"$variants" -c '. + [ env.suite + "/" + env.variant ]')"
 		done
