@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   "7.4": {
     "ascUrl": "https://www.php.net/distributions/php-7.4.29.tar.xz.asc",
@@ -46,6 +47,8 @@
     "version": "8.0.30"
   },
   "8.0-rc": null,
+=======
+>>>>>>> 18f9a930 (remove 8.0 eol)
   "8.1": {
     "ascUrl": "https://www.php.net/distributions/php-8.1.28.tar.xz.asc",
     "sha256": "95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080",
