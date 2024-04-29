@@ -36,7 +36,7 @@ jobs:
       run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
     - name: Login to the Github Container registry
       run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
-    - name: Update the Docker image Version
-      run:  ./update.sh
+    # - name: Update the Docker image Version
+    #   run:  ./update.sh
     - name: Build 8.2 the Docker image and Publish to the Registry
-      run:  ./builds.sh 8.2
+      run:  ./publish.sh 8.2
