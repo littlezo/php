@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Docker Image CI
 
 on:
@@ -94,19 +95,43 @@ defaults:
   DH_HOST: ${{ vars.DH_HOST }}
 >>>>>>> 3e9e06f2 (ci)
 =======
+=======
+name: Docker Image CI 8.0
+
+on:
+  workflow_run:
+    workflows: ["Update Release"]
+    types:
+      - completed
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # schedule:
+    # - cron: 0 0 * * 0
+env:
+>>>>>>> 8ef6ba5f (Update 8.0)
   ACR_NAMESPACE: ${{ vars.ACR_NAMESPACE }}
   ACR_USERNAME: ${{ vars.ACR_USERNAME }}
   ACR_TOKEN: ${{ secrets.ACR_TOKEN }}
   ACR_REGISTRY: ${{ vars.ACR_REGISTRY }}
+<<<<<<< HEAD
   GH_NAMESPACE: ${{ github.repository }}
   GH_USERNAME: ${{ github.actor }}
   GH_PASSWORD: ${{ secrets.PKGS_TOKEN }}
   GH_REGISTRY: ghcr.io
 >>>>>>> b4f3c4ec (feat: Pusher Github Container registry)
+=======
+  GH_NAMESPACE: ${{ github.repository_owner }}
+  GH_USERNAME: ${{ github.actor }}
+  GH_PASSWORD: ${{ secrets.PKGS_TOKEN }}
+  GH_REGISTRY: ghcr.io
+>>>>>>> 8ef6ba5f (Update 8.0)
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -207,15 +232,25 @@ jobs:
 =======
 >>>>>>> dbb40abb (up)
 =======
+=======
+>>>>>>> 8ef6ba5f (Update 8.0)
     - uses: actions/checkout@v3
     - name: Check Git Status
       run: |
         status="$(git status --short)"
+<<<<<<< HEAD
         [ -z "$status" ]
+=======
+        if [ -z "$status" ]; then
+          echo "No new commits, skipping build."
+          exit 0
+        fi
+>>>>>>> 8ef6ba5f (Update 8.0)
     - name: Login to the Aliyun ACR registry
       run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
     - name: Login to the Github Container registry
       run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
+<<<<<<< HEAD
     - name: Update the Docker image Version
       run:  ./update.sh
 <<<<<<< HEAD:.github/workflows/ci.yml
@@ -226,3 +261,9 @@ jobs:
     - name: Build 8.0 the Docker image and Publish to the Registry
       run:  ./builds.sh 8.0
 >>>>>>> 4ccc68df (feat: slicing version build):.github/workflows/8.0.yml
+=======
+    # - name: Update the Docker image Version
+    #   run:  ./update.sh
+    - name: Build 8.0 the Docker image and Publish to the Registry
+      run:  ./publish.sh 8.0
+>>>>>>> 8ef6ba5f (Update 8.0)
