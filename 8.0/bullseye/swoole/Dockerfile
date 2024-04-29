@@ -8,6 +8,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<<< HEAD:8.0/bullseye/swoole/Dockerfile
 =======
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
@@ -15,6 +16,8 @@
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -94,6 +97,7 @@ ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV PHP_VERSION 8.0.27
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.27.tar.xz.asc"
 ENV PHP_SHA256="f942cbfe2f7bacbb8039fb79bbec41c76ea779ac5c8157f21e1e0c1b28a5fc3a"
@@ -112,11 +116,17 @@ ENV PHP_VERSION 8.0.30
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
 ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+ENV PHP_VERSION 8.0.30
+ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
+ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
+>>>>>>> 94ac709b (Update 8.0)
 
 RUN set -eux; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -130,6 +140,9 @@ RUN set -eux; \
 =======
 	apt-get install -y --no-install-recommends gnupg; \
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+	apt-get install -y --no-install-recommends gnupg; \
+>>>>>>> 94ac709b (Update 8.0)
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
@@ -181,6 +194,7 @@ RUN set -eux; \
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
@@ -196,6 +210,11 @@ RUN set -eux; \
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
 		PHP_UNAME='Linux - Docker' \
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
+>>>>>>> 94ac709b (Update 8.0)
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -278,6 +297,7 @@ RUN set -eux; \
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		| awk '/=>/ { print $(NF-1) }' \
 =======
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
@@ -291,6 +311,9 @@ RUN set -eux; \
 =======
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+>>>>>>> 94ac709b (Update 8.0)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -393,6 +416,7 @@ CMD ["php", "-a"]
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ========
 >>>>>>>> 68507dcf (up):8.1/bookworm/swoole/Dockerfile
 =======
@@ -403,3 +427,5 @@ CMD ["php", "-a"]
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)

@@ -5,6 +5,7 @@ set -e
 if [ "${1#-}" != "$1" ]; then
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	set -- php-fpm "$@"
 =======
 	set -- php "$@"
@@ -12,6 +13,9 @@ if [ "${1#-}" != "$1" ]; then
 =======
 	set -- php "$@"
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+	set -- php "$@"
+>>>>>>> 94ac709b (Update 8.0)
 fi
 
 exec "$@"

@@ -4,6 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
 <<<<<<< HEAD:8.0/bookworm/zts/Dockerfile
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -31,6 +32,9 @@ RUN set -eux; \
 =======
 FROM alpine:3.16
 >>>>>>> 8b7004a0 (fix 8.0 latest eol release):8.0/alpine3.16/zts/Dockerfile
+=======
+FROM alpine:3.16
+>>>>>>> 94ac709b (Update 8.0)
 
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
@@ -47,6 +51,7 @@ ENV PHPIZE_DEPS \
 
 # persistent / runtime deps
 RUN set -eux; \
+<<<<<<< HEAD
 <<<<<<< HEAD:8.0/bookworm/zts/Dockerfile
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -161,6 +166,8 @@ RUN { \
 #   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
 # } | tee /etc/apt/sources.list
 =======
+=======
+>>>>>>> 94ac709b (Update 8.0)
 	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN apk add --no-cache \
@@ -170,7 +177,10 @@ RUN apk add --no-cache \
 		tar \
 		xz
 
+<<<<<<< HEAD
 >>>>>>> 8b7004a0 (fix 8.0 latest eol release):8.0/alpine3.16/zts/Dockerfile
+=======
+>>>>>>> 94ac709b (Update 8.0)
 # ensure little user exists
 RUN set -eux; \
 	addgroup -Sg 83 little; \
@@ -193,11 +203,14 @@ RUN set -eux; \
 	chmod 777 ${APP_ROOT}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 =======
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -209,6 +222,7 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -228,10 +242,14 @@ ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B
 =======
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4 39B641343D8C104B2B146DC3F9C39DC0B9698544
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4 39B641343D8C104B2B146DC3F9C39DC0B9698544
+>>>>>>> 94ac709b (Update 8.0)
 
 ENV PHP_VERSION 8.0.30
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
 ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
@@ -239,6 +257,8 @@ ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)
 
 RUN set -eux; \
 	\
@@ -269,6 +289,7 @@ RUN set -eux; \
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
+<<<<<<< HEAD
 <<<<<<< HEAD:8.0/bookworm/zts/Dockerfile
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
@@ -289,13 +310,18 @@ RUN set -eux; \
 		libonig-dev \
 		libreadline-dev \
 =======
+=======
+>>>>>>> 94ac709b (Update 8.0)
 	apk add --no-cache --virtual .build-deps \
 		$PHPIZE_DEPS \
 		argon2-dev \
 		coreutils \
 		curl-dev \
 		gnu-libiconv-dev \
+<<<<<<< HEAD
 >>>>>>> 8b7004a0 (fix 8.0 latest eol release):8.0/alpine3.16/zts/Dockerfile
+=======
+>>>>>>> 94ac709b (Update 8.0)
 		libsodium-dev \
 		libxml2-dev \
 		linux-headers \
@@ -337,6 +363,7 @@ RUN set -eux; \
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
 		--enable-ftp \
@@ -347,6 +374,8 @@ RUN set -eux; \
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
@@ -368,6 +397,7 @@ RUN set -eux; \
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
 =======
@@ -385,10 +415,16 @@ RUN set -eux; \
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
+>>>>>>> 94ac709b (Update 8.0)
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -402,6 +438,8 @@ RUN set -eux; \
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
 		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
@@ -414,11 +452,14 @@ RUN set -eux; \
 		--disable-zend-signals \
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 =======
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -438,6 +479,7 @@ RUN set -eux; \
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
@@ -447,10 +489,14 @@ RUN set -eux; \
 =======
 	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
+>>>>>>> 94ac709b (Update 8.0)
 	\
 	cd /; \
 	docker-php-source delete; \
 	\
+<<<<<<< HEAD
 <<<<<<< HEAD:8.0/bookworm/zts/Dockerfile
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
@@ -482,6 +528,8 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*; \
 =======
+=======
+>>>>>>> 94ac709b (Update 8.0)
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 			| tr ',' '\n' \
@@ -496,6 +544,7 @@ RUN set -eux; \
 	make \
 	pkgconf \
 	autoconf; \
+<<<<<<< HEAD
 >>>>>>> 8b7004a0 (fix 8.0 latest eol release):8.0/alpine3.16/zts/Dockerfile
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
@@ -529,6 +578,11 @@ CMD ["apache2-foreground"]
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+	\
+# update pecl channel definitions https://github.com/docker-library/php/issues/443
+	pecl update-channels; \
+>>>>>>> 94ac709b (Update 8.0)
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
 	pecl install ds; \
 	apk del --no-network .build-deps; \
@@ -567,8 +621,11 @@ EXPOSE 80\
 CMD ["php", "-a"]
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 =======
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)

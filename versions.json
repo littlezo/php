@@ -6,6 +6,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   "7.4": {
     "ascUrl": "https://www.php.net/distributions/php-7.4.29.tar.xz.asc",
@@ -30,12 +31,17 @@
 =======
 =======
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+>>>>>>> 94ac709b (Update 8.0)
   "8.0": {
     "ascUrl": "https://www.php.net/distributions/php-8.0.30.tar.xz.asc",
     "sha256": "216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9",
     "url": "https://www.php.net/distributions/php-8.0.30.tar.xz",
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 94ac709b (Update 8.0)
     "variants": [
       "bullseye/cli",
       "bullseye/swoole",
@@ -47,8 +53,11 @@
     "version": "8.0.30"
   },
   "8.0-rc": null,
+<<<<<<< HEAD
 =======
 >>>>>>> 18f9a930 (remove 8.0 eol)
+=======
+>>>>>>> 94ac709b (Update 8.0)
   "8.1": {
     "ascUrl": "https://www.php.net/distributions/php-8.1.28.tar.xz.asc",
     "sha256": "95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080",
