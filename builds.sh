@@ -110,7 +110,7 @@ for version; do
 		}
 		done
 		echo  $(join ', ' "${variantAliases[@]}")
-	}
+	}&
 	done
 }&
 done
