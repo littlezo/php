@@ -5,11 +5,15 @@
 #
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:8.3/bullseye/apache/Dockerfile
 FROM debian:bullseye-slim
 =======
 FROM debian:bookworm-slim
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+FROM debian:bookworm-slim
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 
 # prevent Debian's PHP packages from being installed
 # https://github.com/docker-library/php/pull/542
@@ -39,16 +43,23 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 		apt-transport-https \
 		ca-certificates \
 		ncat \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+		apt-transport-https \
+		ca-certificates \
+		ncat \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 		ca-certificates \
 		curl \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 ENV PHP_INI_DIR /usr/local/etc/php
@@ -118,6 +129,8 @@ RUN { \
 	} | tee "$APACHE_CONFDIR/conf-available/docker-php.conf" \
 	&& a2enconf docker-php
 =======
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 # RUN set -eux; \
 # { \
 # 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
@@ -144,7 +157,10 @@ RUN set -eux; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -157,18 +173,24 @@ ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
 
 ENV PHP_VERSION 8.3.11
 ENV PHP_URL="https://www.php.net/distributions/php-8.3.11.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.11.tar.xz.asc"
 ENV PHP_SHA256="b862b098a08ab9bf4b36ed12c7d0d9f65353656b36fb0e3c5344093aceb35802"
 =======
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
 
 ENV PHP_VERSION 8.0.30
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
 ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 
 RUN set -eux; \
 	\
@@ -209,9 +231,12 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 <<<<<<< HEAD
+<<<<<<< HEAD
 		apache2-dev \
 =======
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 		libargon2-dev \
 		libcurl4-openssl-dev \
 		libonig-dev \
@@ -255,12 +280,15 @@ RUN set -eux; \
 		\
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
 		--enable-ftp \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 =======
 >>>>>>> d0053071 (feat: up)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
@@ -280,6 +308,7 @@ RUN set -eux; \
 		--with-zlib \
 		\
 <<<<<<< HEAD
+<<<<<<< HEAD
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
 =======
@@ -287,10 +316,16 @@ RUN set -eux; \
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+<<<<<<< HEAD
 <<<<<<< HEAD
 		--with-libdir="lib/$debMultiarch" \
 		\
@@ -298,6 +333,8 @@ RUN set -eux; \
 		\
 		--with-apxs2 \
 =======
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
@@ -309,7 +346,10 @@ RUN set -eux; \
 		--enable-zts \
 # https://externals.io/message/118859
 		--disable-zend-signals \
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -327,9 +367,13 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/692 (copy default example "php.ini" files somewhere easily discoverable)
 	cp -v php.ini-* "$PHP_INI_DIR/"; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+	cp -v php.ini-production "$PHP_INI_DIR/php.ini"; \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 	\
 	cd /; \
 	docker-php-source delete; \
@@ -340,6 +384,7 @@ RUN set -eux; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 =======
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
@@ -347,6 +392,9 @@ RUN set -eux; \
 =======
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 >>>>>>> d0053071 (feat: up)
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -358,6 +406,7 @@ RUN set -eux; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
+<<<<<<< HEAD
 <<<<<<< HEAD
 	rm -rf /tmp/pear ~/.pearrc; \
 	\
@@ -381,6 +430,8 @@ CMD ["apache2-foreground"]
 =======
 >>>>>>> 68507dcf (up):8.0/bookworm/zts/Dockerfile
 =======
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
 	pecl install ds; \
 	 \
@@ -417,4 +468,7 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")

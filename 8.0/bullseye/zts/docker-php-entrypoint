@@ -3,7 +3,11 @@ set -e
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
+<<<<<<< HEAD
 	set -- php-fpm "$@"
+=======
+	set -- php "$@"
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 fi
 
 exec "$@"

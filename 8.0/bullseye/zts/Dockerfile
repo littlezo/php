@@ -6,8 +6,11 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -46,8 +49,11 @@ RUN set -eux; \
 	; \
 	rm -rf /var/lib/apt/lists/*
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 # RUN set -eux; \
 # { \
 # 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
@@ -59,7 +65,10 @@ RUN set -eux; \
 #   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
 #   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
 # } | tee /etc/apt/sources.list
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 # ensure little user exists
 RUN set -eux; \
 	addgroup --gid 82 --system little; \
@@ -87,28 +96,38 @@ ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F
 
 ENV PHP_VERSION 8.0.18
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.18.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.18.tar.xz.asc"
 ENV PHP_SHA256="db161652cacae4b31c347fbf2e17b80656473cb365f2bb3460c4552f5647e2e7"
 =======
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
 
 ENV PHP_VERSION 8.0.30
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
 ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 
 RUN set -eux; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 	apt-get install -y --no-install-recommends gnupg dirmngr; \
 =======
 	apt-get install -y --no-install-recommends gnupg; \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+	apt-get install -y --no-install-recommends gnupg; \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
@@ -158,11 +177,17 @@ RUN set -eux; \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
 		PHP_UNAME='Linux - Docker' \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -205,6 +230,7 @@ RUN set -eux; \
 		--with-zlib \
 		\
 <<<<<<< HEAD
+<<<<<<< HEAD
 # https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
 		--disable-phpdbg \
 =======
@@ -212,6 +238,11 @@ RUN set -eux; \
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
@@ -222,19 +253,27 @@ RUN set -eux; \
 		--with-libdir="lib/$debMultiarch" \
 		\
 <<<<<<< HEAD
+<<<<<<< HEAD
 		--disable-cgi \
 		\
 =======
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748
 		--enable-embed \
 		\
 		--enable-zts \
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # https://externals.io/message/118859
 		--disable-zend-signals \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+# https://externals.io/message/118859
+		--disable-zend-signals \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -262,6 +301,7 @@ RUN set -eux; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		| awk '/=>/ { print $(NF-1) }' \
 =======
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
@@ -269,6 +309,9 @@ RUN set -eux; \
 =======
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 >>>>>>> d0053071 (feat: up)
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -281,11 +324,16 @@ RUN set -eux; \
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 	pecl install redis; \
 =======
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
 	pecl install ds; \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+	pecl install ds; \
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -296,6 +344,7 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
+<<<<<<< HEAD
 <<<<<<< HEAD
     docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
@@ -310,6 +359,8 @@ RUN set -eux; \
     chmod a+x /usr/local/bin/composer; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 =======
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 	docker-php-ext-enable redis; \
 	docker-php-ext-enable ds; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
@@ -324,7 +375,10 @@ RUN set -eux; \
 	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
 	chmod a+x /usr/local/bin/composer; \
 	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
@@ -336,7 +390,10 @@ EXPOSE 80\
 
 CMD ["php", "-a"]
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up)
 =======
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+>>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
