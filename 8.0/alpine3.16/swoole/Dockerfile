@@ -4,7 +4,10 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
 <<<<<<< HEAD:8.0/alpine3.16/swoole/Dockerfile
+=======
+>>>>>>> 8b7004a0 (fix 8.0 latest eol release)
 FROM alpine:3.16
 
 # dependencies required for running "phpize"
@@ -27,10 +30,16 @@ RUN set -eux; \
 RUN apk add --no-cache \
 		ca-certificates \
 		curl \
+<<<<<<< HEAD
 		tar \
 		xz \
 # https://github.com/docker-library/php/issues/494
 		openssl
+=======
+		openssl \
+		tar \
+		xz
+>>>>>>> 8b7004a0 (fix 8.0 latest eol release)
 
 # ensure little user exists
 RUN set -eux; \
@@ -63,11 +72,19 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
+<<<<<<< HEAD
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4
 
 ENV PHP_VERSION 8.0.27
 ENV PHP_URL="https://www.php.net/distributions/php-8.0.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.27.tar.xz.asc"
 ENV PHP_SHA256="f942cbfe2f7bacbb8039fb79bbec41c76ea779ac5c8157f21e1e0c1b28a5fc3a"
+=======
+ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F 2C16C765DBE54A088130F1BC4B9B5F600B55F3B4 39B641343D8C104B2B146DC3F9C39DC0B9698544
+
+ENV PHP_VERSION 8.0.30
+ENV PHP_URL="https://www.php.net/distributions/php-8.0.30.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.30.tar.xz.asc"
+ENV PHP_SHA256="216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9"
+>>>>>>> 8b7004a0 (fix 8.0 latest eol release)
 
 RUN set -eux; \
 	\
@@ -120,6 +137,12 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+<<<<<<< HEAD
+=======
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
+>>>>>>> 8b7004a0 (fix 8.0 latest eol release)
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -138,8 +161,11 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
+<<<<<<< HEAD
 # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
 		--enable-ftp \
+=======
+>>>>>>> 8b7004a0 (fix 8.0 latest eol release)
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
@@ -308,5 +334,8 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up):8.2/alpine3.18/swoole/Dockerfile
+=======
+>>>>>>> 8b7004a0 (fix 8.0 latest eol release)
