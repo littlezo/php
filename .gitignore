@@ -1,3 +1,5 @@
 .jq-template.awk
 tests/
 schedule.json
+.actrc
+.secrets
