@@ -174,7 +174,12 @@ for version in "${versions[@]}"; do
 	done
 
 	echo "$version: $fullVersion"
-
+	# sed -i '' "s/\(\"8.2-rc\"=\"[^\"]*\"\)/\"8.2-rc\"=\"$fullVersion\"/" .env.current.version
+	if ! grep -q "^$version=" .env.current.version; then
+		echo "$version=$fullVersion" >> .env.current.version
+	else
+		sed -i '' "s/\(\"$version\"=\"[^\"]*\"\)/\"$version\"=\"$fullVersion\"/" .env.current.version
+	fi
 	export fullVersion url ascUrl sha256
 	json="$(
 		jq <<<"$json" -c --argjson variants "$variants" '

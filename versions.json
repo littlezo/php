@@ -280,10 +280,13 @@
   },
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   "8.2-rc": null,
 >>>>>>> 86832e56 (feat: remove 8.0 and rc)
 =======
+=======
+>>>>>>> 8965a27c (Build only with version changes)
   "8.2-rc": {
     "ascUrl": "https://downloads.php.net/~sergey/php-8.2.19RC1.tar.xz.asc",
     "sha256": "8b3df81133978a7e3e4f41caff193a651f06032daf39ce8934fa57390384e248",
@@ -304,10 +307,13 @@
     ],
     "version": "8.2.19RC1"
   },
+<<<<<<< HEAD
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
   "8.2-rc": null,
 >>>>>>> 44f4c7bd (feat: 8.0 gpg keys remove rc)
+=======
+>>>>>>> 8965a27c (Build only with version changes)
   "8.3": {
 <<<<<<< HEAD
     "ascUrl": "https://www.php.net/distributions/php-8.3.11.tar.xz.asc",
@@ -405,6 +411,9 @@
     "version": "8.3.6"
   },
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8965a27c (Build only with version changes)
   "8.3-rc": {
     "ascUrl": "https://downloads.php.net/~jakub/php-8.3.7RC1.tar.xz.asc",
     "sha256": "0b0a0701cdfb063796f678987af480a48479ceccd3dbca160294254d6cb836b5",
@@ -425,8 +434,11 @@
     ],
     "version": "8.3.7RC1"
   }
+<<<<<<< HEAD
 >>>>>>> 665451a4 (Revert "feat: remove 8.0 and rc")
 =======
   "8.3-rc": null
 >>>>>>> 44f4c7bd (feat: 8.0 gpg keys remove rc)
+=======
+>>>>>>> 8965a27c (Build only with version changes)
 }
