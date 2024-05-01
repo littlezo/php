@@ -21,10 +21,13 @@ jobs:
         if git diff --exit-code; then
           echo "No changes to commit"
         else
+          git merge
           git config --global user.name 'GitHub Actions'
           git config user.email github-actions@github.com
+          git add .
           git commit -am "ci: Update Docker image version"
           git config pull.rebase false
           git pull
+          git merge
           git push
         fi
