@@ -31,3 +31,5 @@ jobs:
           git merge
           git push
         fi
+    - name: Remove Untagged Release
+      run: ./untagged.sh
