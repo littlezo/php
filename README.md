@@ -26,6 +26,7 @@ fork 自 [Docker "Official Image"](https://github.com/docker-library/php)
   
 ### 新增
   - swoole
+  - swow
  
 ### 特性
   - 基于官方镜像构建

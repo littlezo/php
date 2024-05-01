@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+rm -rf 8.{0,1,2}-rc
 mkdir 8.{0,1,2}-rc
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -90,7 +91,7 @@ for version in "${versions[@]}"; do
 		alpine3.19 \
 		alpine3.18 \
 	; do
-		for variant in cli swoole zts; do
+		for variant in cli swoole zts swow; do
 			# if [[ "$version" == "8.0" && !("$suite" == "bullseye" || "$suite" == "alpine3.16") ]]; then
 			# 	echo "Skipping $version $suite"
 			# 	continue
