@@ -1,4 +1,5 @@
 {
+  "8.0-rc": null,
   "8.1": {
     "ascUrl": "https://www.php.net/distributions/php-8.1.28.tar.xz.asc",
     "sha256": "95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080",
@@ -80,24 +81,5 @@
     ],
     "version": "8.3.6"
   },
-  "8.3-rc": {
-    "ascUrl": "https://downloads.php.net/~jakub/php-8.3.7RC1.tar.xz.asc",
-    "sha256": "0b0a0701cdfb063796f678987af480a48479ceccd3dbca160294254d6cb836b5",
-    "url": "https://downloads.php.net/~jakub/php-8.3.7RC1.tar.xz",
-    "variants": [
-      "bookworm/cli",
-      "bookworm/swoole",
-      "bookworm/zts",
-      "bullseye/cli",
-      "bullseye/swoole",
-      "bullseye/zts",
-      "alpine3.19/cli",
-      "alpine3.19/swoole",
-      "alpine3.19/zts",
-      "alpine3.18/cli",
-      "alpine3.18/swoole",
-      "alpine3.18/zts"
-    ],
-    "version": "8.3.7RC1"
-  }
+  "8.3-rc": null
 }
