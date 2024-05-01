@@ -26,18 +26,20 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Check Git Status
+      id: check
       run: |
         COMMIT_MESSAGE=$(git log --format=%B -n 1 HEAD)
         echo $COMMIT_MESSAGE
         if [[ "$COMMIT_MESSAGE" != ci:* ]]; then
           echo "No new commits, skipping build."
-          exit 0
+          echo "::set-output name=skip::true"
         fi
     - name: Login to the Aliyun ACR registry
+      if: steps.check.outputs.skip != 'true'
       run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
     - name: Login to the Github Container registry
+      if: steps.check.outputs.skip != 'true'
       run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
-    # - name: Update the Docker image Version
-    #   run:  ./update.sh
     - name: Build 8.1 the Docker image and Publish to the Registry
+      if: steps.check.outputs.skip != 'true'
       run:  ./publish.sh 8.1
