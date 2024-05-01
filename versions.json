@@ -74,15 +74,19 @@
       "bookworm/cli",
       "bookworm/swoole",
       "bookworm/zts",
+      "bookworm/swow",
       "bullseye/cli",
       "bullseye/swoole",
       "bullseye/zts",
+      "bullseye/swow",
       "alpine3.19/cli",
       "alpine3.19/swoole",
       "alpine3.19/zts",
+      "alpine3.19/swow",
       "alpine3.18/cli",
       "alpine3.18/swoole",
-      "alpine3.18/zts"
+      "alpine3.18/zts",
+      "alpine3.18/swow"
     ],
     "version": "8.0.30"
   },
@@ -269,15 +273,19 @@
       "bookworm/cli",
       "bookworm/swoole",
       "bookworm/zts",
+      "bookworm/swow",
       "bullseye/cli",
       "bullseye/swoole",
       "bullseye/zts",
+      "bullseye/swow",
       "alpine3.19/cli",
       "alpine3.19/swoole",
       "alpine3.19/zts",
+      "alpine3.19/swow",
       "alpine3.18/cli",
       "alpine3.18/swoole",
-      "alpine3.18/zts"
+      "alpine3.18/zts",
+      "alpine3.18/swow"
     ],
     "version": "8.2.19RC1"
 >>>>>>> d0053071 (feat: up)
@@ -299,15 +307,19 @@
       "bookworm/cli",
       "bookworm/swoole",
       "bookworm/zts",
+      "bookworm/swow",
       "bullseye/cli",
       "bullseye/swoole",
       "bullseye/zts",
+      "bullseye/swow",
       "alpine3.19/cli",
       "alpine3.19/swoole",
       "alpine3.19/zts",
+      "alpine3.19/swow",
       "alpine3.18/cli",
       "alpine3.18/swoole",
-      "alpine3.18/zts"
+      "alpine3.18/zts",
+      "alpine3.18/swow"
     ],
     "version": "8.2.19RC1"
   },
@@ -394,15 +406,19 @@
       "bookworm/cli",
       "bookworm/swoole",
       "bookworm/zts",
+      "bookworm/swow",
       "bullseye/cli",
       "bullseye/swoole",
       "bullseye/zts",
+      "bullseye/swow",
       "alpine3.19/cli",
       "alpine3.19/swoole",
       "alpine3.19/zts",
+      "alpine3.19/swow",
       "alpine3.18/cli",
       "alpine3.18/swoole",
-      "alpine3.18/zts"
+      "alpine3.18/zts",
+      "alpine3.18/swow"
     ],
 <<<<<<< HEAD
     "version": "8.3.7RC1"

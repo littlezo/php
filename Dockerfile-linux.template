@@ -548,6 +548,7 @@ RUN docker-php-ext-enable sodium; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
 {{ if env.variant == "swoole" then ( -}}
+# swoole module
 ENV EXTRA_EXT \
   bcmath bz2 calendar exif ffi gd gettext intl \
   mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
@@ -629,6 +630,7 @@ RUN set -ex; \
 	rm -rf /tmp/*
 {{ ) else "" end -}}
 {{ if env.variant == "swow" then ( -}}
+# swow
 ENV EXTRA_EXT \
   bcmath bz2 calendar exif ffi gd gettext intl \
   mysqli pcntl pdo_mysql pdo_pgsql shmop soap \

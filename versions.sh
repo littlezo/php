@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+rm -rf 8.{0,1,2}-rc
 mkdir 8.{0,1,2}-rc
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -107,6 +108,7 @@ for version in "${versions[@]}"; do
 >>>>>>> 8d656cb0 (Remove 8.0 release EOL)
 	; do
 <<<<<<< HEAD
+<<<<<<< HEAD
 		for variant in cli apache fpm zts; do
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'apache' ]; then
@@ -159,6 +161,9 @@ for version in "${versions[@]}"; do
 =======
 >>>>>>> 94ac709b (Update 8.0)
 =======
+=======
+		for variant in cli swoole zts swow; do
+>>>>>>> 0b3102bf (Adder swow)
 			# if [[ "$version" == "8.0" && !("$suite" == "bullseye" || "$suite" == "alpine3.16") ]]; then
 			# 	echo "Skipping $version $suite"
 			# 	continue
