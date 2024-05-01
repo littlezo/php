@@ -20,11 +20,12 @@ env:
   GH_USERNAME: ${{ github.actor }}
   GH_PASSWORD: ${{ secrets.PKGS_TOKEN }}
   GH_REGISTRY: ghcr.io
+  skip: false
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Check Git Status
       id: check
       run: |
@@ -32,14 +33,14 @@ jobs:
         echo $COMMIT_MESSAGE
         if [[ "$COMMIT_MESSAGE" != ci:* ]]; then
           echo "No new commits, skipping build."
-          echo "::set-output name=skip::true"
+          echo "skip=true" >> $GITHUB_ENV
         fi
     - name: Login to the Aliyun ACR registry
-      if: steps.check.outputs.skip != 'true'
+      if: env.skip != 'true'
       run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
     - name: Login to the Github Container registry
-      if: steps.check.outputs.skip != 'true'
+      if: env.skip != 'true'
       run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
     - name: Build 8.3 the Docker image and Publish to the Registry
-      if: steps.check.outputs.skip != 'true'
+      if: env.skip != 'true'
       run:  ./publish.sh 8.3
