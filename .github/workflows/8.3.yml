@@ -17,8 +17,8 @@ env:
   GH_NAMESPACE: ${{ github.repository_owner }}
   GH_REGISTRY: ghcr.io
   skip: false
-  BUILD: false
-  RC_BUILD: false
+  BUILD: true
+  RC_BUILD: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -71,6 +71,7 @@ jobs:
         LATEST_VERSION=$(sed -n 's/8.3=//p' .env.latest.version)
         RC_CURRENT_VERSION=$(sed -n 's/8.3-rc=//p' .env.current.version)
         RC_LATEST_VERSION=$(sed -n 's/8.3-rc=//p' .env.latest.version)
+        git pull
         if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
           sed -i "s/8.3=$LATEST_VERSION/8.3=$CURRENT_VERSION/g" .env.latest.version
         fi
