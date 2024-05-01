@@ -17,6 +17,8 @@ env:
   GH_NAMESPACE: ${{ github.repository_owner }}
   GH_REGISTRY: ghcr.io
   skip: false
+  BUILD: false
+  RC_BUILD: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,12 +33,51 @@ jobs:
           echo "No new commits, skipping build."
           echo "skip=true" >> $GITHUB_ENV
         fi
+        CURRENT_VERSION=$(grep -oP '8.2=\K[^]+' .env.current.version)
+        LATEST_VERSION=$(grep -oP '8.2=\K[^]+' .env.latest.version)
+        if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
+          echo "Version match, skipping build."
+          echo "BUILD=false" >> $GITHUB_ENV
+        else
+          echo "Version mismatch, running build."
+        fi
+        RC_CURRENT_VERSION=$(grep -oP '8.2-rc=\K[^]+' .env.current.version)
+        RC_LATEST_VERSION=$(grep -oP '8.2-rc=\K[^]+' .env.latest.version)
+        if [[ "$RC_CURRENT_VERSION" == "$RC_LATEST_VERSION" ]]; then
+          echo "RC Version match, skipping build."
+          echo "RC_BUILD=false" >> $GITHUB_ENV
+        else
+          echo "RC Version mismatch, running build."
+        fi
     - name: Login to the Aliyun ACR registry
-      if: env.skip != 'true'
+      if: env.skip != 'true' || env.BUILD == 'true' || env.RC_BUILD == 'true'
       run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
     - name: Login to the Github Container registry
-      if: env.skip != 'true'
+      if: env.skip != 'true' || env.BUILD == 'true' || env.RC_BUILD == 'true'
       run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
     - name: Build 8.2 the Docker image and Publish to the Registry
-      if: env.skip != 'true'
+      if: env.skip != 'true' && env.BUILD == 'true'
       run:  ./publish.sh 8.2
+    - name: Build 8.2 RC the Docker image and Publish to the Registry
+      if: env.skip != 'true' && env.RC_BUILD == 'true'
+      run:  ./publish.sh 8.2-rc
+    - name: Update Build Version
+      run: |
+        CURRENT_VERSION=$(grep -oP '8.2=\K[^]+' .env.current.version)
+        LATEST_VERSION=$(grep -oP '8.2=\K[^]+' .env.latest.version)
+        RC_CURRENT_VERSION=$(grep -oP '8.2-rc=\K[^]+' .env.current.version)
+        RC_LATEST_VERSION=$(grep -oP '8.2-rc=\K[^]+' .env.latest.version)
+        if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
+          sed -i "s/8.2=$CURRENT_VERSION/8.2=$LATEST_VERSION/g" .env.latest.version
+        fi
+        if [[ "$RC_CURRENT_VERSION" != "$RC_LATEST_VERSION" ]]; then
+          sed -i "s/8.2-rc=$RC_CURRENT_VERSION/8.2-rc=$RC_LATEST_VERSION/g" .env.latest.version
+        fi
+        if git diff --exit-code; then
+          echo "No changes to commit"
+        else
+          git config --global user.name 'GitHub Actions'
+          git config user.email github-actions@github.com
+          git commit -am "Update Docker image Version $CURRENT_VERSION and $RC_CURRENT_VERSION"
+          git push
+        fi
