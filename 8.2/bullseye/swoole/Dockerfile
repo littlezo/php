@@ -282,6 +282,7 @@ RUN docker-php-ext-enable sodium; \
 	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
+# swoole module
 ENV EXTRA_EXT \
   bcmath bz2 calendar exif ffi gd gettext intl \
   mysqli pcntl pdo_mysql pdo_pgsql shmop soap \

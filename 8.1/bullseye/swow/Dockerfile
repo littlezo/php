@@ -4,7 +4,10 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
+<<<<<<< HEAD
 <<<<<<< HEAD:8.1/bullseye/swow/Dockerfile
+=======
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -81,15 +84,25 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
+<<<<<<< HEAD
 ENV PHP_VERSION 8.1.14
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.14.tar.xz.asc"
 ENV PHP_SHA256="e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a"
+=======
+ENV PHP_VERSION 8.1.28
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.28.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.28.tar.xz.asc"
+ENV PHP_SHA256="95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080"
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
 
 RUN set -eux; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
+<<<<<<< HEAD
 	apt-get install -y --no-install-recommends gnupg dirmngr; \
+=======
+	apt-get install -y --no-install-recommends gnupg; \
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
@@ -138,6 +151,12 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
+<<<<<<< HEAD
+=======
+# https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
+		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
+		PHP_UNAME='Linux - Docker' \
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -161,7 +180,11 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
+<<<<<<< HEAD
 # --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+=======
+# --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
 		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
@@ -218,7 +241,11 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
+<<<<<<< HEAD
 		| awk '/=>/ { print $(NF-1) }' \
+=======
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -251,6 +278,10 @@ RUN docker-php-ext-enable sodium; \
 	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
 
+<<<<<<< HEAD
+=======
+# swow
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
 ENV EXTRA_EXT \
   bcmath bz2 calendar exif ffi gd gettext intl \
   mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
@@ -292,7 +323,11 @@ RUN set -ex; \
 	docker-php-source delete; \
 	# download
  	cd /tmp; \
+<<<<<<< HEAD
 	curl -SL "https://github.com/swow/swow/archive/${SW_VERSION}.tar.gz" -o swow.tar.gz; \
+=======
+	curl -SL "https://github.com/swow/swow/archive/v1.0.0.tar.gz" -o swow.tar.gz; \
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
 	ls -alh; \
 	# php extension:swow
 	cd /tmp; \
@@ -329,5 +364,8 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
+<<<<<<< HEAD
 =======
 >>>>>>> 68507dcf (up):8.2/bookworm/swoole/Dockerfile
+=======
+>>>>>>> 3cc3b9a8 (ci: Update Docker image version)
