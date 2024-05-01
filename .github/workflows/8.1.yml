@@ -5,10 +5,10 @@ on:
     workflows: ["Update Release"]
     types:
       - completed
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
   # schedule:
     # - cron: 0 0 * * 0
 env:
@@ -84,5 +84,7 @@ jobs:
           git config --global user.name 'GitHub Actions'
           git config user.email github-actions@github.com
           git commit -am "Update Docker image Version $CURRENT_VERSION or $RC_CURRENT_VERSION"
+          git config pull.rebase false
+          git pull
           git push
         fi
