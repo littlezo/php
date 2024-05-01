@@ -177,7 +177,7 @@ for version in "${versions[@]}"; do
 	if ! grep -q "^$version=" .env.current.version; then
 		echo "$version=$fullVersion" >> .env.current.version
 	else
-		sed -i '' "s/\($version=[^ ]*\)/$version=$fullVersion/" .env.current.version
+		sed -i "s/\($version=[^ ]*\)/$version=$fullVersion/" .env.current.version
 	fi
 	export fullVersion url ascUrl sha256
 	json="$(
