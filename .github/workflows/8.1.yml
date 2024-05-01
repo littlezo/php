@@ -33,16 +33,20 @@ jobs:
           echo "No new commits, skipping build."
           echo "skip=true" >> $GITHUB_ENV
         fi
-        CURRENT_VERSION=$(grep -oP '8.1=\K[^]+' .env.current.version)
-        LATEST_VERSION=$(grep -oP '8.1=\K[^]+' .env.latest.version)
+        CURRENT_VERSION=$(sed -n 's/8.1=//p' .env.current.version)
+        LATEST_VERSION=$(sed -n 's/8.1=//p' .env.latest.version)
+        RC_CURRENT_VERSION=$(sed -n 's/8.1-rc=//p' .env.current.version)
+        RC_LATEST_VERSION=$(sed -n 's/8.1-rc=//p' .env.latest.version)
         if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
           echo "Version match, skipping build."
           echo "BUILD=false" >> $GITHUB_ENV
         else
           echo "Version mismatch, running build."
         fi
-        RC_CURRENT_VERSION=$(grep -oP '8.1-rc=\K[^]+' .env.current.version)
-        RC_LATEST_VERSION=$(grep -oP '8.1-rc=\K[^]+' .env.latest.version)
+        CURRENT_VERSION=$(sed -n 's/8.1=//p' .env.current.version)
+        LATEST_VERSION=$(sed -n 's/8.1=//p' .env.latest.version)
+        RC_CURRENT_VERSION=$(sed -n 's/8.1-rc=//p' .env.current.version)
+        RC_LATEST_VERSION=$(sed -n 's/8.1-rc=//p' .env.latest.version)
         if [[ "$RC_CURRENT_VERSION" == "$RC_LATEST_VERSION" ]]; then
           echo "RC Version match, skipping build."
           echo "RC_BUILD=false" >> $GITHUB_ENV
@@ -63,10 +67,10 @@ jobs:
       run:  ./publish.sh 8.1-rc
     - name: Update Build Version
       run: |
-        CURRENT_VERSION=$(grep -oP '8.1=\K[^]+' .env.current.version)
-        LATEST_VERSION=$(grep -oP '8.1=\K[^]+' .env.latest.version)
-        RC_CURRENT_VERSION=$(grep -oP '8.1-rc=\K[^]+' .env.current.version)
-        RC_LATEST_VERSION=$(grep -oP '8.1-rc=\K[^]+' .env.latest.version)
+        CURRENT_VERSION=$(sed -n 's/8.1=//p' .env.current.version)
+        LATEST_VERSION=$(sed -n 's/8.1=//p' .env.latest.version)
+        RC_CURRENT_VERSION=$(sed -n 's/8.1-rc=//p' .env.current.version)
+        RC_LATEST_VERSION=$(sed -n 's/8.1-rc=//p' .env.latest.version)
         if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
           sed -i "s/8.1=$CURRENT_VERSION/8.1=$LATEST_VERSION/g" .env.latest.version
         fi
