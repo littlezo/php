@@ -24,5 +24,6 @@ jobs:
           git config --global user.name 'GitHub Actions'
           git config user.email github-actions@github.com
           git commit -am "ci: Update Docker image version"
+          git pull
           git push
         fi
