@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Check Git Status
       run: |
         status="$(git status --short)"
@@ -21,7 +21,7 @@ jobs:
           echo "No changes to commit"
         else
           git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
+          git config user.email github-actions@github.com
           git commit -am "ci: Update Docker image version"
           git push
         fi
