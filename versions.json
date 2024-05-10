@@ -26,9 +26,9 @@
   },
   "8.1-rc": null,
   "8.2": {
-    "ascUrl": "https://www.php.net/distributions/php-8.2.18.tar.xz.asc",
-    "sha256": "44b306fc021e56441f691da6c3108788bd9e450f293b3bc70fcd64b08dd41a50",
-    "url": "https://www.php.net/distributions/php-8.2.18.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.2.19.tar.xz.asc",
+    "sha256": "aecd63f3ebea6768997f5c4fccd98acbf897762ed5fc25300e846197a9485c13",
+    "url": "https://www.php.net/distributions/php-8.2.19.tar.xz",
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -47,36 +47,13 @@
       "alpine3.18/zts",
       "alpine3.18/swow"
     ],
-    "version": "8.2.18"
+    "version": "8.2.19"
   },
-  "8.2-rc": {
-    "ascUrl": "https://downloads.php.net/~sergey/php-8.2.19RC1.tar.xz.asc",
-    "sha256": "8b3df81133978a7e3e4f41caff193a651f06032daf39ce8934fa57390384e248",
-    "url": "https://downloads.php.net/~sergey/php-8.2.19RC1.tar.xz",
-    "variants": [
-      "bookworm/cli",
-      "bookworm/swoole",
-      "bookworm/zts",
-      "bookworm/swow",
-      "bullseye/cli",
-      "bullseye/swoole",
-      "bullseye/zts",
-      "bullseye/swow",
-      "alpine3.19/cli",
-      "alpine3.19/swoole",
-      "alpine3.19/zts",
-      "alpine3.19/swow",
-      "alpine3.18/cli",
-      "alpine3.18/swoole",
-      "alpine3.18/zts",
-      "alpine3.18/swow"
-    ],
-    "version": "8.2.19RC1"
-  },
+  "8.2-rc": null,
   "8.3": {
-    "ascUrl": "https://www.php.net/distributions/php-8.3.6.tar.xz.asc",
-    "sha256": "53c8386b2123af97626d3438b3e4058e0c5914cb74b048a6676c57ac647f5eae",
-    "url": "https://www.php.net/distributions/php-8.3.6.tar.xz",
+    "ascUrl": "https://www.php.net/distributions/php-8.3.7.tar.xz.asc",
+    "sha256": "d53433c1ca6b2c8741afa7c524272e6806c1e895e5912a058494fea89988570a",
+    "url": "https://www.php.net/distributions/php-8.3.7.tar.xz",
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -95,7 +72,7 @@
       "alpine3.18/zts",
       "alpine3.18/swow"
     ],
-    "version": "8.3.6"
+    "version": "8.3.7"
   },
   "8.3-rc": null
 }
