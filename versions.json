@@ -198,6 +198,7 @@
   },
   "8.1-rc": null,
   "8.2": {
+<<<<<<< HEAD
     "ascUrl": "https://www.php.net/distributions/php-8.2.18.tar.xz.asc",
     "sha256": "44b306fc021e56441f691da6c3108788bd9e450f293b3bc70fcd64b08dd41a50",
     "url": "https://www.php.net/distributions/php-8.2.18.tar.xz",
@@ -269,6 +270,11 @@
     "ascUrl": "https://downloads.php.net/~sergey/php-8.2.19RC1.tar.xz.asc",
     "sha256": "8b3df81133978a7e3e4f41caff193a651f06032daf39ce8934fa57390384e248",
     "url": "https://downloads.php.net/~sergey/php-8.2.19RC1.tar.xz",
+=======
+    "ascUrl": "https://www.php.net/distributions/php-8.2.19.tar.xz.asc",
+    "sha256": "aecd63f3ebea6768997f5c4fccd98acbf897762ed5fc25300e846197a9485c13",
+    "url": "https://www.php.net/distributions/php-8.2.19.tar.xz",
+>>>>>>> f0eb1ea7 (ci: Update Docker image version)
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -287,6 +293,7 @@
       "alpine3.18/zts",
       "alpine3.18/swow"
     ],
+<<<<<<< HEAD
     "version": "8.2.19RC1"
 >>>>>>> d0053071 (feat: up)
   },
@@ -402,6 +409,15 @@
     "ascUrl": "https://downloads.php.net/~jakub/php-8.3.7RC1.tar.xz.asc",
     "sha256": "0b0a0701cdfb063796f678987af480a48479ceccd3dbca160294254d6cb836b5",
     "url": "https://downloads.php.net/~jakub/php-8.3.7RC1.tar.xz",
+=======
+    "version": "8.2.19"
+  },
+  "8.2-rc": null,
+  "8.3": {
+    "ascUrl": "https://www.php.net/distributions/php-8.3.7.tar.xz.asc",
+    "sha256": "d53433c1ca6b2c8741afa7c524272e6806c1e895e5912a058494fea89988570a",
+    "url": "https://www.php.net/distributions/php-8.3.7.tar.xz",
+>>>>>>> f0eb1ea7 (ci: Update Docker image version)
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -421,6 +437,7 @@
       "alpine3.18/swow"
     ],
 <<<<<<< HEAD
+<<<<<<< HEAD
     "version": "8.3.7RC1"
   }
 >>>>>>> d0053071 (feat: up)
@@ -429,6 +446,9 @@
 >>>>>>> 86832e56 (feat: remove 8.0 and rc)
 =======
     "version": "8.3.6"
+=======
+    "version": "8.3.7"
+>>>>>>> f0eb1ea7 (ci: Update Docker image version)
   },
 <<<<<<< HEAD
 <<<<<<< HEAD

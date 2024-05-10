@@ -89,6 +89,7 @@ ENV GPG_KEYS 39B641343D8C104B2B146DC3F9C39DC0B9698544 E60913E4DF209907D8E30D9665
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV PHP_VERSION 8.2.23
 ENV PHP_URL="https://www.php.net/distributions/php-8.2.23.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.23.tar.xz.asc"
 ENV PHP_SHA256="81c5ae6ba44e262a076349ee54a2e468638a4571085d80bff37f6fd308e1d8d5"
@@ -102,6 +103,11 @@ ENV PHP_VERSION 8.2.18
 ENV PHP_URL="https://www.php.net/distributions/php-8.2.18.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.18.tar.xz.asc"
 ENV PHP_SHA256="44b306fc021e56441f691da6c3108788bd9e450f293b3bc70fcd64b08dd41a50"
 >>>>>>> d0053071 (feat: up)
+=======
+ENV PHP_VERSION 8.2.19
+ENV PHP_URL="https://www.php.net/distributions/php-8.2.19.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.19.tar.xz.asc"
+ENV PHP_SHA256="aecd63f3ebea6768997f5c4fccd98acbf897762ed5fc25300e846197a9485c13"
+>>>>>>> f0eb1ea7 (ci: Update Docker image version)
 
 RUN set -eux; \
 	\
