@@ -34,6 +34,8 @@ RUN set -eux; \
 {{ ) end -}}
 ENV PHPIZE_DEPS \
 		autoconf \
+		procps \
+		wget \
 		dpkg-dev {{ if is_alpine then "dpkg " else "" end }}\
 		file \
 		g++ \
