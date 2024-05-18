@@ -19,6 +19,8 @@ RUN set -eux; \
 # (see persistent deps below)
 ENV PHPIZE_DEPS \
 		autoconf \
+		procps \
+		wget \
 		dpkg-dev \
 		file \
 		g++ \

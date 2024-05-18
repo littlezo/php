@@ -10,6 +10,8 @@ FROM alpine:3.19
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 ENV PHPIZE_DEPS \
 		autoconf \
+		procps \
+		wget \
 		dpkg-dev dpkg \
 		file \
 		g++ \
