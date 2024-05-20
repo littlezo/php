@@ -1,0 +1,53 @@
+# Redis configuration file example
+
+# 绑定IP,允许所有IP访问,也可以指定具体IP,如: 127.0.0.1
+bind 0.0.0.0
+
+# 保护模式,设置为no允许远程访问
+protected-mode yes
+
+# 端口号,默认6379
+port 6379
+
+# 设置连接密码,增强安全性
+requirepass Muke@Redis.Su@2320
+
+# 工作目录,默认是当前目录
+dir /data
+
+# 是否在后台运行,设置为yes
+# daemonize yes
+
+# 持久化数据
+# 对数据进行持久化,可以将数据持久化到硬盘,可以选择RDB或AOF两种方式
+# 使用RDB持久化方式,可以在指定的时间间隔内生成数据集的时间点值备份,恢复时会丢失最后一次备份后的数据
+# 900秒(15分钟)内至少有1个key被改变则备份
+save 900 1
+# 300秒(5分钟)内至少有10个key被改变则备份
+save 300 10
+# 60秒内至少有10000个key被改变则备份
+save 60 10000
+# 使用AOF持久化方式,会将服务器执行的每一个写命令记录在文件中,恢复时不会丢失任何数据
+appendonly yes
+
+# 日志级别,可设置为debug,verbose,notice,warning
+loglevel notice
+
+# 日志文件路径
+logfile /data/redis.log
+
+# 设置数据库个数,默认16个
+databases 16
+
+# 最大内存限制,Redis可以最大使用的内存空间
+# 当内存超出maxmemory时,依据maxmemory-policy策略来移除数据
+# 建议设置,防止服务器内存被写爆,maxmemory <bytes>
+maxmemory 1gb
+# 内存溢出后的处理策略
+# volatile-lru -> 利用LRU算法移除设置过期时间的key
+# allkeys-lru -> 利用LRU算法移除任何key
+# volatile-random -> 移除随机的设置过期时间的key
+# allkeys-random -> 移除随机的任何key
+# volatile-ttl -> 移除即将过期的key
+# noeviction -> 不移除任何key,只是返回错误
+maxmemory-policy allkeys-lru

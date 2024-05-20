@@ -10,6 +10,29 @@ docker pull ghcr.io/littlezo/php:swoole-alpine
 docker pull registry.cn-beijing.aliyuncs.com/forlong/php:version-tag
 ```
 
+### hyper swow 一键启动配置
+
+`依赖配置` 包含 `mysql` `redis` `pgsql` `rabbitmq`
+
+`httpserver` 包含  `caddy` `swoole`
+
+#### 环境启动
+ - 修改 env_file
+ - 启动依赖环境
+  
+  ```shell
+  docker compose -f docker-compose-deps.yml up -d
+  ```
+
+ - 启动服务
+  ```shell
+  docker compose -f docker-compose.yml up -d
+  ```
+
+- 查看调试日志
+  ```shell
+  docker compose -f docker-compose.yml -f --tail 100
+  ```
 
 ## 维护者: [@长久同学](https://github.com/littlezo/php)
 
