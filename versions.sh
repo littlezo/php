@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-rm -rf 8.{0,1,2}-rc
-mkdir 8.{0,1,2}-rc
+rm -rf 8.{1,2,3}-rc
+mkdir 8.{1,2,3}-rc
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 versions=("$@")
@@ -75,7 +75,7 @@ for version in "${versions[@]}"; do
 
 	if ! wget -q --spider "$url"; then
 		echo >&2 "error: '$url' appears to be missing"
-		exit 1
+		continue
 	fi
 
 	# if we don't have a .asc URL, let's see if we can figure one out :)
@@ -88,8 +88,8 @@ for version in "${versions[@]}"; do
 	for suite in \
 		bookworm \
 		bullseye \
+		alpine3.20 \
 		alpine3.19 \
-		alpine3.18 \
 	; do
 		for variant in cli swoole zts swow; do
 			# if [[ "$version" == "8.0" && !("$suite" == "bullseye" || "$suite" == "alpine3.16") ]]; then
@@ -109,6 +109,7 @@ for version in "${versions[@]}"; do
 	if ! grep -q "^$version=" .env.current.version; then
 		echo "$version=$fullVersion" >> .env.current.version
 	else
+		# sed -i '' "s/\($version=[^ ]*\)/$version=$fullVersion/" .env.current.version
 		sed -i "s/\($version=[^ ]*\)/$version=$fullVersion/" .env.current.version
 	fi
 	export fullVersion url ascUrl sha256
