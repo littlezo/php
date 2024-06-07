@@ -87,6 +87,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV PHP_VERSION 8.1.14
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.14.tar.xz.asc"
 ENV PHP_SHA256="e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a"
@@ -95,6 +96,11 @@ ENV PHP_VERSION 8.1.28
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.28.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.28.tar.xz.asc"
 ENV PHP_SHA256="95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080"
 >>>>>>> 3cc3b9a8 (ci: Update Docker image version)
+=======
+ENV PHP_VERSION 8.1.29
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.29.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.29.tar.xz.asc"
+ENV PHP_SHA256="288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536"
+>>>>>>> 995be175 (ci: Update Docker image version)
 
 RUN set -eux; \
 	\

@@ -66,10 +66,16 @@
   "8.0-rc": null,
 >>>>>>> 115e3629 (ci: Update Docker image version)
   "8.1": {
+<<<<<<< HEAD
     "ascUrl": "https://www.php.net/distributions/php-8.1.28.tar.xz.asc",
     "sha256": "95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080",
     "url": "https://www.php.net/distributions/php-8.1.28.tar.xz",
 >>>>>>> 770142cb (feat: 8.0 latest release)
+=======
+    "ascUrl": "https://www.php.net/distributions/php-8.1.29.tar.xz.asc",
+    "sha256": "288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536",
+    "url": "https://www.php.net/distributions/php-8.1.29.tar.xz",
+>>>>>>> 995be175 (ci: Update Docker image version)
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -88,6 +94,7 @@
       "alpine3.18/zts",
       "alpine3.18/swow"
     ],
+<<<<<<< HEAD
     "version": "8.0.30"
   },
   "8.0-rc": null,
@@ -275,6 +282,15 @@
     "sha256": "aecd63f3ebea6768997f5c4fccd98acbf897762ed5fc25300e846197a9485c13",
     "url": "https://www.php.net/distributions/php-8.2.19.tar.xz",
 >>>>>>> f0eb1ea7 (ci: Update Docker image version)
+=======
+    "version": "8.1.29"
+  },
+  "8.1-rc": null,
+  "8.2": {
+    "ascUrl": "https://www.php.net/distributions/php-8.2.20.tar.xz.asc",
+    "sha256": "4474cc430febef6de7be958f2c37253e5524d5c5331a7e1765cd2d2234881e50",
+    "url": "https://www.php.net/distributions/php-8.2.20.tar.xz",
+>>>>>>> 995be175 (ci: Update Docker image version)
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -293,6 +309,7 @@
       "alpine3.18/zts",
       "alpine3.18/swow"
     ],
+<<<<<<< HEAD
 <<<<<<< HEAD
     "version": "8.2.19RC1"
 >>>>>>> d0053071 (feat: up)
@@ -418,6 +435,15 @@
     "sha256": "d53433c1ca6b2c8741afa7c524272e6806c1e895e5912a058494fea89988570a",
     "url": "https://www.php.net/distributions/php-8.3.7.tar.xz",
 >>>>>>> f0eb1ea7 (ci: Update Docker image version)
+=======
+    "version": "8.2.20"
+  },
+  "8.2-rc": null,
+  "8.3": {
+    "ascUrl": "https://www.php.net/distributions/php-8.3.8.tar.xz.asc",
+    "sha256": "aea358b56186f943c2bbd350c9005b9359133d47e954cfc561385319ae5bb8d7",
+    "url": "https://www.php.net/distributions/php-8.3.8.tar.xz",
+>>>>>>> 995be175 (ci: Update Docker image version)
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -436,6 +462,7 @@
       "alpine3.18/zts",
       "alpine3.18/swow"
     ],
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     "version": "8.3.7RC1"
@@ -485,4 +512,9 @@
 =======
   "8.3-rc": null
 >>>>>>> 115e3629 (ci: Update Docker image version)
+=======
+    "version": "8.3.8"
+  },
+  "8.3-rc": null
+>>>>>>> 995be175 (ci: Update Docker image version)
 }

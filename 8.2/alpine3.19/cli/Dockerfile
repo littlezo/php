@@ -89,6 +89,7 @@ ENV GPG_KEYS 39B641343D8C104B2B146DC3F9C39DC0B9698544 E60913E4DF209907D8E30D9665
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:8.2/alpine3.19/cli/Dockerfile
 ENV PHP_VERSION 8.2.23
 ENV PHP_URL="https://www.php.net/distributions/php-8.2.23.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.23.tar.xz.asc"
@@ -113,6 +114,11 @@ ENV PHP_VERSION 8.2.19
 ENV PHP_URL="https://www.php.net/distributions/php-8.2.19.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.19.tar.xz.asc"
 ENV PHP_SHA256="aecd63f3ebea6768997f5c4fccd98acbf897762ed5fc25300e846197a9485c13"
 >>>>>>> f0eb1ea7 (ci: Update Docker image version)
+=======
+ENV PHP_VERSION 8.2.20
+ENV PHP_URL="https://www.php.net/distributions/php-8.2.20.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.2.20.tar.xz.asc"
+ENV PHP_SHA256="4474cc430febef6de7be958f2c37253e5524d5c5331a7e1765cd2d2234881e50"
+>>>>>>> 995be175 (ci: Update Docker image version)
 
 RUN set -eux; \
 	\
