@@ -4,3 +4,4 @@ schedule.json
 .actrc
 .secrets
 swow.sh
+.DS_Store
