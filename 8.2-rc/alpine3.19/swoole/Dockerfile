@@ -253,6 +253,7 @@ ENV EXTRA_LIBS \
 	pcre2-dev \
 	libintl \
 	gettext-dev \
+	brotli-dev \
 	tidyhtml-dev \
 	c-ares-dev \
 	zlib-dev
