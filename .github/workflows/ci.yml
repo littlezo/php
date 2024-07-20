@@ -26,8 +26,6 @@ jobs:
     outputs:
       strategy: ${{ steps.generate-jobs.outputs.strategy }}
     steps:
-      - name: Login to the Github Container registry
-        run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
       - uses: actions/checkout@v4
       - uses: docker-library/bashbrew@HEAD
       - id: generate-jobs
@@ -40,3 +38,24 @@ jobs:
           echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
           jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
+  test:
+    needs: generate-jobs
+    strategy: ${{ fromJson(needs.generate-jobs.outputs.strategy) }}
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare Environment
+        run: ${{ matrix.runs.prepare }}
+      - name: Pull Dependencies
+        run: ${{ matrix.runs.pull }}
+      - name: Build ${{ matrix.name }}
+        run: ${{ matrix.runs.build }}
+      - name: History ${{ matrix.name }}
+        run: ${{ matrix.runs.history }}
+      - name: Test ${{ matrix.name }}
+        run: ${{ matrix.runs.test }}
+      - name: '"docker images"'
+        run: ${{ matrix.runs.images }}
+      - name: Push images ${{ matrix.name }}
+        run: ${{ matrix.runs.push }}
