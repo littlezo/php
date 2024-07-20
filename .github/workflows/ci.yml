@@ -1,0 +1,42 @@
+name: GitHub CI
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 0 * * 0
+
+defaults:
+  run:
+    shell: 'bash -Eeuo pipefail -x {0}'
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+
+  generate-jobs:
+    name: Generate Jobs
+    runs-on: ubuntu-latest
+    outputs:
+      strategy: ${{ steps.generate-jobs.outputs.strategy }}
+    steps:
+      - name: Login to the Github Container registry
+        run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
+      - uses: actions/checkout@v4
+      - uses: docker-library/bashbrew@HEAD
+      - id: generate-jobs
+        name: Generate Jobs
+        run: |
+          # echo "$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+          # strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+          strategy="$("./scripts/github-actions/generate.sh")"
+          EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
+          echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
+          jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"

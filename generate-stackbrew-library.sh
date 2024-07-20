@@ -56,6 +56,7 @@ getArches() {
 <<<<<<< HEAD
 getArches 'php'
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 getArches 'littleof/php'
@@ -71,10 +72,15 @@ echo $parentRepoToArches
 >>>>>>> 5dd26455 (up)
 cat <<-EOH
 # this file is generated via https://github.com/docker-library/php/blob/$(fileCommit "$self")/$self
+=======
+>>>>>>> d40358db (feat: ci)
 
-Maintainers: Tianon Gravi <admwiggin@gmail.com> (@tianon),
-             Joseph Ferguson <yosifkit@gmail.com> (@yosifkit)
-GitRepo: https://github.com/docker-library/php.git
+cat <<-EOH
+# this file is generated via https://github.com/littlezo/php/blob/$(fileCommit "$self")/$self
+
+Maintainers: @长久同学 <littlezov@qq.com> (@littlezo),
+             @小小只同学 <littlezov@qq.com> (@littlezo)
+GitRepo: https://github.com/littlezo/php.git
 EOH
 
 # prints "$2$1$3$1...$N"
