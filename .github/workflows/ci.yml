@@ -17,7 +17,7 @@ concurrency:
 
 permissions:
   contents: read
-
+  packages: write
 jobs:
   apply-templates:
     name: Check For Uncomitted Changes
