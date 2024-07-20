@@ -94,7 +94,7 @@ for tag in $tags; do
 						+ (
 							.tags
 							| map(
-								["--tag " + ("ghcr.io/littlezo/" + . | @sh), "--tag " + ("registry.cn-beijing.aliyuncs.com/forlong" + . | @sh)] | join(" ")
+								["--tag " + ("ghcr.io/littlezo/" + . | @sh), "--tag " + ("registry.cn-beijing.aliyuncs.com/forlong/" + . | @sh)] | join(" ")
 							)
 						)
 						+ if .file != "Dockerfile" then
@@ -110,7 +110,7 @@ for tag in $tags; do
 					push: ((
 							.tags
 							| map(
-								["docker push " + ("ghcr.io/littlezo/" + . | @sh), "docker push " + ("registry.cn-beijing.aliyuncs.com/forlong" + . | @sh)] | join(" && ")
+								["docker push " + ("ghcr.io/littlezo/" + . | @sh), "docker push " + ("registry.cn-beijing.aliyuncs.com/forlong/" + . | @sh)] | join(" && ")
 							)
 						) | join(" && ")),
 					history: ("docker history " + ("ghcr.io/littlezo/" + .tags[0] | @sh)),
