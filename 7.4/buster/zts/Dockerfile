@@ -237,11 +237,45 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 RUN docker-php-ext-enable sodium; \
     docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
+<<<<<<< HEAD:7.4/buster/zts/Dockerfile
     sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+=======
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+
+# swoole module
+ENV EXTRA_EXT \
+  bcmath bz2 calendar exif ffi gd gettext intl \
+  mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
+  sockets sysvmsg sysvsem sysvshm tidy zip
+
+ENV EXTRA_LIBS \
+  autoconf \
+	libbz2-dev \
+  libffi-dev \
+	zlib1g-dev \
+  libpng-dev \
+	libicu-dev \
+  libpq-dev \
+  libxml2-dev \
+  libzip-dev \
+	libpcre3 \
+	libpcre3-dev\
+	libssl-dev \
+	libcurl4-openssl-dev \
+	libbrotli1 \
+	libbrotli-dev \
+	libtidy-dev \
+	libc-ares-dev \
+	libzip-dev
+>>>>>>> d280eaab (added: swoole add brotli-dev libs):8.4-rc/bookworm/swoole/Dockerfile
 
 RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \

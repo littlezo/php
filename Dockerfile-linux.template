@@ -574,11 +574,14 @@ ENV EXTRA_LIBS \
 	pcre2-dev \
 	libintl \
 	gettext-dev \
+	brotli-dev \
 {{ ) else ( -}}
 	libpcre3 \
 	libpcre3-dev\
 	libssl-dev \
 	libcurl4-openssl-dev \
+	libbrotli1 \
+	libbrotli-dev \
 {{ ) end -}}
 	{{ if is_alpine then "tidyhtml-dev" else "libtidy-dev" end }} \
 	{{ if is_alpine then "c-ares-dev" else "libc-ares-dev" end }} \

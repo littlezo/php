@@ -312,6 +312,8 @@ ENV EXTRA_LIBS \
 	libpcre3-dev\
 	libssl-dev \
 	libcurl4-openssl-dev \
+	libbrotli1 \
+	libbrotli-dev \
 	libtidy-dev \
 	libc-ares-dev \
 	libzip-dev
