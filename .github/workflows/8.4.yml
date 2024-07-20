@@ -1,0 +1,92 @@
+name: Docker Image CI 8.4
+
+on:
+  workflow_run:
+    workflows: ["Update Release"]
+    types:
+      - completed
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+  # schedule:
+    # - cron: 0 0 * * 0
+env:
+  ACR_NAMESPACE: ${{ vars.ACR_NAMESPACE }}
+  ACR_REGISTRY: ${{ vars.ACR_REGISTRY }}
+  GH_NAMESPACE: ${{ github.repository_owner }}
+  GH_REGISTRY: ghcr.io
+  skip: false
+  BUILD: true
+  RC_BUILD: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check Git Status
+      id: check
+      run: |
+        COMMIT_MESSAGE=$(git log --format=%B -n 1 HEAD)
+        echo $COMMIT_MESSAGE
+        if [[ "$COMMIT_MESSAGE" != ci:* ]]; then
+          echo "No new commits, skipping build."
+          echo "skip=true" >> $GITHUB_ENV
+        fi
+        CURRENT_VERSION=$(sed -n 's/8.4=//p' .env.current.version)
+        LATEST_VERSION=$(sed -n 's/8.4=//p' .env.latest.version)
+        RC_CURRENT_VERSION=$(sed -n 's/8.4-rc=//p' .env.current.version)
+        RC_LATEST_VERSION=$(sed -n 's/8.4-rc=//p' .env.latest.version)
+        if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
+          echo "Version match, skipping build."
+          echo "BUILD=false" >> $GITHUB_ENV
+        else
+          echo "Version mismatch, running build."
+        fi
+        CURRENT_VERSION=$(sed -n 's/8.4=//p' .env.current.version)
+        LATEST_VERSION=$(sed -n 's/8.4=//p' .env.latest.version)
+        RC_CURRENT_VERSION=$(sed -n 's/8.4-rc=//p' .env.current.version)
+        RC_LATEST_VERSION=$(sed -n 's/8.4-rc=//p' .env.latest.version)
+        if [[ "$RC_CURRENT_VERSION" == "$RC_LATEST_VERSION" ]]; then
+          echo "RC Version match, skipping build."
+          echo "RC_BUILD=false" >> $GITHUB_ENV
+        else
+          echo "RC Version mismatch, running build."
+        fi
+    - name: Login to the Aliyun ACR registry
+      if: env.skip != 'true' || env.BUILD == 'true' || env.RC_BUILD == 'true'
+      run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
+    - name: Login to the Github Container registry
+      if: env.skip != 'true' || env.BUILD == 'true' || env.RC_BUILD == 'true'
+      run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
+    - name: Build 8.4 the Docker image and Publish to the Registry
+      if: env.skip != 'true' && env.BUILD == 'true'
+      run:  ./publish.sh 8.4
+    - name: Build 8.4 RC the Docker image and Publish to the Registry
+      if: env.skip != 'true' && env.RC_BUILD == 'true'
+      run:  ./publish.sh 8.4-rc
+    - name: Update Build Version
+      run: |
+        CURRENT_VERSION=$(sed -n 's/8.4=//p' .env.current.version)
+        LATEST_VERSION=$(sed -n 's/8.4=//p' .env.latest.version)
+        RC_CURRENT_VERSION=$(sed -n 's/8.4-rc=//p' .env.current.version)
+        RC_LATEST_VERSION=$(sed -n 's/8.4-rc=//p' .env.latest.version)
+        git pull
+        if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
+          sed -i "s/8.4=$LATEST_VERSION/8.4=$CURRENT_VERSION/g" .env.latest.version
+        fi
+        if [[ "$RC_CURRENT_VERSION" != "$RC_LATEST_VERSION" ]]; then
+          sed -i "s/8.4-rc=$RC_LATEST_VERSION/8.4-rc=$RC_CURRENT_VERSION/g" .env.latest.version
+        fi
+        if git diff --exit-code; then
+          echo "No changes to commit"
+        else
+          git merge
+          git config --global user.name 'GitHub Actions'
+          git config user.email github-actions@github.com
+          git commit -am "Update Docker image Version $CURRENT_VERSION or $RC_CURRENT_VERSION"
+          git config pull.rebase false
+          git pull origin main
+          git merge
+          git push origin main
+        fi
