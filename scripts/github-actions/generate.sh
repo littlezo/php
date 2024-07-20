@@ -110,9 +110,9 @@ for tag in $tags; do
 					push: ((
 							.tags
 							| map(
-								["docker push " + ("ghcr.io/" + . | @sh), "docker push " + ("registry.cn-beijing.aliyuncs.com/" + . | @sh)] | join("\n")
+								["docker push " + ("ghcr.io/" + . | @sh), "docker push " + ("registry.cn-beijing.aliyuncs.com/" + . | @sh)] | join(" && ")
 							)
-						) | join("\n")),
+						) | join(" && ")),
 					history: ("docker history " + ("ghcr.io/" + .tags[0] | @sh)),
 					test: (
 						[
