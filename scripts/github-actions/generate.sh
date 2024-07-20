@@ -3,6 +3,9 @@ set -Eeuo pipefail
 
 # image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
 image=php
+REGISTRY=ghcr.io
+# echo $image
+# exit 0;
 [ -n "${GENERATE_STACKBREW_LIBRARY:-}" ] || [ -x ./generate-stackbrew-library.sh ] # sanity check
 tmp="$(mktemp -d)"
 trap "$(printf 'rm -rf %q' "$tmp")" EXIT
@@ -36,13 +39,15 @@ if ! bashbrew from "$image" &> /dev/null; then
 fi
 
 tags="$(bashbrew list --build-order --uniq "$image")"
-
+# echo $images
+# exit 0
 # see https://github.com/docker-library/python/commit/6b513483afccbfe23520b1f788978913e025120a for the ideal of what this would be (minimal YAML in all 30+ repos, shared shell script that outputs fully dynamic steps list), if GitHub Actions were to support a fully dynamic steps list
 
 order=()
 declare -A metas=()
 for tag in $tags; do
 	echo >&2 "Processing $tag ..."
+	# continue
 	bashbrewImage="${tag##*/}" # account for BASHBREW_NAMESPACE being set
 	meta="$(
 		bashbrew cat --format '
@@ -89,7 +94,7 @@ for tag in $tags; do
 						+ (
 							.tags
 							| map(
-								"--tag " + (. | @sh)
+								"--tag " + ("ghcr.io/" + . | @sh)
 							)
 						)
 						+ if .file != "Dockerfile" then
@@ -102,6 +107,12 @@ for tag in $tags; do
 						]
 						| join(" ")
 					),
+					push: ((
+							.tags
+							| map(
+								"docker push " + ("ghcr.io/" + . | @sh)
+							)
+						) | join("\n")),
 					history: ("docker history " + (.tags[0] | @sh)),
 					test: (
 						[
