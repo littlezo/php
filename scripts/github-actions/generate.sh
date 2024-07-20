@@ -94,7 +94,7 @@ for tag in $tags; do
 						+ (
 							.tags
 							| map(
-								"--tag " + ("ghcr.io/" + . | @sh)
+								["--tag " + ("ghcr.io/" + . | @sh), "--tag " + ("registry.cn-beijing.aliyuncs.com/" + . | @sh)] | join(" ")
 							)
 						)
 						+ if .file != "Dockerfile" then
@@ -110,13 +110,13 @@ for tag in $tags; do
 					push: ((
 							.tags
 							| map(
-								"docker push " + ("ghcr.io/" + . | @sh)
+								["docker push " + ("ghcr.io/" + . | @sh), "docker push " + ("registry.cn-beijing.aliyuncs.com/" + . | @sh)] | join("\n")
 							)
 						) | join("\n")),
-					history: ("docker history " + (.tags[0] | @sh)),
+					history: ("docker history " + ("ghcr.io/" + .tags[0] | @sh)),
 					test: (
 						[
-							"set -- " + (.tags[0] | @sh),
+							"set -- " + ("ghcr.io/" + .tags[0] | @sh),
 							# https://github.com/docker-library/bashbrew/issues/46#issuecomment-1152567694 (allow local test config / tests)
 							"if [ -s ./.test/config.sh ]; then set -- --config ~/oi/test/config.sh --config ./.test/config.sh \"$@\"; fi",
 							"~/oi/test/run.sh \"$@\""
