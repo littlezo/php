@@ -74,7 +74,7 @@ jobs:
         run: ${{ matrix.runs.history }}
       - name: Test ${{ matrix.name }}
         run: ${{ matrix.runs.test }}
-      - name: '"docker images"'
+      - name: '"Docker images"'
         run: ${{ matrix.runs.images }}
       - name: Push images ${{ matrix.name }}
         run: ${{ matrix.runs.push }}
