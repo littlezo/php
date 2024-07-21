@@ -14,6 +14,8 @@ defaults:
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 permissions:
   contents: read
@@ -102,3 +104,5 @@ jobs:
         fi
     - name: Remove Untagged Release
       run: ./untagged.sh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
