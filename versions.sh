@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+<<<<<<< HEAD
 rm -rf 8.{0,1,2}-rc
 mkdir 8.{0,1,2}-rc
+=======
+rm -rf 8.{1,2,3,4}-rc
+mkdir 8.{1,2,3}-rc
+>>>>>>> 74b5c6b4 (feat: version)
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 versions=("$@")
