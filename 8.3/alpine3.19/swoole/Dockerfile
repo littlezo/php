@@ -43,9 +43,13 @@ ENV PHPIZE_DEPS \
 =======
 		pkgconf \
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 =======
 		lz4-dev \
+=======
+		liblz4-dev \
+>>>>>>> 52c07a0a (fix alpine deps)
 		zstd-dev \
 		sqlite-dev \
 >>>>>>> 00f31708 (update pkgs)
