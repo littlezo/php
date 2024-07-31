@@ -42,8 +42,18 @@ ENV PHPIZE_DEPS \
 		gcc \
 		libc-dev \
 		make \
-		{{ if is_alpine then "pkgconf" else "pkg-config" end }} \
-		re2c
+	{{ if is_alpine then ( -}}
+	pkgconf \
+		lz4-dev \
+		zstd-dev \
+		sqlite-dev \
+	{{ ) else ( -}}
+	pkg-config \
+		liblz4-dev \
+		libzstd-dev \
+		libsqlite3-dev \
+	{{ ) end -}}
+	re2c
 
 # persistent / runtime deps
 {{ if is_alpine then ( -}}

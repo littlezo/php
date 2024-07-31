@@ -42,7 +42,13 @@ ENV PHPIZE_DEPS \
 		pkg-config \
 =======
 		pkgconf \
+<<<<<<< HEAD
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
+=======
+		lz4-dev \
+		zstd-dev \
+		sqlite-dev \
+>>>>>>> 00f31708 (update pkgs)
 		re2c
 
 # persistent / runtime deps

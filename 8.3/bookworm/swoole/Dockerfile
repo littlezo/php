@@ -68,6 +68,9 @@ RUN set -eux; \
 	chmod 1777 /var/www/html
 =======
 		pkg-config \
+		liblz4-dev \
+		libzstd-dev \
+		libsqlite3-dev \
 		re2c
 
 # persistent / runtime deps

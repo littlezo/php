@@ -28,6 +28,9 @@ ENV PHPIZE_DEPS \
 		libc-dev \
 		make \
 		pkg-config \
+		liblz4-dev \
+		libzstd-dev \
+		libsqlite3-dev \
 		re2c
 
 # persistent / runtime deps
