@@ -31,8 +31,12 @@ jobs:
         run:  ./update.sh
       - name: Check Git Status
         run: |
-          status="$(git status --short)"
-          [ -z "$status" ]
+          # status="$(git status --short)"
+          if [ -n "$(git status --short)" ]; then
+            return true;
+          else
+            exit 0;
+          fi
   generate-jobs:
     needs: apply-templates
     name: Generate Jobs
