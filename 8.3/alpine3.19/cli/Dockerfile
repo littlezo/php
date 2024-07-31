@@ -24,7 +24,8 @@ ENV PHPIZE_DEPS \
 		libc-dev \
 		make \
 		pkgconf \
-		liblz4-dev \
+		lz4 \
+		lz4-dev \
 		zstd-dev \
 		sqlite-dev \
 		re2c

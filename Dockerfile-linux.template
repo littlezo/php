@@ -44,7 +44,8 @@ ENV PHPIZE_DEPS \
 		make \
 	{{ if is_alpine then ( -}}
 	pkgconf \
-		liblz4-dev \
+		lz4 \
+		lz4-dev \
 		zstd-dev \
 		sqlite-dev \
 	{{ ) else ( -}}
