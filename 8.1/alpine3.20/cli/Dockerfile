@@ -116,10 +116,13 @@ RUN set -eux; \
 		libsodium-dev \
 		libxml2-dev \
 		linux-headers \
+		lz4-dev \
 		oniguruma-dev \
 		openssl-dev \
 		readline-dev \
 		sqlite-dev \
+		sqlite-dev \
+		zstd-dev \
 	; \
 	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
@@ -220,12 +223,21 @@ RUN set -eux; \
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 	pecl install redis; \
 =======
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
 	pecl install ds; \
 	pecl install igbinary;\
 >>>>>>> 5030ce88 (feat: add igbinary ext)
+=======
+	pecl install msgpack; \
+	pecl install igbinary; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
+	pecl install ds; \
+>>>>>>> e9df8816 (update redis swoole ext)
 	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -237,12 +249,19 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
 <<<<<<< HEAD
+<<<<<<< HEAD
     docker-php-ext-enable redis; \
 =======
 	docker-php-ext-enable redis; \
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 >>>>>>> 5030ce88 (feat: add igbinary ext)
+=======
+	docker-php-ext-enable ds; \
+	docker-php-ext-enable igbinary; \
+	docker-php-ext-enable msgpack; \
+	docker-php-ext-enable redis; \
+>>>>>>> e9df8816 (update redis swoole ext)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \

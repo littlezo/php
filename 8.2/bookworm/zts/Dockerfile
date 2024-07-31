@@ -177,12 +177,15 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		libargon2-dev \
 		libcurl4-openssl-dev \
+		liblz4-dev \
 		libonig-dev \
 		libreadline-dev \
 		libsodium-dev \
 		libsqlite3-dev \
+		libsqlite3-dev \
 		libssl-dev \
 		libxml2-dev \
+		libzstd-dev \
 		zlib1g-dev \
 	; \
 	\
@@ -325,6 +328,7 @@ RUN set -eux; \
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:8.2/bookworm/zts/Dockerfile
 <<<<<<< HEAD:8.2/bookworm/zts/Dockerfile
 =======
@@ -337,8 +341,14 @@ RUN set -eux; \
 >>>>>>> 959e5a5a (builder):8.2-rc/buster/zts/Dockerfile
 =======
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
+=======
+	pecl install msgpack; \
+	pecl install igbinary; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
+>>>>>>> e9df8816 (update redis swoole ext)
 	pecl install ds; \
-	pecl install igbinary;\
 	 \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	rm -rf /tmp/pear ~/.pearrc; \
@@ -350,6 +360,7 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
+<<<<<<< HEAD
 <<<<<<< HEAD
     docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
@@ -365,8 +376,12 @@ RUN set -eux; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 =======
 	docker-php-ext-enable redis; \
+=======
+>>>>>>> e9df8816 (update redis swoole ext)
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
+	docker-php-ext-enable msgpack; \
+	docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \

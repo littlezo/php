@@ -179,12 +179,15 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		libargon2-dev \
 		libcurl4-openssl-dev \
+		liblz4-dev \
 		libonig-dev \
 		libreadline-dev \
 		libsodium-dev \
 		libsqlite3-dev \
+		libsqlite3-dev \
 		libssl-dev \
 		libxml2-dev \
+		libzstd-dev \
 		zlib1g-dev \
 	; \
 	\
@@ -321,6 +324,7 @@ RUN set -eux; \
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 	pecl install redis; \
 =======
 	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
@@ -330,6 +334,14 @@ RUN set -eux; \
 =======
 	pecl install igbinary;\
 >>>>>>> 5030ce88 (feat: add igbinary ext)
+=======
+	pecl install msgpack; \
+	pecl install igbinary; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
+	pecl install ds; \
+>>>>>>> e9df8816 (update redis swoole ext)
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -342,9 +354,12 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 RUN docker-php-ext-enable sodium; \
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     docker-php-ext-enable redis; \
 =======
 	docker-php-ext-enable redis; \
+=======
+>>>>>>> e9df8816 (update redis swoole ext)
 	docker-php-ext-enable ds; \
 <<<<<<< HEAD
 >>>>>>> e93d3047 (fix: swoole build error)
@@ -354,7 +369,12 @@ RUN docker-php-ext-enable sodium; \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 =======
 	docker-php-ext-enable igbinary; \
+<<<<<<< HEAD
 >>>>>>> 5030ce88 (feat: add igbinary ext)
+=======
+	docker-php-ext-enable msgpack; \
+	docker-php-ext-enable redis; \
+>>>>>>> e9df8816 (update redis swoole ext)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
