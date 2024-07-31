@@ -32,80 +32,80 @@ jobs:
       - name: Check Git Status
         run: |
           # status="$(git status --short)"
-          if [ -n "$(git status --short)" ]; then
-            return 0;
+          if [ -z "$(git status --short)" ]; then
+            exit 0;
           else
             exit 0;
           fi
-  generate-jobs:
-    needs: apply-templates
-    name: Generate Jobs
-    runs-on: ubuntu-latest
-    outputs:
-      strategy: ${{ steps.generate-jobs.outputs.strategy }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker-library/bashbrew@HEAD
-      - id: generate-jobs
-        name: Generate Jobs
-        run: |
-          # echo "$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
-          # strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
-          strategy="$("./scripts/github-actions/generate.sh")"
-          EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
-          echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
-          jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
-          echo "$EOF" >> "$GITHUB_OUTPUT"
-  build:
-    needs: generate-jobs
-    strategy: ${{ fromJson(needs.generate-jobs.outputs.strategy) }}
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Login to the Github Container registry
-        run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
-      - name: Login to the Aliyun ACR registry
-        run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
-      - name: Prepare Environment
-        run: ${{ matrix.runs.prepare }}
-      - name: Pull Dependencies
-        run: ${{ matrix.runs.pull }}
-      - name: Build ${{ matrix.name }}
-        run: ${{ matrix.runs.build }}
-      - name: History ${{ matrix.name }}
-        run: ${{ matrix.runs.history }}
-      - name: Test ${{ matrix.name }}
-        run: ${{ matrix.runs.test }}
-      - name: '"Docker images"'
-        run: ${{ matrix.runs.images }}
-      - name: Push images ${{ matrix.name }}
-        run: ${{ matrix.runs.push }}
-  changes:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Check Git Status
-      run: |
-        status="$(git status --short)"
-        [ -z "$status" ]
-    - name: Push changes
-      run: |
-        if git diff --exit-code; then
-          echo "No changes to commit"
-        else
-          git merge
-          git config --global user.name 'GitHub Actions'
-          git config user.email github-actions@github.com
-          git add .
-          git commit -am "ci: Update Docker image version"
-          git config pull.rebase false
-          git pull
-          git merge
-          git push
-        fi
-    - name: Remove Untagged Release
-      run: ./untagged.sh
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # generate-jobs:
+  #   needs: apply-templates
+  #   name: Generate Jobs
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     strategy: ${{ steps.generate-jobs.outputs.strategy }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: docker-library/bashbrew@HEAD
+  #     - id: generate-jobs
+  #       name: Generate Jobs
+  #       run: |
+  #         # echo "$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+  #         # strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+  #         strategy="$("./scripts/github-actions/generate.sh")"
+  #         EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
+  #         echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
+  #         jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
+  #         echo "$EOF" >> "$GITHUB_OUTPUT"
+  # build:
+  #   needs: generate-jobs
+  #   strategy: ${{ fromJson(needs.generate-jobs.outputs.strategy) }}
+  #   name: ${{ matrix.name }}
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Login to the Github Container registry
+  #       run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
+  #     - name: Login to the Aliyun ACR registry
+  #       run: docker login --username ${{ vars.ACR_USERNAME }} --password ${{ secrets.ACR_TOKEN }}  ${{ vars.ACR_REGISTRY }}
+  #     - name: Prepare Environment
+  #       run: ${{ matrix.runs.prepare }}
+  #     - name: Pull Dependencies
+  #       run: ${{ matrix.runs.pull }}
+  #     - name: Build ${{ matrix.name }}
+  #       run: ${{ matrix.runs.build }}
+  #     - name: History ${{ matrix.name }}
+  #       run: ${{ matrix.runs.history }}
+  #     - name: Test ${{ matrix.name }}
+  #       run: ${{ matrix.runs.test }}
+  #     - name: '"Docker images"'
+  #       run: ${{ matrix.runs.images }}
+  #     - name: Push images ${{ matrix.name }}
+  #       run: ${{ matrix.runs.push }}
+  # changes:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Check Git Status
+  #     run: |
+  #       status="$(git status --short)"
+  #       [ -z "$status" ]
+  #   - name: Push changes
+  #     run: |
+  #       if git diff --exit-code; then
+  #         echo "No changes to commit"
+  #       else
+  #         git merge
+  #         git config --global user.name 'GitHub Actions'
+  #         git config user.email github-actions@github.com
+  #         git add .
+  #         git commit -am "ci: Update Docker image version"
+  #         git config pull.rebase false
+  #         git pull
+  #         git merge
+  #         git push
+  #       fi
+  #   - name: Remove Untagged Release
+  #     run: ./untagged.sh
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
