@@ -32,30 +32,31 @@ jobs:
       - name: Check Git Status
         run: |
           # status="$(git status --short)"
-          if [ -z "$(git status --short)" ]; then
-            exit 0;
-          else
-            exit 0;
-          fi
-  # generate-jobs:
-  #   needs: apply-templates
-  #   name: Generate Jobs
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     strategy: ${{ steps.generate-jobs.outputs.strategy }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: docker-library/bashbrew@HEAD
-  #     - id: generate-jobs
-  #       name: Generate Jobs
-  #       run: |
-  #         # echo "$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
-  #         # strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
-  #         strategy="$("./scripts/github-actions/generate.sh")"
-  #         EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
-  #         echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
-  #         jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
-  #         echo "$EOF" >> "$GITHUB_OUTPUT"
+          [ -z status="$(git status --short)" ]
+          # if [ -z "$(git status --short)" ]; then
+          #   exit 0;
+          # else
+          #   exit 0;
+          # fi
+  generate-jobs:
+    needs: apply-templates
+    name: Generate Jobs
+    runs-on: ubuntu-latest
+    outputs:
+      strategy: ${{ steps.generate-jobs.outputs.strategy }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker-library/bashbrew@HEAD
+      - id: generate-jobs
+        name: Generate Jobs
+        run: |
+          # echo "$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+          # strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+          strategy="$("./scripts/github-actions/generate.sh")"
+          EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
+          echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
+          jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
   # build:
   #   needs: generate-jobs
   #   strategy: ${{ fromJson(needs.generate-jobs.outputs.strategy) }}
