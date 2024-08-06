@@ -1,14 +1,11 @@
 name: GitHub CI
 
 on:
-  # workflow_run:
-  #   workflows: ["Release"]
-  #   types:
-  #     - completed
-  push:
-    paths:
-      - '8.*/**'
-      - ’versions.json'
+  workflow_run:
+    workflows: ["Release"]
+    types:
+      - completed
+
   # pull_request:
   # push:
   # workflow_dispatch:
