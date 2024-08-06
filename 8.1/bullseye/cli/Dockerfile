@@ -458,9 +458,6 @@ RUN set -eux; \
 =======
 >>>>>>> e1fdcca1 (ci: Update Docker image version)
 	pecl install ds; \
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	 \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	rm -rf /tmp/pear ~/.pearrc; \
@@ -627,6 +624,9 @@ RUN docker-php-ext-enable sodium; \
 >>>>>>> 5030ce88 (feat: add igbinary ext)
 =======
 	docker-php-ext-enable msgpack; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	docker-php-ext-enable redis; \
 >>>>>>> e9df8816 (update redis swoole ext)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \

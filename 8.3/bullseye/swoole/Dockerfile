@@ -333,12 +333,15 @@ RUN set -eux; \
 	pecl install igbinary; \
 	pecl install ds; \
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> e9df8816 (update redis swoole ext)
 =======
 	pecl install --configureoptions 'enable-redis-igbinary="yes" \
 	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
 	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 >>>>>>> f033d8e2 (ci: Update Docker image version)
+=======
+>>>>>>> 5bfc178f (ci: Update Docker image version)
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -437,6 +440,9 @@ RUN docker-php-ext-enable sodium; \
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 	docker-php-ext-enable msgpack; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \

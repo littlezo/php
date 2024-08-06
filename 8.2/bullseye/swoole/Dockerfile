@@ -292,9 +292,6 @@ RUN set -eux; \
 	pecl install msgpack; \
 	pecl install igbinary; \
 	pecl install ds; \
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -308,6 +305,9 @@ RUN docker-php-ext-enable sodium; \
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 	docker-php-ext-enable msgpack; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
