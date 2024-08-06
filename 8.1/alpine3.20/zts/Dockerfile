@@ -229,6 +229,9 @@ RUN set -eux; \
 =======
 >>>>>>> e1fdcca1 (ci: Update Docker image version)
 	pecl install ds; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	apk del --no-network .build-deps; \
 >>>>>>> 5030ce88 (feat: add igbinary ext)
 	rm -rf /tmp/pear ~/.pearrc; \
@@ -241,6 +244,7 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 RUN docker-php-ext-enable sodium
 =======
 RUN docker-php-ext-enable sodium; \
@@ -250,6 +254,9 @@ RUN pecl install --configureoptions 'enable-redis-igbinary="yes" \
 	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	docker-php-ext-enable sodium; \
 >>>>>>> e1fdcca1 (ci: Update Docker image version)
+=======
+RUN docker-php-ext-enable sodium; \
+>>>>>>> f033d8e2 (ci: Update Docker image version)
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 	docker-php-ext-enable msgpack; \
