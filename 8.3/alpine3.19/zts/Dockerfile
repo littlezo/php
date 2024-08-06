@@ -24,17 +24,18 @@ ENV PHPIZE_DEPS \
 		libc-dev \
 		make \
 		pkgconf \
-		lz4 \
-		lz4-dev \
-		zstd-dev \
-		sqlite-dev \
 		re2c
 
 # persistent / runtime deps
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 RUN set -eux; \
 	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+=======
+# RUN set -eux; \
+# 	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+>>>>>>> e1fdcca1 (ci: Update Docker image version)
 
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 RUN apk add --no-cache \
@@ -172,13 +173,15 @@ RUN set -eux; \
 		libsodium-dev \
 		libxml2-dev \
 		linux-headers \
+		lz4 \
 		lz4-dev \
+		lz4-libs \
 		oniguruma-dev \
 		openssl-dev \
 		readline-dev \
 		sqlite-dev \
-		sqlite-dev \
 		zstd-dev \
+		zstd-libs \
 	; \
 	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
@@ -307,9 +310,6 @@ RUN set -eux; \
 =======
 	pecl install msgpack; \
 	pecl install igbinary; \
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	pecl install ds; \
 >>>>>>> e9df8816 (update redis swoole ext)
 	apk del --no-network .build-deps; \
@@ -321,6 +321,7 @@ RUN set -eux; \
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
+<<<<<<< HEAD
 RUN docker-php-ext-enable sodium; \
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -340,6 +341,12 @@ RUN set -eux; \
 	docker-php-ext-enable redis; \
 =======
 >>>>>>> e9df8816 (update redis swoole ext)
+=======
+RUN pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
+	docker-php-ext-enable sodium; \
+>>>>>>> e1fdcca1 (ci: Update Docker image version)
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 	docker-php-ext-enable msgpack; \

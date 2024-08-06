@@ -68,9 +68,6 @@ RUN set -eux; \
 	chmod 1777 /var/www/html
 =======
 		pkg-config \
-		liblz4-dev \
-		libzstd-dev \
-		libsqlite3-dev \
 		re2c
 
 # persistent / runtime deps
@@ -237,7 +234,6 @@ RUN set -eux; \
 		libonig-dev \
 		libreadline-dev \
 		libsodium-dev \
-		libsqlite3-dev \
 		libsqlite3-dev \
 		libssl-dev \
 		libxml2-dev \
@@ -451,9 +447,6 @@ CMD ["php-fpm"]
 	pecl update-channels; \
 	pecl install msgpack; \
 	pecl install igbinary; \
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	pecl install ds; \
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
@@ -464,7 +457,10 @@ CMD ["php-fpm"]
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
-RUN docker-php-ext-enable sodium; \
+RUN pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
+	docker-php-ext-enable sodium; \
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 	docker-php-ext-enable msgpack; \
@@ -498,6 +494,9 @@ ENV EXTRA_LIBS \
 	libcurl4-openssl-dev \
 	libbrotli1 \
 	libbrotli-dev \
+	liblz4-dev \
+	libzstd-dev \
+	libsqlite3-dev \
 	libtidy-dev \
 	libc-ares-dev \
 	libzip-dev
@@ -511,7 +510,6 @@ RUN set -eux; \
 RUN set -ex; \
 	pecl channel-update pecl.php.net; \
 	docker-php-ext-install $EXTRA_EXT; \
-	docker-php-ext-enable redis; \
 	docker-php-ext-install sockets; \
 	docker-php-source extract; \
 	pecl install --configureoptions 'enable-sockets="no" enable-openssl="yes" \

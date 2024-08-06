@@ -32,9 +32,6 @@ ENV PHPIZE_DEPS \
 		libc-dev \
 		make \
 		pkg-config \
-		liblz4-dev \
-		libzstd-dev \
-		libsqlite3-dev \
 		re2c
 
 # persistent / runtime deps
@@ -270,7 +267,6 @@ RUN set -eux; \
 		libreadline-dev \
 		libsodium-dev \
 		libsqlite3-dev \
-		libsqlite3-dev \
 		libssl-dev \
 		libxml2-dev \
 		libzstd-dev \
@@ -454,10 +450,13 @@ RUN set -eux; \
 =======
 	pecl install msgpack; \
 	pecl install igbinary; \
+<<<<<<< HEAD
 	pecl install --configureoptions 'enable-redis-igbinary="yes" \
 	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
 	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 >>>>>>> e9df8816 (update redis swoole ext)
+=======
+>>>>>>> e1fdcca1 (ci: Update Docker image version)
 	pecl install ds; \
 	 \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
@@ -592,6 +591,7 @@ RUN set -eux; \
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
+<<<<<<< HEAD
 RUN docker-php-ext-enable sodium; \
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -601,6 +601,12 @@ RUN docker-php-ext-enable sodium; \
 	docker-php-ext-enable redis; \
 =======
 >>>>>>> e9df8816 (update redis swoole ext)
+=======
+RUN pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
+	docker-php-ext-enable sodium; \
+>>>>>>> e1fdcca1 (ci: Update Docker image version)
 	docker-php-ext-enable ds; \
 <<<<<<< HEAD
 >>>>>>> e93d3047 (fix: swoole build error)
