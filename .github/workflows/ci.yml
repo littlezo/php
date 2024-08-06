@@ -63,6 +63,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: Login to the Docker registry
+        run: docker login --username ${{ vars.DOCKER_USERNAME  }} --password ${{ secrets.DOCKER_TOKEN }} ${{ vars.DOCKER_HOST }}
       - name: Login to the Github Container registry
         run: docker login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
       - name: Login to the Aliyun ACR registry
