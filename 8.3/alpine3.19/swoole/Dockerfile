@@ -407,11 +407,8 @@ RUN set -eux; \
 	pkgconf \
 	autoconf; \
 	\
-# update pecl channel definitions https://github.com/docker-library/php/issues/443
-	pecl update-channels; \
-	pecl install msgpack; \
-	pecl install igbinary; \
-	pecl install ds; \
+	# update pecl channel definitions https://github.com/docker-library/php/issues/443
+  pecl update-channels; \
 	apk del --no-network .build-deps; \
 >>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	rm -rf /tmp/pear ~/.pearrc; \
@@ -420,6 +417,13 @@ RUN set -eux; \
 # smoke test
 	php --version
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
+
+RUN pecl install msgpack; \
+	pecl install igbinary; \
+	pecl install ds; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 <<<<<<< HEAD
@@ -511,16 +515,14 @@ RUN docker-php-ext-enable sodium; \
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 	docker-php-ext-enable msgpack; \
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
-	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	php --ri redis
 
 # swoole module
 ENV EXTRA_EXT \

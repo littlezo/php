@@ -232,6 +232,7 @@ RUN set -eux; \
 	pkgconf \
 	autoconf; \
 	\
+<<<<<<< HEAD
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 <<<<<<< HEAD
@@ -256,6 +257,10 @@ RUN set -eux; \
 >>>>>>> f033d8e2 (ci: Update Docker image version)
 =======
 >>>>>>> 5bfc178f (ci: Update Docker image version)
+=======
+	# update pecl channel definitions https://github.com/docker-library/php/issues/443
+  pecl update-channels; \
+>>>>>>> 7a6d57cd (ci: Update Docker image version)
 	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -263,6 +268,13 @@ RUN set -eux; \
 # smoke test
 	php --version
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
+
+RUN pecl install msgpack; \
+	pecl install igbinary; \
+	pecl install ds; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 <<<<<<< HEAD
@@ -289,17 +301,24 @@ RUN docker-php-ext-enable sodium; \
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 	docker-php-ext-enable msgpack; \
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
 	docker-php-ext-enable redis; \
 >>>>>>> e9df8816 (update redis swoole ext)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
+<<<<<<< HEAD
     sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
     sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+=======
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	php --ri redis
+
+>>>>>>> 7a6d57cd (ci: Update Docker image version)
 
 RUN set -eux; \
     curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
