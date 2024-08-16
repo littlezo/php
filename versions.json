@@ -470,7 +470,30 @@
     "version": "8.2.22"
 >>>>>>> 0b14ee1f (ci: Update Docker image version)
   },
-  "8.2-rc": null,
+  "8.2-rc": {
+    "ascUrl": "https://downloads.php.net/~sergey/php-8.2.23RC1.tar.xz.asc",
+    "sha256": "a3a87b1ab88219056fe6c9bfd96709744dddb59fdaf24661375a002d82044325",
+    "url": "https://downloads.php.net/~sergey/php-8.2.23RC1.tar.xz",
+    "variants": [
+      "bookworm/cli",
+      "bookworm/swoole",
+      "bookworm/zts",
+      "bookworm/swow",
+      "bullseye/cli",
+      "bullseye/swoole",
+      "bullseye/zts",
+      "bullseye/swow",
+      "alpine3.20/cli",
+      "alpine3.20/swoole",
+      "alpine3.20/zts",
+      "alpine3.20/swow",
+      "alpine3.19/cli",
+      "alpine3.19/swoole",
+      "alpine3.19/zts",
+      "alpine3.19/swow"
+    ],
+    "version": "8.2.23RC1"
+  },
   "8.3": {
 <<<<<<< HEAD
     "ascUrl": "https://www.php.net/distributions/php-8.3.7.tar.xz.asc",
@@ -661,6 +684,33 @@
 =======
     "version": "8.3.10"
   },
+<<<<<<< HEAD
   "8.3-rc": null
 >>>>>>> 0b14ee1f (ci: Update Docker image version)
+=======
+  "8.3-rc": {
+    "ascUrl": "https://downloads.php.net/~jakub/php-8.3.11RC1.tar.xz.asc",
+    "sha256": "03e2982f21578c2ffe962cb0465ef970ff43109b23a4879557ccc7e89ce03867",
+    "url": "https://downloads.php.net/~jakub/php-8.3.11RC1.tar.xz",
+    "variants": [
+      "bookworm/cli",
+      "bookworm/swoole",
+      "bookworm/zts",
+      "bookworm/swow",
+      "bullseye/cli",
+      "bullseye/swoole",
+      "bullseye/zts",
+      "bullseye/swow",
+      "alpine3.20/cli",
+      "alpine3.20/swoole",
+      "alpine3.20/zts",
+      "alpine3.20/swow",
+      "alpine3.19/cli",
+      "alpine3.19/swoole",
+      "alpine3.19/zts",
+      "alpine3.19/swow"
+    ],
+    "version": "8.3.11RC1"
+  }
+>>>>>>> 83443a4d (ci: Update Docker image version)
 }
