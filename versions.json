@@ -689,9 +689,9 @@
 >>>>>>> 0b14ee1f (ci: Update Docker image version)
 =======
   "8.3-rc": {
-    "ascUrl": "https://downloads.php.net/~jakub/php-8.3.11RC1.tar.xz.asc",
-    "sha256": "03e2982f21578c2ffe962cb0465ef970ff43109b23a4879557ccc7e89ce03867",
-    "url": "https://downloads.php.net/~jakub/php-8.3.11RC1.tar.xz",
+    "ascUrl": "https://downloads.php.net/~jakub/php-8.3.11RC2.tar.xz.asc",
+    "sha256": "207130b9b57c4a3f7e78014e2c0d8adbaad7cf12675dff41e2510f227b81cf01",
+    "url": "https://downloads.php.net/~jakub/php-8.3.11RC2.tar.xz",
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -710,7 +710,7 @@
       "alpine3.19/zts",
       "alpine3.19/swow"
     ],
-    "version": "8.3.11RC1"
+    "version": "8.3.11RC2"
   }
 >>>>>>> 83443a4d (ci: Update Docker image version)
 }
