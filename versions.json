@@ -289,6 +289,7 @@
   "8.2": {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "ascUrl": "https://www.php.net/distributions/php-8.2.20.tar.xz.asc",
     "sha256": "4474cc430febef6de7be958f2c37253e5524d5c5331a7e1765cd2d2234881e50",
     "url": "https://www.php.net/distributions/php-8.2.20.tar.xz",
@@ -447,6 +448,11 @@
     "ascUrl": "https://downloads.php.net/~pierrick/php-8.2.22RC1.tar.xz.asc",
     "sha256": "7d39f89df220be4e479c7aa185424ef68273f079bcb787ea6397e0054938d063",
     "url": "https://downloads.php.net/~pierrick/php-8.2.22RC1.tar.xz",
+=======
+    "ascUrl": "https://www.php.net/distributions/php-8.2.23.tar.xz.asc",
+    "sha256": "81c5ae6ba44e262a076349ee54a2e468638a4571085d80bff37f6fd308e1d8d5",
+    "url": "https://www.php.net/distributions/php-8.2.23.tar.xz",
+>>>>>>> 120fa435 (ci: Update Docker image version)
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -465,6 +471,7 @@
       "alpine3.19/zts",
       "alpine3.19/swow"
     ],
+<<<<<<< HEAD
     "version": "8.2.22RC1"
 =======
     "version": "8.2.22"
@@ -493,8 +500,13 @@
       "alpine3.19/swow"
     ],
     "version": "8.2.23RC1"
+=======
+    "version": "8.2.23"
+>>>>>>> 120fa435 (ci: Update Docker image version)
   },
+  "8.2-rc": null,
   "8.3": {
+<<<<<<< HEAD
 <<<<<<< HEAD
     "ascUrl": "https://www.php.net/distributions/php-8.3.7.tar.xz.asc",
     "sha256": "d53433c1ca6b2c8741afa7c524272e6806c1e895e5912a058494fea89988570a",
@@ -512,6 +524,11 @@
     "sha256": "a0f2179d00931fe7631a12cbc3428f898ca3d99fe564260c115af381d2a1978d",
     "url": "https://www.php.net/distributions/php-8.3.10.tar.xz",
 >>>>>>> 0b14ee1f (ci: Update Docker image version)
+=======
+    "ascUrl": "https://www.php.net/distributions/php-8.3.11.tar.xz.asc",
+    "sha256": "b862b098a08ab9bf4b36ed12c7d0d9f65353656b36fb0e3c5344093aceb35802",
+    "url": "https://www.php.net/distributions/php-8.3.11.tar.xz",
+>>>>>>> 120fa435 (ci: Update Docker image version)
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -530,6 +547,7 @@
       "alpine3.19/zts",
       "alpine3.19/swow"
     ],
+<<<<<<< HEAD
 <<<<<<< HEAD
     "version": "8.2.21RC1"
 =======
@@ -713,4 +731,9 @@
     "version": "8.3.11RC2"
   }
 >>>>>>> 83443a4d (ci: Update Docker image version)
+=======
+    "version": "8.3.11"
+  },
+  "8.3-rc": null
+>>>>>>> 120fa435 (ci: Update Docker image version)
 }
