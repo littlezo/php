@@ -237,9 +237,12 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 RUN pecl install msgpack; \
 	pecl install igbinary; \
 	pecl install ds; \
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis
+	\
+	# pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	# enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	# enable-redis-lz4="yes" with-liblz4="yes"' redis \
+	\ 
+	pecl install redis
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
