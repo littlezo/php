@@ -4,10 +4,6 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM debian:bullseye-slim
 
 # prevent Debian's PHP packages from being installed
@@ -86,37 +82,15 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-ENV PHP_VERSION 8.1.14
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.14.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.14.tar.xz.asc"
-ENV PHP_SHA256="e16e47a872d58685913ac848ce92ec49f42c1828110c98c65fb6265a08724a1a"
-=======
-ENV PHP_VERSION 8.1.27
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
-ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
-=======
-ENV PHP_VERSION 8.1.28
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.28.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.28.tar.xz.asc"
-ENV PHP_SHA256="95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080"
->>>>>>> d0053071 (feat: up)
-=======
 ENV PHP_VERSION 8.1.29
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.29.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.29.tar.xz.asc"
 ENV PHP_SHA256="288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536"
->>>>>>> 995be175 (ci: Update Docker image version)
 
 RUN set -eux; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
-<<<<<<< HEAD
-	apt-get install -y --no-install-recommends gnupg dirmngr; \
-=======
 	apt-get install -y --no-install-recommends gnupg; \
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
@@ -167,12 +141,9 @@ RUN set -eux; \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
-<<<<<<< HEAD
-=======
 # https://github.com/php/php-src/blob/d6299206dd828382753453befd1b915491b741c6/configure.ac#L1496-L1511
 		PHP_BUILD_PROVIDER='https://github.com/docker-library/php' \
 		PHP_UNAME='Linux - Docker' \
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
@@ -222,9 +193,10 @@ RUN set -eux; \
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
-# bundled pcre does not support JIT on s390x
-# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
-		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
+# bundled pcre does not support JIT on riscv64 until 10.41 (php 8.3+)
+# https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
+# https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
+		$(test "$gnuArch" = 'riscv64-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
 		\
 		--disable-cgi \
@@ -253,15 +225,7 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
-<<<<<<< HEAD
-<<<<<<< HEAD
-		| awk '/=>/ { print $(NF-1) }' \
-=======
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
-=======
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
->>>>>>> d0053071 (feat: up)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -376,8 +340,3 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
-<<<<<<< HEAD
-=======
->>>>>>> 68507dcf (up)
-=======
->>>>>>> 0e455fac (fix: 8.0 gpg keys)

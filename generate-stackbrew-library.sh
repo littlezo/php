@@ -52,28 +52,7 @@ getArches() {
 			| xargs bashbrew cat --format '[{{ .RepoName }}:{{ .TagName }}]="{{ join " " .TagEntry.Architectures }}"'
 	) )"
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
 getArches 'php'
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-getArches 'littleof/php'
->>>>>>> 2863c5ab (up)
-cat <<-EOH
-	# this file is generated via https://github.com/docker-library/php/blob/$(fileCommit "$self")/$self
-=======
-getArches 'php'
->>>>>>> 60f9f684 (up)
-
-=======
-echo $parentRepoToArches
->>>>>>> 5dd26455 (up)
-cat <<-EOH
-# this file is generated via https://github.com/docker-library/php/blob/$(fileCommit "$self")/$self
-=======
->>>>>>> d40358db (feat: ci)
 
 cat <<-EOH
 # this file is generated via https://github.com/littlezo/php/blob/$(fileCommit "$self")/$self
@@ -151,20 +130,10 @@ for version; do
 			variantAliases+=( "${versionAliases[@]}" )
 		fi
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 60f9f684 (up)
 		suiteVariantAliases=( "${variantAliases[@]/%/-$suite}" )
 		if [ "$suite" = "$defaultAlpineVariant" ] ; then
 			variantAliases=( "${variantAliases[@]/%/-alpine}" )
 		elif [ "$suite" != "$defaultDebianVariant" ]; then
-=======
-		suiteVariantAliases=("${variantAliases[@]/%/-$suite}")
-		if [ "${suite#alpine}" = "${alpineVersions[$version]:-$defaultAlpineVersion}" ]; then
-			variantAliases=("${variantAliases[@]/%/-alpine}")
-		elif [ "$suite" != "${debianSuites[$version]:-$defaultDebianSuite}" ]; then
->>>>>>> 26d9c2c0 (feat: ci)
 			variantAliases=()
 		fi
 		variantAliases=( "${suiteVariantAliases[@]}" ${variantAliases[@]+"${variantAliases[@]}"} )

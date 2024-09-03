@@ -10,6 +10,8 @@ FROM alpine:3.19
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 ENV PHPIZE_DEPS \
 		autoconf \
+		procps \
+		wget \
 		dpkg-dev dpkg \
 		file \
 		g++ \
@@ -20,6 +22,9 @@ ENV PHPIZE_DEPS \
 		re2c
 
 # persistent / runtime deps
+# RUN set -eux; \
+# 	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 RUN apk add --no-cache \
 		ca-certificates \
 		curl \
@@ -31,7 +36,9 @@ RUN apk add --no-cache \
 RUN set -eux; \
 	addgroup -Sg 83 little; \
 	adduser -u 82 -D -S  -s /sbin/nologin -G little -g little little
+#	adduser -u 82 -D -S -G little little
 # 82 is the standard uid/gid for "little" in Alpine
+# https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
 
@@ -40,27 +47,12 @@ ENV PHP_INI_DIR=/usr/local/etc/php \
 	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
-<<<<<<< HEAD:8.4-rc/alpine3.19/cli/Dockerfile
-<<<<<<< HEAD:8.4-rc/alpine3.19/cli/Dockerfile
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
-	[ ! -d /var/www/html ]; \
-	mkdir -p /var/www/html; \
-	chown www-data:www-data /var/www/html; \
-	chmod 1777 /var/www/html
-=======
-=======
-# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
->>>>>>> 959e5a5a (builder):8.1/alpine3.15/cli/Dockerfile
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 
-<<<<<<< HEAD:8.4-rc/alpine3.19/cli/Dockerfile
->>>>>>> b6080d7e (cli and zts):8.1/alpine3.15/cli/Dockerfile
-
-=======
->>>>>>> 959e5a5a (builder):8.1/alpine3.15/cli/Dockerfile
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -115,10 +107,15 @@ RUN set -eux; \
 		libsodium-dev \
 		libxml2-dev \
 		linux-headers \
+		lz4 \
+		lz4-dev \
+		lz4-libs \
 		oniguruma-dev \
 		openssl-dev \
 		readline-dev \
 		sqlite-dev \
+		zstd-dev \
+		zstd-libs \
 	; \
 	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
@@ -210,9 +207,8 @@ RUN set -eux; \
 	pkgconf \
 	autoconf; \
 	\
-# update pecl channel definitions https://github.com/docker-library/php/issues/443
-	pecl update-channels; \
-	pecl install redis; \
+	# update pecl channel definitions https://github.com/docker-library/php/issues/443
+  pecl update-channels; \
 	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -221,20 +217,32 @@ RUN set -eux; \
 	php --version
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
+RUN pecl install msgpack; \
+	pecl install igbinary; \
+	pecl install ds; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis
+
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
-    docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+	docker-php-ext-enable igbinary; \
+	docker-php-ext-enable msgpack; \
+	docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	php --ri redis
+
 
 RUN set -eux; \
-    curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
-    chmod a+x /usr/local/bin/composer; \
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
+	chmod a+x /usr/local/bin/composer; \
+	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH

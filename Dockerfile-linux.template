@@ -34,6 +34,8 @@ RUN set -eux; \
 {{ ) end -}}
 ENV PHPIZE_DEPS \
 		autoconf \
+		procps \
+		wget \
 		dpkg-dev {{ if is_alpine then "dpkg " else "" end }}\
 		file \
 		g++ \
@@ -45,6 +47,9 @@ ENV PHPIZE_DEPS \
 
 # persistent / runtime deps
 {{ if is_alpine then ( -}}
+# RUN set -eux; \
+# 	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 RUN apk add --no-cache \
 		ca-certificates \
 		curl \
@@ -54,27 +59,11 @@ RUN apk add --no-cache \
 
 # ensure app user exists
 RUN set -eux; \
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	adduser -u 82 -D -S -G www-data www-data
-# 82 is the standard uid/gid for "www-data" in Alpine
-# https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
-=======
-	addgroup -g 83 -S little; \
-	adduser -u 82 -D -S -G little little;
->>>>>>> b6080d7e (cli and zts)
-=======
-	addgroup -Sg 83 little; \
-	adduser -u 82 -D -S  -s /sbin/nologin -G little -g little little
-# 82 is the standard uid/gid for "little" in Alpine
->>>>>>> 959e5a5a (builder)
-=======
 	addgroup -Sg 83 app; \
 	adduser -u 82 -D -S  -s /sbin/nologin -G app -g app app
+#	adduser -u 82 -D -S -G app app
 # 82 is the standard uid/gid for "app" in Alpine
 # https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
->>>>>>> 2d5ae29b (feat: up)
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
 {{ ) else ( -}}
@@ -85,13 +74,22 @@ RUN set -eux; \
 		apt-transport-https \
 		ca-certificates \
 		ncat \
-		procps \
-		wget \
 		ca-certificates \
 		curl \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
+# RUN set -eux; \
+# { \
+# 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+# } | tee /etc/apt/sources.list
 # ensure app user exists
 RUN set -eux; \
 	addgroup --gid 82 --system app; \
@@ -103,90 +101,12 @@ ENV PHP_INI_DIR=/usr/local/etc/php \
 	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
-<<<<<<< HEAD
-<<<<<<< HEAD
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
-	[ ! -d /var/www/html ]; \
-	mkdir -p /var/www/html; \
-	chown www-data:www-data /var/www/html; \
-	chmod 1777 /var/www/html
-=======
-=======
-# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
->>>>>>> 959e5a5a (builder)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown app:app ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
->>>>>>> b6080d7e (cli and zts)
 
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends apache2; \
-	rm -rf /var/lib/apt/lists/*; \
-	\
-# generically convert lines like
-#   export APACHE_RUN_USER=www-data
-# into
-#   : ${APACHE_RUN_USER:=www-data}
-#   export APACHE_RUN_USER
-# so that they can be overridden at runtime ("-e APACHE_RUN_USER=...")
-	sed -ri 's/^export ([^=]+)=(.*)$/: ${\1:=\2}\nexport \1/' "$APACHE_ENVVARS"; \
-	\
-# setup directories and permissions
-	. "$APACHE_ENVVARS"; \
-	for dir in \
-		"$APACHE_LOCK_DIR" \
-		"$APACHE_RUN_DIR" \
-		"$APACHE_LOG_DIR" \
-{{ if [ "bullseye" ] | index(env.suite) then "" else ( -}}
-# https://salsa.debian.org/apache-team/apache2/-/commit/b97ca8714890ead1ba6c095699dde752e8433205
-		"$APACHE_RUN_DIR/socks" \
-{{ ) end -}}
-	; do \
-		rm -rvf "$dir"; \
-		mkdir -p "$dir"; \
-		chown "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$dir"; \
-# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
-		chmod 1777 "$dir"; \
-	done; \
-	\
-# delete the "index.html" that installing Apache drops in here
-	rm -rvf /var/www/html/*; \
-	\
-# logs should go to stdout / stderr
-	ln -sfT /dev/stderr "$APACHE_LOG_DIR/error.log"; \
-	ln -sfT /dev/stdout "$APACHE_LOG_DIR/access.log"; \
-	ln -sfT /dev/stdout "$APACHE_LOG_DIR/other_vhosts_access.log"; \
-	chown -R --no-dereference "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APACHE_LOG_DIR"
-
-# Apache + PHP requires preforking Apache for best results
-RUN a2dismod mpm_event && a2enmod mpm_prefork
-
-# PHP files should be handled by PHP, and should be preferred over any other file type
-RUN { \
-		echo '<FilesMatch \.php$>'; \
-		echo '\tSetHandler application/x-httpd-php'; \
-		echo '</FilesMatch>'; \
-		echo; \
-		echo 'DirectoryIndex disabled'; \
-		echo 'DirectoryIndex index.php index.html'; \
-		echo; \
-		echo '<Directory /var/www/>'; \
-		echo '\tOptions -Indexes'; \
-		echo '\tAllowOverride All'; \
-		echo '</Directory>'; \
-	} | tee "$APACHE_CONFDIR/conf-available/docker-php.conf" \
-	&& a2enconf docker-php
-
-{{ ) else "" end -}}
-=======
->>>>>>> b6080d7e (cli and zts)
-=======
->>>>>>> 959e5a5a (builder)
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -330,14 +250,14 @@ RUN set -eux; \
 			"libcurl4-openssl-dev",
 			"libreadline-dev",
 			"libsodium-dev",
-			"libsqlite3-dev",
 			"libssl-dev",
 			"libxml2-dev",
 			"zlib1g-dev",
 			# oniguruma is part of mbstring in php 7.4+
 			"libonig-dev",
 			"liblz4-dev",
-			"libzstd-dev"
+			"libzstd-dev",
+			"libsqlite3-dev"
 		end ] | sort[] | (
 -}}
 		{{ . }} \
@@ -423,24 +343,12 @@ RUN set -eux; \
 # https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
 {{ if is_alpine then ( -}}
-<<<<<<< HEAD
-<<<<<<< HEAD
 		$(test "$gnuArch" = 'riscv64-linux-musl' && echo '--without-pcre-jit') \
 {{ ) else ( -}}
 		$(test "$gnuArch" = 'riscv64-linux-gnu' && echo '--without-pcre-jit') \
 {{ ) end -}}
 {{ ) else "" end -}}
 {{ if is_alpine then "" else ( -}}
-=======
-		$(test "$gnuArch" = 's390x-linux-musl'; echo '--without-pcre-jit') \
-{{ ) else ( -}}
-		$(test "$gnuArch" = 's390x-linux-gnu'; echo '--without-pcre-jit') \
->>>>>>> e93d3047 (fix: swoole build error)
-=======
-		$(test "$gnuArch" = 's390x-linux-musl' && echo '--without-pcre-jit') \
-{{ ) else ( -}}
-		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
->>>>>>> 6d04cee6 (fix: Fix syntax)
 		--with-libdir="lib/$debMultiarch" \
 {{ ) end -}}
 {{ # https://github.com/docker-library/php/issues/280 -}}
@@ -500,8 +408,16 @@ RUN set -eux; \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
 	apk add --no-cache $runDeps; \
-	\
-	apk del --no-network .build-deps; \
+		\
+	# apk del --no-network .build-deps; \
+		\
+	apk add --no-cache --virtual .build-deps \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	autoconf; \
 {{ ) else ( -}}
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
@@ -518,92 +434,29 @@ RUN set -eux; \
 	rm -rf /var/lib/apt/lists/*; \
 {{ ) end -}}
 	\
-<<<<<<< HEAD
-<<<<<<< HEAD
-# update pecl channel definitions https://github.com/docker-library/php/issues/443
-	pecl update-channels; \
-<<<<<<< HEAD
-<<<<<<< HEAD
-	pecl install redis; \
-=======
-	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
-	pecl install ds; \
-	pecl install igbinary;\
->>>>>>> dfba0b57 (feat: add igbinary ext)
-=======
-	pecl install msgpack; \
-	pecl install igbinary; \
-	pecl install ds; \
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> e9df8816 (update redis swoole ext)
-=======
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
->>>>>>> fde5eb4d (fix redis)
-=======
->>>>>>> d45e75a9 (fix redis ext)
-=======
 	# update pecl channel definitions https://github.com/docker-library/php/issues/443
   pecl update-channels; \
->>>>>>> 9f98d15d (fix redis exit)
 	{{ if is_alpine then "apk del --no-network .build-deps;" else "" end}} \
-=======
-# update pecl channel definitions https://github.com/docker-library/php/issues/443
-	pecl update-channels; \
->>>>>>> 2d5ae29b (feat: up)
 	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*; \
 	\
 # smoke test
 	php --version
-
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
-# sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN pecl install msgpack; \
 	pecl install igbinary; \
-	pecl install --configureoptions 'enable-redis-igbinary="yes" enable-redis-lzf="yes" enable-redis-zstd="yes"' redis; \
 	pecl install ds; \
-<<<<<<< HEAD
 	pecl install --configureoptions 'enable-redis-igbinary="yes" \
 	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
 	enable-redis-lz4="yes" with-liblz4="yes"' redis
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
-<<<<<<< HEAD
-<<<<<<< HEAD
 RUN docker-php-ext-enable sodium; \
-<<<<<<< HEAD
-<<<<<<< HEAD
-    docker-php-ext-enable redis; \
-=======
-	docker-php-ext-enable redis; \
-=======
->>>>>>> e9df8816 (update redis swoole ext)
-=======
-RUN pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
-	docker-php-ext-enable sodium; \
->>>>>>> 290b5e6e (fix alpine)
-=======
-RUN docker-php-ext-enable sodium; \
->>>>>>> fde5eb4d (fix redis)
-=======
-  docker-php-ext-enable sodium; \
->>>>>>> 2d5ae29b (feat: up)
 	docker-php-ext-enable ds; \
-<<<<<<< HEAD
->>>>>>> e93d3047 (fix: swoole build error)
-=======
 	docker-php-ext-enable igbinary; \
-<<<<<<< HEAD
->>>>>>> dfba0b57 (feat: add igbinary ext)
-=======
 	docker-php-ext-enable msgpack; \
 	docker-php-ext-enable redis; \
->>>>>>> e9df8816 (update redis swoole ext)
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
@@ -808,24 +661,6 @@ RUN set -eux; \
 	chmod a+x /usr/local/bin/composer; \
 	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
-<<<<<<< HEAD
-=======
-{{
-	# https://github.com/docker-library/php/issues/865
-	# https://bugs.php.net/bug.php?id=76324
-	# https://github.com/php/php-src/pull/3632
-	# https://github.com/php/php-src/commit/2d03197749696ac3f8effba6b7977b0d8729fef3
-	if (is_alpine | not) and (.version | version_id) < ("7.4" | version_id) then (
--}}
-# temporary "freetype-config" workaround for https://github.com/docker-library/php/issues/865 (https://bugs.php.net/bug.php?id=76324)
-RUN { echo '#!/bin/sh'; echo 'exec pkg-config "$@" freetype2'; } > /usr/local/bin/freetype-config && chmod +x /usr/local/bin/freetype-config
-
-{{ ) else "" end -}}
-<<<<<<< HEAD
-
->>>>>>> b6080d7e (cli and zts)
-=======
->>>>>>> 959e5a5a (builder)
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
 
@@ -834,57 +669,4 @@ WORKDIR ${APP_ROOT}
 EXPOSE 80\
 	443
 
-<<<<<<< HEAD
-RUN set -eux; \
-	cd /usr/local/etc; \
-	if [ -d php-fpm.d ]; then \
-		# for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
-		sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
-		cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
-	else \
-		# PHP 5.x doesn't use "include=" by default, so we'll create our own simple config that mimics PHP 7+ for consistency
-		mkdir php-fpm.d; \
-		cp php-fpm.conf.default php-fpm.d/www.conf; \
-		{ \
-			echo '[global]'; \
-			echo 'include=etc/php-fpm.d/*.conf'; \
-		} | tee php-fpm.conf; \
-	fi; \
-	{ \
-		echo '[global]'; \
-		echo 'error_log = /proc/self/fd/2'; \
-		echo; echo '; https://github.com/docker-library/php/pull/725#issuecomment-443540114'; echo 'log_limit = 8192'; \
-		echo; \
-		echo '[www]'; \
-		echo '; php-fpm closes STDOUT on startup, so sending logs to /proc/self/fd/1 does not work.'; \
-		echo '; https://bugs.php.net/bug.php?id=73886'; \
-		echo 'access.log = /proc/self/fd/2'; \
-		echo; \
-		echo 'clear_env = no'; \
-		echo; \
-		echo '; Ensure worker stdout and stderr are sent to the main error log.'; \
-		echo 'catch_workers_output = yes'; \
-		echo 'decorate_workers_output = no'; \
-	} | tee php-fpm.d/docker.conf; \
-	{ \
-		echo '[global]'; \
-		echo 'daemonize = no'; \
-		echo; \
-		echo '[www]'; \
-		echo 'listen = 9000'; \
-	} | tee php-fpm.d/zz-docker.conf; \
-	mkdir -p "$PHP_INI_DIR/conf.d"; \
-	{ \
-		echo '; https://github.com/docker-library/php/issues/878#issuecomment-938595965'; \
-		echo 'fastcgi.logging = Off'; \
-	} > "$PHP_INI_DIR/conf.d/docker-fpm.ini"
-
-# Override stop signal to stop process gracefully
-# https://github.com/php/php-src/blob/17baa87faddc2550def3ae7314236826bc1b1398/sapi/fpm/php-fpm.8.in#L163
-STOPSIGNAL SIGQUIT
-
-EXPOSE 9000
-{{ ) else "" end -}}
-=======
->>>>>>> b6080d7e (cli and zts)
 CMD {{ env.cmd }}

@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 declare -A aliases=(
-	[8.2]='8 latest'
+	[8.3]='8 latest'
 )
 
 echo $ACR_NAMESPACE
@@ -77,85 +77,6 @@ for version; do
 	{
 		suite="$(dirname "$dir")" # "buster", etc
 		variant="$(basename "$dir")" # "cli", etc
-<<<<<<< HEAD
-		alpineVer="${suite#alpine}"  # "3.12", etc
-		tags="littleof/php:$fullVersion-$variant-$suite"
-		shortTags="littleof/php:$fullVersion-$variant"
-		versionTags="littleof/php:$fullVersion"
-		shortversionTags="littleof/php:$fullVersion"
-		echo build $tags
-		docker build -t $tags -f "$version/$dir/"Dockerfile ./"$version/$dir/"
-		docker push $tags
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 3faf28cf (up)
-		if [[ "$version" == "7.4" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-			docker tag $tags $shortTags
-			docker push $shortTags
-			docker tag $tags $versionTags
-			docker push $versionTags
-			docker tag $tags littleof/php:$version
-			docker push littleof/php:$version
-			docker tag $tags littleof/php:7
-			docker push littleof/php:7
-		fi
-		if [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-			docker tag $tags $shortTags
-			docker push $shortTags
-			docker push $versionTags-$variant
-			docker tag $tags littleof/php:$version-$variant
-		fi
-<<<<<<< HEAD
-		if [[ "$version" == "8.1" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-=======
-		if [[ "$version" == "8.2" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
->>>>>>> 3faf28cf (up)
-			docker tag $tags $shortTags
-			docker push $shortTags
-			docker tag $tags $versionTags
-			docker push $versionTags
-			docker tag $tags littleof/php:$version
-			docker push littleof/php:$version
-			docker tag $tags littleof/php:8
-			docker push littleof/php:8
-			docker tag $tags littleof/php:latest
-			docker push littleof/php:latest
-		fi
-<<<<<<< HEAD
-=======
-		# if [[ "$version" == "7.4" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-		# 	docker tag $tags $shortTags
-		# 	docker push $shortTags
-		# 	docker tag $tags $versionTags
-		# 	docker push $versionTags
-		# 	docker tag $tags littleof/php:$version
-		# 	docker push littleof/php:$version
-		# 	docker tag $tags littleof/php:7
-		# 	docker push littleof/php:7
-		# fi
-		# if [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-		# 	docker tag $tags $shortTags
-		# 	docker push $shortTags
-		# 	docker push $versionTags-$variant
-		# 	docker tag $tags littleof/php:$version-$variant
-		# fi
-		# if [[ "$version" == "8.2" ]] && [[ "$variant" == "cli" ]] && [[ "$suite" == "bullseye" ]]; then
-		# 	docker tag $tags $shortTags
-		# 	docker push $shortTags
-		# 	docker tag $tags $versionTags
-		# 	docker push $versionTags
-		# 	docker tag $tags littleof/php:$version
-		# 	docker push littleof/php:$version
-		# 	docker tag $tags littleof/php:8
-		# 	docker push littleof/php:8
-		# 	docker tag $tags littleof/php:latest
-		# 	docker push littleof/php:latest
-		# fi
->>>>>>> e93d3047 (fix: swoole build error)
-=======
->>>>>>> 3faf28cf (up)
-=======
 		dir="$version/$dir"
 		[ -f "$dir/Dockerfile" ] || continue
 
@@ -188,56 +109,8 @@ for version; do
 			docker push "$GH_REGISTRY/$GH_NAMESPACE/php:$ver"
 		}
 		done
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-		# echo  $(join ', ' "${variantAliases[@]}")
-		wait
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 2549d2b2 (up)
-=======
-	}&
->>>>>>> 58413dc3 (up)
-=======
-=======
-		echo  $(join ', ' "${variantAliases[@]}")
-<<<<<<< HEAD
->>>>>>> 3527f237 (feat: 优化构建)
-	}
-	# &
->>>>>>> 7a6e3eed (feat: docker login)
-=======
-	}&
->>>>>>> da7cf35b (up)
-=======
-	}
->>>>>>> cf9523ad (up)
-=======
-	}&
->>>>>>> 47c52ab7 (feat:ci)
-=======
-	}
->>>>>>> 51ad4bed (fix: 优化构建)
-=======
-	}&
->>>>>>> e3b15287 (feat: add push docker hub)
-=======
-		echo  $(join ', ' "${variantAliases[@]}")
-<<<<<<< HEAD
-	}
->>>>>>> c1ae64c6 (fix: build shell)
-=======
-	}&
->>>>>>> 8a1c3aeb (feat parallel suite build Update Release join build)
-=======
 		echo  $(join ', ' "${variantAliases[@]}")
 	}
->>>>>>> 0a9ad1ea (fix)
 	done
 }&
 done

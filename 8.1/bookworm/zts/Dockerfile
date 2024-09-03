@@ -4,10 +4,6 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 FROM debian:bookworm-slim
 
 # prevent Debian's PHP packages from being installed
@@ -47,9 +43,6 @@ RUN set -eux; \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
-<<<<<<< HEAD
-
-=======
 # RUN set -eux; \
 # { \
 # 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
@@ -61,7 +54,6 @@ RUN set -eux; \
 #   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
 #   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
 # } | tee /etc/apt/sources.list
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 # ensure little user exists
 RUN set -eux; \
 	addgroup --gid 82 --system little; \
@@ -73,23 +65,10 @@ ENV PHP_INI_DIR=/usr/local/etc/php \
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
-<<<<<<< HEAD
-<<<<<<< HEAD:8.1/bookworm/zts/Dockerfile
-	[ ! -d /var/www/html ]; \
-	mkdir -p /var/www/html; \
-	chown www-data:www-data /var/www/html; \
-	chmod 1777 /var/www/html
-=======
-=======
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
-<<<<<<< HEAD
->>>>>>> 959e5a5a (builder):8.0-rc/bullseye/cli/Dockerfile
-=======
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
@@ -103,27 +82,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 ENV PHP_VERSION 8.1.29
 ENV PHP_URL="https://www.php.net/distributions/php-8.1.29.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.29.tar.xz.asc"
 ENV PHP_SHA256="288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536"
-=======
-ENV PHP_VERSION 8.1.27
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.27.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.27.tar.xz.asc"
-ENV PHP_SHA256="479e65c3f05714d4aace1370e617d78e49e996ec7a7579a5be47535be61f0658"
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
-=======
-ENV PHP_VERSION 8.1.28
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.28.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.28.tar.xz.asc"
-ENV PHP_SHA256="95d0b2e9466108fd750dab5c30a09e5c67f5ad2cb3b1ffb3625a038a755ad080"
->>>>>>> d0053071 (feat: up)
-=======
-ENV PHP_VERSION 8.1.29
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.29.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.29.tar.xz.asc"
-ENV PHP_SHA256="288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536"
->>>>>>> 995be175 (ci: Update Docker image version)
 
 RUN set -eux; \
 	\
@@ -206,15 +167,7 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/822
 		--with-pic \
 		\
-<<<<<<< HEAD
-<<<<<<< HEAD
 # --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
-=======
-# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
-=======
-# --enable-ftp is included here for compatibility with existing versions. ftp_ssl_connect() needed ftp to be compiled statically before PHP 7.0 (see https://github.com/docker-library/php/issues/236).
->>>>>>> d0053071 (feat: up)
 		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
 		--enable-mbstring \
@@ -241,16 +194,10 @@ RUN set -eux; \
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
-<<<<<<< HEAD
 # bundled pcre does not support JIT on riscv64 until 10.41 (php 8.3+)
 # https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
 # https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
 		$(test "$gnuArch" = 'riscv64-linux-gnu' && echo '--without-pcre-jit') \
-=======
-# bundled pcre does not support JIT on s390x
-# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
-		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 		--with-libdir="lib/$debMultiarch" \
 		\
 # https://github.com/docker-library/php/pull/939#issuecomment-730501748
@@ -285,15 +232,7 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
-<<<<<<< HEAD
-<<<<<<< HEAD
 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
-=======
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
-=======
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
->>>>>>> d0053071 (feat: up)
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
@@ -303,38 +242,8 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
-<<<<<<< HEAD
-# update pecl channel definitions https://github.com/docker-library/php/issues/443
-	pecl update-channels; \
-<<<<<<< HEAD
-<<<<<<< HEAD
-	pecl install redis; \
-=======
-	pecl install --configureoptions 'enable-redis-igbinary="no" enable-redis-lzf="no" enable-redis-zstd="no"' redis; \
-	pecl install ds; \
-<<<<<<< HEAD
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
-=======
-	pecl install igbinary;\
->>>>>>> 5030ce88 (feat: add igbinary ext)
-=======
-	pecl install msgpack; \
-	pecl install igbinary; \
-	pecl install ds; \
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> e9df8816 (update redis swoole ext)
-=======
-	pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
->>>>>>> f033d8e2 (ci: Update Docker image version)
-=======
->>>>>>> 5bfc178f (ci: Update Docker image version)
-=======
 	# update pecl channel definitions https://github.com/docker-library/php/issues/443
   pecl update-channels; \
->>>>>>> 7a6d57cd (ci: Update Docker image version)
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -351,36 +260,7 @@ RUN pecl install msgpack; \
 	enable-redis-lz4="yes" with-liblz4="yes"' redis
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
-<<<<<<< HEAD
-<<<<<<< HEAD
 RUN docker-php-ext-enable sodium; \
-<<<<<<< HEAD
-<<<<<<< HEAD
-    docker-php-ext-enable redis; \
-	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
-
-RUN set -eux; \
-    curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
-    chmod a+x /usr/local/bin/composer; \
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-=======
-	docker-php-ext-enable redis; \
-=======
->>>>>>> e9df8816 (update redis swoole ext)
-=======
-RUN pecl install --configureoptions 'enable-redis-igbinary="yes" \
-	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
-	enable-redis-lz4="yes" with-liblz4="yes"' redis; \
-	docker-php-ext-enable sodium; \
->>>>>>> e1fdcca1 (ci: Update Docker image version)
-=======
-RUN docker-php-ext-enable sodium; \
->>>>>>> f033d8e2 (ci: Update Docker image version)
 	docker-php-ext-enable ds; \
 	docker-php-ext-enable igbinary; \
 	docker-php-ext-enable msgpack; \
@@ -398,7 +278,6 @@ RUN set -eux; \
 	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
 	chmod a+x /usr/local/bin/composer; \
 	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
->>>>>>> 0e455fac (fix: 8.0 gpg keys)
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
@@ -409,8 +288,3 @@ EXPOSE 80\
 	443
 
 CMD ["php", "-a"]
-<<<<<<< HEAD
-=======
->>>>>>> 68507dcf (up)
-=======
->>>>>>> 0e455fac (fix: 8.0 gpg keys)

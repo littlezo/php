@@ -19,6 +19,8 @@ RUN set -eux; \
 # (see persistent deps below)
 ENV PHPIZE_DEPS \
 		autoconf \
+		procps \
+		wget \
 		dpkg-dev \
 		file \
 		g++ \
@@ -41,7 +43,17 @@ RUN set -eux; \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
-
+# RUN set -eux; \
+# { \
+# 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+# } | tee /etc/apt/sources.list
 # ensure little user exists
 RUN set -eux; \
 	addgroup --gid 82 --system little; \
@@ -52,27 +64,12 @@ ENV PHP_INI_DIR=/usr/local/etc/php \
 	PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/app-src:/app-src/bin
 RUN set -eux; \
 	mkdir -p "$PHP_INI_DIR/conf.d"; \
-<<<<<<< HEAD:8.4-rc/bullseye/cli/Dockerfile
-<<<<<<< HEAD:8.4-rc/bullseye/cli/Dockerfile
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
-	[ ! -d /var/www/html ]; \
-	mkdir -p /var/www/html; \
-	chown www-data:www-data /var/www/html; \
-	chmod 1777 /var/www/html
-=======
-=======
-# allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
->>>>>>> 959e5a5a (builder):8.1/buster/cli/Dockerfile
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
 	chown little:little ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 
-<<<<<<< HEAD:8.4-rc/bullseye/cli/Dockerfile
->>>>>>> b6080d7e (cli and zts):7.4/buster/cli/Dockerfile
-
-=======
->>>>>>> 959e5a5a (builder):8.1/buster/cli/Dockerfile
 # Apply stack smash protection to functions using local buffers and alloca()
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no performance impact on x86_64)
 # Enable optimization (-O2)
@@ -129,12 +126,14 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		libargon2-dev \
 		libcurl4-openssl-dev \
+		liblz4-dev \
 		libonig-dev \
 		libreadline-dev \
 		libsodium-dev \
 		libsqlite3-dev \
 		libssl-dev \
 		libxml2-dev \
+		libzstd-dev \
 		zlib1g-dev \
 	; \
 	\
@@ -232,9 +231,8 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
-# update pecl channel definitions https://github.com/docker-library/php/issues/443
-	pecl update-channels; \
-	pecl install redis; \
+	# update pecl channel definitions https://github.com/docker-library/php/issues/443
+  pecl update-channels; \
 	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
@@ -243,20 +241,32 @@ RUN set -eux; \
 	php --version
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
+RUN pecl install msgpack; \
+	pecl install igbinary; \
+	pecl install ds; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" \
+	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
+	enable-redis-lz4="yes" with-liblz4="yes"' redis
+
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium; \
-    docker-php-ext-enable redis; \
+	docker-php-ext-enable ds; \
+	docker-php-ext-enable igbinary; \
+	docker-php-ext-enable msgpack; \
+	docker-php-ext-enable redis; \
 	sed -i "s@;date.timezone =@date.timezone = Asia/Shanghai@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
-    sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"
+	sed -i "s@upload_max_filesize = 2M@upload_max_filesize = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@post_max_size = 8M@post_max_size = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_input_time = 60@max_input_time = 1800@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@max_execution_time = 30@max_execution_time = 1800M@g" "$PHP_INI_DIR/php.ini"; \
+	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"; \
+	php --ri redis
+
 
 RUN set -eux; \
-    curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
-    chmod a+x /usr/local/bin/composer; \
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
+	chmod a+x /usr/local/bin/composer; \
+	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 ENTRYPOINT ["docker-php-entrypoint"]
 STOPSIGNAL SIGWINCH
