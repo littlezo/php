@@ -34,8 +34,6 @@ RUN set -eux; \
 {{ ) end -}}
 ENV PHPIZE_DEPS \
 		autoconf \
-		procps \
-		wget \
 		dpkg-dev {{ if is_alpine then "dpkg " else "" end }}\
 		file \
 		g++ \
@@ -47,9 +45,6 @@ ENV PHPIZE_DEPS \
 
 # persistent / runtime deps
 {{ if is_alpine then ( -}}
-# RUN set -eux; \
-# 	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-
 RUN apk add --no-cache \
 		ca-certificates \
 		curl \
@@ -57,8 +52,9 @@ RUN apk add --no-cache \
 		tar \
 		xz
 
-# ensure little user exists
+# ensure app user exists
 RUN set -eux; \
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	adduser -u 82 -D -S -G www-data www-data
@@ -73,6 +69,12 @@ RUN set -eux; \
 	adduser -u 82 -D -S  -s /sbin/nologin -G little -g little little
 # 82 is the standard uid/gid for "little" in Alpine
 >>>>>>> 959e5a5a (builder)
+=======
+	addgroup -Sg 83 app; \
+	adduser -u 82 -D -S  -s /sbin/nologin -G app -g app app
+# 82 is the standard uid/gid for "app" in Alpine
+# https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
+>>>>>>> 2d5ae29b (feat: up)
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
 {{ ) else ( -}}
@@ -83,26 +85,17 @@ RUN set -eux; \
 		apt-transport-https \
 		ca-certificates \
 		ncat \
+		procps \
+		wget \
 		ca-certificates \
 		curl \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*
-# RUN set -eux; \
-# { \
-# 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
-#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
-#   echo "deb https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
-#   echo "deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
-#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
-#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
-#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
-#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
-# } | tee /etc/apt/sources.list
-# ensure little user exists
+# ensure app user exists
 RUN set -eux; \
-	addgroup --gid 82 --system little; \
-	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
+	addgroup --gid 82 --system app; \
+	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup app app;
 {{ ) end -}}
 
 ENV PHP_INI_DIR=/usr/local/etc/php \
@@ -123,7 +116,7 @@ RUN set -eux; \
 >>>>>>> 959e5a5a (builder)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
-	chown little:little ${APP_ROOT}; \
+	chown app:app ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 >>>>>>> b6080d7e (cli and zts)
 
@@ -337,14 +330,14 @@ RUN set -eux; \
 			"libcurl4-openssl-dev",
 			"libreadline-dev",
 			"libsodium-dev",
+			"libsqlite3-dev",
 			"libssl-dev",
 			"libxml2-dev",
 			"zlib1g-dev",
 			# oniguruma is part of mbstring in php 7.4+
 			"libonig-dev",
 			"liblz4-dev",
-			"libzstd-dev",
-			"libsqlite3-dev"
+			"libzstd-dev"
 		end ] | sort[] | (
 -}}
 		{{ . }} \
@@ -507,13 +500,8 @@ RUN set -eux; \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
 	apk add --no-cache $runDeps; \
-	apk add --no-cache --virtual .build-deps \
-	g++ \
-	gcc \
-	libc-dev \
-	make \
-	pkgconf \
-	autoconf; \
+	\
+	apk del --no-network .build-deps; \
 {{ ) else ( -}}
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
@@ -530,6 +518,7 @@ RUN set -eux; \
 	rm -rf /var/lib/apt/lists/*; \
 {{ ) end -}}
 	\
+<<<<<<< HEAD
 <<<<<<< HEAD
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
@@ -560,16 +549,23 @@ RUN set -eux; \
   pecl update-channels; \
 >>>>>>> 9f98d15d (fix redis exit)
 	{{ if is_alpine then "apk del --no-network .build-deps;" else "" end}} \
+=======
+# update pecl channel definitions https://github.com/docker-library/php/issues/443
+	pecl update-channels; \
+>>>>>>> 2d5ae29b (feat: up)
 	rm -rf /tmp/pear ~/.pearrc; \
-	rm -rf /tmp/*; \
 	\
 # smoke test
 	php --version
+
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
+# sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN pecl install msgpack; \
 	pecl install igbinary; \
+	pecl install --configureoptions 'enable-redis-igbinary="yes" enable-redis-lzf="yes" enable-redis-zstd="yes"' redis; \
 	pecl install ds; \
+<<<<<<< HEAD
 	pecl install --configureoptions 'enable-redis-igbinary="yes" \
 	enable-redis-lzf="yes" enable-redis-zstd="yes" enable-redis-msgpack="yes" \
 	enable-redis-lz4="yes" with-liblz4="yes"' redis
@@ -594,6 +590,9 @@ RUN pecl install --configureoptions 'enable-redis-igbinary="yes" \
 =======
 RUN docker-php-ext-enable sodium; \
 >>>>>>> fde5eb4d (fix redis)
+=======
+  docker-php-ext-enable sodium; \
+>>>>>>> 2d5ae29b (feat: up)
 	docker-php-ext-enable ds; \
 <<<<<<< HEAD
 >>>>>>> e93d3047 (fix: swoole build error)
@@ -686,6 +685,7 @@ RUN set -eux; \
 RUN set -ex; \
 	pecl channel-update pecl.php.net; \
 	docker-php-ext-install $EXTRA_EXT; \
+	docker-php-ext-enable redis; \
 	docker-php-ext-install sockets; \
 	docker-php-source extract; \
 	pecl install --configureoptions 'enable-sockets="no" enable-openssl="yes" \
@@ -717,6 +717,7 @@ ENV EXTRA_EXT \
 
 ENV EXTRA_LIBS \
   autoconf \
+	$PHPIZE_DEPS \
 	{{ if is_alpine then "libbz2" else "libbz2-dev" end }} \
   libffi-dev \
 	{{ if is_alpine then "zlib-dev" else "zlib1g-dev" end }} \
@@ -772,6 +773,7 @@ RUN set -eux; \
 RUN set -ex; \
 	pecl channel-update pecl.php.net; \
 	docker-php-ext-install $EXTRA_EXT; \
+	docker-php-ext-enable redis; \
 	docker-php-ext-install sockets; \
 	docker-php-source extract; \
 	docker-php-source delete; \
