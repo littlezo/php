@@ -32,12 +32,12 @@ RUN apk add --no-cache \
 		tar \
 		xz
 
-# ensure little user exists
+# ensure app user exists
 RUN set -eux; \
-	addgroup -Sg 83 little; \
-	adduser -u 82 -D -S  -s /sbin/nologin -G little -g little little
-#	adduser -u 82 -D -S -G little little
-# 82 is the standard uid/gid for "little" in Alpine
+	addgroup -Sg 83 app; \
+	adduser -u 82 -D -S  -s /sbin/nologin -G app -g app app
+#	adduser -u 82 -D -S -G app app
+# 82 is the standard uid/gid for "app" in Alpine
 # https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
@@ -50,7 +50,7 @@ RUN set -eux; \
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
-	chown little:little ${APP_ROOT}; \
+	chown app:app ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 
 # Apply stack smash protection to functions using local buffers and alloca()
@@ -204,6 +204,9 @@ RUN set -eux; \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
 	apk add --no-cache $runDeps; \
+		\
+	# apk del --no-network .build-deps; \
+		\
 	apk add --no-cache --virtual .build-deps \
 	g++ \
 	gcc \
@@ -296,6 +299,7 @@ RUN set -eux; \
 RUN set -ex; \
 	pecl channel-update pecl.php.net; \
 	docker-php-ext-install $EXTRA_EXT; \
+	docker-php-ext-enable redis; \
 	docker-php-ext-install sockets; \
 	docker-php-source extract; \
 	pecl install --configureoptions 'enable-sockets="no" enable-openssl="yes" \

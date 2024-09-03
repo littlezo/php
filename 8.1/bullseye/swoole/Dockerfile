@@ -54,10 +54,10 @@ RUN set -eux; \
 #   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
 #   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
 # } | tee /etc/apt/sources.list
-# ensure little user exists
+# ensure app user exists
 RUN set -eux; \
-	addgroup --gid 82 --system little; \
-	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup little little;
+	addgroup --gid 82 --system app; \
+	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup app app;
 
 ENV PHP_INI_DIR=/usr/local/etc/php \
 	APP_ROOT=/app-src \
@@ -67,7 +67,7 @@ RUN set -eux; \
 # allow running as an arbitrary user (https://github.com/docker-library/php/issues/743)
 	[ ! -d ${APP_ROOT} ]; \
 	mkdir -p ${APP_ROOT}; \
-	chown little:little ${APP_ROOT}; \
+	chown app:app ${APP_ROOT}; \
 	chmod 777 ${APP_ROOT}
 
 # Apply stack smash protection to functions using local buffers and alloca()
@@ -304,6 +304,7 @@ RUN set -eux; \
 RUN set -ex; \
 	pecl channel-update pecl.php.net; \
 	docker-php-ext-install $EXTRA_EXT; \
+	docker-php-ext-enable redis; \
 	docker-php-ext-install sockets; \
 	docker-php-source extract; \
 	pecl install --configureoptions 'enable-sockets="no" enable-openssl="yes" \
