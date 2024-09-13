@@ -48,7 +48,30 @@
     ],
     "version": "8.2.23"
   },
-  "8.2-rc": null,
+  "8.2-rc": {
+    "ascUrl": "https://downloads.php.net/~pierrick/php-8.2.24RC1.tar.xz.asc",
+    "sha256": "0bc255062e1159a52ea750b61b6b5eebec10852742aa8f60634101fc02cd8910",
+    "url": "https://downloads.php.net/~pierrick/php-8.2.24RC1.tar.xz",
+    "variants": [
+      "bookworm/cli",
+      "bookworm/swoole",
+      "bookworm/zts",
+      "bookworm/swow",
+      "bullseye/cli",
+      "bullseye/swoole",
+      "bullseye/zts",
+      "bullseye/swow",
+      "alpine3.20/cli",
+      "alpine3.20/swoole",
+      "alpine3.20/zts",
+      "alpine3.20/swow",
+      "alpine3.19/cli",
+      "alpine3.19/swoole",
+      "alpine3.19/zts",
+      "alpine3.19/swow"
+    ],
+    "version": "8.2.24RC1"
+  },
   "8.3": {
     "ascUrl": "https://www.php.net/distributions/php-8.3.11.tar.xz.asc",
     "sha256": "b862b098a08ab9bf4b36ed12c7d0d9f65353656b36fb0e3c5344093aceb35802",
@@ -73,11 +96,10 @@
     ],
     "version": "8.3.11"
   },
-  "8.3-rc": null,
-  "8.4-rc": {
-    "ascUrl": "https://downloads.php.net/~saki/php-8.4.0beta4.tar.xz.asc",
-    "sha256": "bafb6f5c10a0b34ed5f2ff28eb12bc4154ffef4c04534c03e993e1c951fb9d22",
-    "url": "https://downloads.php.net/~saki/php-8.4.0beta4.tar.xz",
+  "8.3-rc": {
+    "ascUrl": "https://downloads.php.net/~eric/php-8.3.12RC1.tar.xz.asc",
+    "sha256": "fbb3ece7f2525dee3154094da8fbbdd5c294b482b2a20c66cd4ce4aa7aaf1296",
+    "url": "https://downloads.php.net/~eric/php-8.3.12RC1.tar.xz",
     "variants": [
       "bookworm/cli",
       "bookworm/swoole",
@@ -96,6 +118,30 @@
       "alpine3.19/zts",
       "alpine3.19/swow"
     ],
-    "version": "8.4.0beta4"
+    "version": "8.3.12RC1"
+  },
+  "8.4-rc": {
+    "ascUrl": "https://downloads.php.net/~calvinb/php-8.4.0beta5.tar.xz.asc",
+    "sha256": "86c9e6fe9b4ab2046832ab65f955c50d663a6fccb3f6d6fbddc4aa9b96a561b7",
+    "url": "https://downloads.php.net/~calvinb/php-8.4.0beta5.tar.xz",
+    "variants": [
+      "bookworm/cli",
+      "bookworm/swoole",
+      "bookworm/zts",
+      "bookworm/swow",
+      "bullseye/cli",
+      "bullseye/swoole",
+      "bullseye/zts",
+      "bullseye/swow",
+      "alpine3.20/cli",
+      "alpine3.20/swoole",
+      "alpine3.20/zts",
+      "alpine3.20/swow",
+      "alpine3.19/cli",
+      "alpine3.19/swoole",
+      "alpine3.19/zts",
+      "alpine3.19/swow"
+    ],
+    "version": "8.4.0beta5"
   }
 }
