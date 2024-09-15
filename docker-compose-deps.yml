@@ -1,0 +1,50 @@
+services:
+  pgsql:
+    container_name: pgsql
+    hostname: pgsql
+    image: postgres:16-alpine
+    env_file: env_file
+    volumes:
+      - "././postgresql:/var/lib/postgresql/data:rw"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro"
+    restart: always
+    network_mode: host
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis:7-alpine
+    env_file: env_file
+    volumes:
+      -  "./redis.cnf:/usr/local/etc/redis/redis.conf:ro"
+      - "././redis/data:/data:rw"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro"
+    restart: always
+    network_mode: host
+    command: redis-server /usr/local/etc/redis/redis.conf
+  mysql:
+    container_name: mysql
+    hostname: mysql
+    image: mysql:8.4
+    env_file: env_file
+    volumes:
+      - "./my.cnf:/etc/my.cnf:rw"
+      - "././mysql:/var/lib/mysql:rw"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro"
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --skip-external-locking
+    network_mode: host
+  rabbit:
+    container_name: rabbit
+    hostname: rabbit
+    image: rabbitmq:management
+    environment:
+      - RABBITMQ_DEFAULT_USER=muke
+      - RABBITMQ_PLUGINS=rabbitmq_management
+    volumes:
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro"
+      - "././rabbitmq/lib:/var/lib/rabbitmq:rw"
+      - "././rabbitmq/log:/var/log/rabbitmq:rw"
+      - "./rabbitmq.conf:/etc/rabbitmq/conf.d/99-rabbitmq.conf:rw"
+    restart: always
+    network_mode: host
+    # network_mode: bridge

@@ -1,0 +1,90 @@
+services:
+  gateway:
+    image: caddy:latest
+    container_name: gateway_caddy
+    hostname: gateway_caddy
+    restart: always
+    network_mode: host
+    env_file: .caddy/.env
+    volumes:
+      - ./ui/dist:/website
+      - ./Caddyfile:/etc/Caddyfile
+  api:
+    container_name: api
+    hostname: api
+    # image: registry-vpc.cn-beijing.aliyuncs.com/forlong/php:swoole
+    image: ghcr.io/littlezo/php:swoole
+    volumes:
+      - ./:/app-src:rw
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro"
+      - '/var/tmp/cache/hyperf/runtime:/app-src/runtime:rw' # 避免本地运行时污染 docker 运行时
+    restart: on-failure
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      NODE: dev  #节点名称
+      XDEBUG_CONFIG:
+        client_host=host.docker.internal
+        start_with_request=yes
+    network_mode: host
+    command:
+      - sh
+      - -c
+      - |
+        # sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
+        # sed -i 's/https/https/g' /etc/apt/sources.list.d/debian.sources
+        # apt-get update -y
+        # apt-get install procps  wget -y
+        # apt-get autoremove
+        # rm -rf /var/lib/apt/lists/*
+        ps -ef
+        cd /app-src
+        # {
+        # echo "# swoole"
+        # echo "vm.overcommit_memory = 1"
+        # echo "net.core.somaxconn = 1024"
+        # echo "fs.inotify.max_user_watches=524288"
+        # echo "net.ipv4.tcp_mem = 379008 505344 758016"
+        # echo "net.ipv4.tcp_wmem = 4096 16384 4194304"
+        # echo "net.ipv4.tcp_rmem = 4096 87380 4194304"
+        # echo "net.core.wmem_default = 8388608"
+        # echo "net.core.rmem_default = 8388608"
+        # echo "net.core.rmem_max = 16777216"
+        # echo "net.core.wmem_max = 16777216"
+        # echo "net.ipv4.tcp_syncookies=1"
+        # echo "net.ipv4.tcp_max_syn_backlog=81920"
+        # echo "net.ipv4.tcp_synack_retries=3"
+        # echo "net.ipv4.tcp_syn_retries=3"
+        # echo "net.ipv4.tcp_fin_timeout = 30"
+        # echo "net.ipv4.tcp_keepalive_time = 300"
+        # echo "net.ipv4.tcp_tw_reuse = 1"
+        # echo "net.ipv4.tcp_tw_recycle = 1"
+        # echo "net.ipv4.ip_local_port_range = 20000 65000"
+        # echo "net.ipv4.tcp_max_tw_buckets = 200000"
+        # echo "net.ipv4.route.max_size = 5242880"
+        # } | tee -a /etc/sysctl.conf
+        # sysctl -p
+        ulimit -c unlimited
+        # ulimit -u
+        # ulimit -u 65534
+        ulimit -n 100000
+        ulimit -n
+        ulimit -a
+        wget https://mirrors.tencent.com/composer/composer.phar
+        mv composer.phar  /usr/local/bin/composer
+        chmod +x /usr/local/bin/composer
+        php --ri swoole
+        composer --version
+        php --version
+        # php --ini
+        # php -m
+        # php --ri swoole
+        # php --ri xdebug
+        # php --ri pcntl
+        # composer install -o
+        # composer self-update
+        # composer config -g repos.packagist composer https://mirrors.tencent.com/composer/
+        # composer update -o
+        composer dump-autoload -o
+        rm -rf runtime/container
+        php bin/hyperf server:watch

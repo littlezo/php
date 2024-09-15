@@ -1,0 +1,17 @@
+:80 {
+	handle /prod/* {
+		uri strip_prefix /prod
+		reverse_proxy 0.0.0.0:9501
+	}
+	handle  {
+			root * /website
+			try_files {path} /index.html
+			file_server
+	}
+	#tls {$TLS_EMAIL}
+	@websockets {
+		header Connection *Upgrade*
+		header Upgrade    websocket
+	}
+	reverse_proxy /wss/* @websockets 127.0.0.1:9502
+}
