@@ -8,7 +8,7 @@ if [ -n "${BASHBREW_SCRIPTS:-}" ]; then
 	jqt="$BASHBREW_SCRIPTS/jq-template.awk"
 elif [ "$BASH_SOURCE" -nt "$jqt" ]; then
 	# https://github.com/docker-library/bashbrew/blob/master/scripts/jq-template.awk
-	wget -qO "$jqt" 'https://github.com/docker-library/bashbrew/raw/9f6a35772ac863a0241f147c820354e4008edf38/scripts/jq-template.awk'
+	wget -qO "$jqt" 'https://raw.githubusercontent.com/docker-library/bashbrew/master/scripts/jq-template.awk'
 fi
 
 if [ "$#" -eq 0 ]; then
@@ -29,10 +29,12 @@ generated_warning() {
 
 for version; do
 	export version
+	if [ -d $version ]; then
+		rm -rf "$version"
+    # echo "文件夹存在"
+	fi
 
-	rm -rf "$version"
-
-	if jq -e '.[env.version] | not' versions.json > /dev/null; then
+	if jq -e '.[env.version] | not' versions.json >/dev/null; then
 		echo "deleting $version ..."
 		continue
 	fi
@@ -41,7 +43,7 @@ for version; do
 	eval "variants=( $variants )"
 
 	for dir in "${variants[@]}"; do
-		suite="$(dirname "$dir")" # "buster", etc
+		suite="$(dirname "$dir")"    # "buster", etc
 		variant="$(basename "$dir")" # "cli", etc
 		export suite variant
 
@@ -54,28 +56,24 @@ for version; do
 		export from alpineVer
 
 		case "$variant" in
-			apache) cmd='["apache2-foreground"]' ;;
-			fpm) cmd='["php-fpm"]' ;;
-			*) cmd='["php", "-a"]' ;;
+		*) cmd='["php", "-a"]' ;;
 		esac
 		export cmd
 
 		echo "processing $version/$dir ..."
 		mkdir -p "$version/$dir"
-
+		echo "$version/$dir"
+		echo $jqt
 		{
 			generated_warning
 			gawk -f "$jqt" 'Dockerfile-linux.template'
-		} > "$version/$dir/Dockerfile"
+		} >"$version/$dir/Dockerfile"
 
 		cp -a \
 			docker-php-entrypoint \
 			docker-php-ext-* \
 			docker-php-source \
 			"$version/$dir/"
-		if [ "$variant" = 'apache' ]; then
-			cp -a apache2-foreground "$version/$dir/"
-		fi
 
 		cmd="$(jq <<<"$cmd" -r '.[0]')"
 		if [ "$cmd" != 'php' ]; then
