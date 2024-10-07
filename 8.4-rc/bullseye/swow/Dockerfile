@@ -4,43 +4,60 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.19
+FROM debian:bullseye-slim
+
+# prevent Debian's PHP packages from being installed
+# https://github.com/docker-library/php/pull/542
+RUN set -eux; \
+	{ \
+		echo 'Package: php*'; \
+		echo 'Pin: release *'; \
+		echo 'Pin-Priority: -1'; \
+	} > /etc/apt/preferences.d/no-debian-php
 
 # dependencies required for running "phpize"
-# these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
+# (see persistent deps below)
 ENV PHPIZE_DEPS \
 		autoconf \
 		procps \
 		wget \
-		dpkg-dev dpkg \
+		dpkg-dev \
 		file \
 		g++ \
 		gcc \
 		libc-dev \
 		make \
-		pkgconf \
+		pkg-config \
 		re2c
 
 # persistent / runtime deps
-# RUN set -eux; \
-# 	sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-
-RUN apk add --no-cache \
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		$PHPIZE_DEPS \
+		apt-transport-https \
+		ca-certificates \
+		ncat \
 		ca-certificates \
 		curl \
-		openssl \
-		tar \
-		xz
-
+		xz-utils \
+	; \
+	rm -rf /var/lib/apt/lists/*
+# RUN set -eux; \
+# { \
+# 	echo "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib"; \
+#   echo "deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+#   echo "deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib"; \
+# } | tee /etc/apt/sources.list
 # ensure app user exists
 RUN set -eux; \
-	addgroup -Sg 83 app; \
-	adduser -u 82 -D -S  -s /sbin/nologin -G app -g app app
-#	adduser -u 82 -D -S -G app app
-# 82 is the standard uid/gid for "app" in Alpine
-# https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
-# https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
-# https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
+	addgroup --gid 82 --system app; \
+	adduser --uid 82 --no-create-home --disabled-login --disabled-password --system --ingroup app app;
 
 ENV PHP_INI_DIR=/usr/local/etc/php \
 	APP_ROOT=/app-src \
@@ -71,7 +88,10 @@ ENV PHP_SHA256="0b3db6af3e0643e310c9c32b407faf4be6fe265c0f37c5b2fed911d6e9ab046e
 
 RUN set -eux; \
 	\
-	apk add --no-cache --virtual .fetch-deps gnupg; \
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends gnupg; \
+	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
@@ -93,33 +113,29 @@ RUN set -eux; \
 		rm -rf "$GNUPGHOME"; \
 	fi; \
 	\
-	apk del --no-network .fetch-deps
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark > /dev/null; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
-	apk add --no-cache --virtual .build-deps \
-		$PHPIZE_DEPS \
-		argon2-dev \
-		coreutils \
-		curl-dev \
-		gnu-libiconv-dev \
-		libsodium-dev \
-		libxml2-dev \
-		linux-headers \
-		lz4 \
-		lz4-dev \
-		lz4-libs \
-		oniguruma-dev \
-		openssl-dev \
-		readline-dev \
-		sqlite-dev \
-		zstd-dev \
-		zstd-libs \
-	; \
 	\
-# make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
-	rm -vf /usr/include/iconv.h; \
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		libargon2-dev \
+		libcurl4-openssl-dev \
+		liblz4-dev \
+		libonig-dev \
+		libreadline-dev \
+		libsodium-dev \
+		libsqlite3-dev \
+		libssl-dev \
+		libxml2-dev \
+		libzstd-dev \
+		zlib1g-dev \
+	; \
 	\
 	export \
 		CFLAGS="$PHP_CFLAGS" \
@@ -132,6 +148,11 @@ RUN set -eux; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+	debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
+# https://bugs.php.net/bug.php?id=74125
+	if [ ! -d /usr/include/curl ]; then \
+		ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
+	fi; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
@@ -159,7 +180,7 @@ RUN set -eux; \
 		--with-sqlite3=/usr \
 		\
 		--with-curl \
-		--with-iconv=/usr \
+		--with-iconv \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
@@ -170,6 +191,7 @@ RUN set -eux; \
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+		--with-libdir="lib/$debMultiarch" \
 		\
 		--disable-cgi \
 	; \
@@ -193,23 +215,19 @@ RUN set -eux; \
 	cd /; \
 	docker-php-source delete; \
 	\
-	runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)"; \
-	apk add --no-cache $runDeps; \
-		\
-	# apk del --no-network .build-deps; \
-		\
-	apk add --no-cache --virtual .build-deps \
-	g++ \
-	gcc \
-	libc-dev \
-	make \
-	pkgconf \
-	autoconf; \
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+	apt-mark auto '.*' > /dev/null; \
+	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
+	find /usr/local -type f -executable -exec ldd '{}' ';' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+		| sort -u \
+		| xargs -r dpkg-query --search \
+		| cut -d: -f1 \
+		| sort -u \
+		| xargs -r apt-mark manual \
+	; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*; \
 	\
 	# update pecl channel definitions https://github.com/docker-library/php/issues/443
   pecl update-channels; \
@@ -222,7 +240,7 @@ RUN set -eux; \
 	# enable-redis-lz4="yes" with-liblz4="yes"' redis \
 	\ 
 	 \
-	apk del --no-network .build-deps; \
+	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*; \
 	\
@@ -244,7 +262,7 @@ RUN docker-php-ext-enable sodium; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	php --ri redis
 
-# swoole module
+# swow
 ENV EXTRA_EXT \
   bcmath bz2 calendar exif ffi gd gettext intl \
   mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
@@ -252,47 +270,31 @@ ENV EXTRA_EXT \
 
 ENV EXTRA_LIBS \
   autoconf \
-	libbz2 \
+	$PHPIZE_DEPS \
+	libbz2-dev \
   libffi-dev \
-	zlib-dev \
+	zlib1g-dev \
   libpng-dev \
-	icu-dev \
+	libicu-dev \
   libpq-dev \
   libxml2-dev \
   libzip-dev \
-	curl-dev \
-	linux-headers \
-	openssl-dev \
-	pcre-dev \
-	pcre2-dev \
-	libintl \
-	gettext-dev \
-	brotli-dev \
-	sqlite-dev \
-	lz4 \
-	lz4-dev \
-	lz4-libs \
-	zstd-dev \
-	zstd-libs \
-	tidyhtml-dev \
-	c-ares-dev \
-	zlib-dev
+	openssl \
+	git \
+	bash \
+	libpcre3 \
+	libpcre3-dev\
+	libssl-dev \
+	libcurl4-openssl-dev \
+	libtidy-dev \
+	libc-ares-dev \
+	libzip-dev
 
 RUN set -eux; \
-	runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)"; \
-	apk add --no-cache $runDeps; \
-	apk add --no-cache  --update --virtual .build-deps \
-	g++ \
-	gcc \
-	libc-dev \
-	make \
-	pkgconf \
-	autoconf $EXTRA_LIBS
+	apt-get update; \
+	apt-get install -y --no-install-recommends $EXTRA_LIBS; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*
 
 RUN set -ex; \
 	pecl channel-update pecl.php.net; \
@@ -300,23 +302,29 @@ RUN set -ex; \
 	 \
 	docker-php-ext-install sockets; \
 	docker-php-source extract; \
-	pecl install --configureoptions 'enable-sockets="no" enable-openssl="yes" \
-	enable-mysqlnd="no" enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes"\
-	enable-cares="yes" enable-brotli="yes" enable-swoole-pgsql="yes" \
-	with-swoole-odbc="no" with-swoole-oracle="no" enable-swoole-sqlite="yes" \
-	with-openssl-dir="/usr"' swoole; \
-	docker-php-ext-enable swoole; \
 	docker-php-source delete; \
+	# download
+ 	cd /tmp; \
+	curl -SL "https://github.com/swow/swow/archive/v1.0.0.tar.gz" -o swow.tar.gz; \
+	ls -alh; \
+	# php extension:swow
+	cd /tmp; \
+	mkdir -p swow; \
+	tar -xf swow.tar.gz -C swow --strip-components=1; \
+	( \
+			cd swow/ext; \
+			phpize; \
+			./configure --enable-swow --enable-swow-ssl --enable-swow-curl; \
+			make -s -j$(nproc); \
+			make install \
+	); \
+	echo "memory_limit=1G" >  /usr/local/etc/php/conf.d/00-default.ini; \
+	echo "opcache.enable_cli = 'On'" >>  /usr/local/etc/php/conf.d/50-opcache.ini; \
+	echo "extension=swow.so" > /usr/local/etc/php/conf.d/docker-php-ext-swow.ini; \
 	php --version; \
 	php -m; \
-	{ \
-	echo "[swoole]"; \
-	echo "extension=swoole"; \
-	echo "swoole.unixsock_buffer_size=512M"; \
-	echo "swoole.use_shortname=Off"; \
-	echo "swoole.enable_preemptive_scheduler=On"; \
-	} | tee /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
-	apk del --no-network .build-deps; \
+	php --ri swow; \
+	 \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*
 

@@ -244,7 +244,7 @@ RUN docker-php-ext-enable sodium; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	php --ri redis
 
-# swoole module
+# swow
 ENV EXTRA_EXT \
   bcmath bz2 calendar exif ffi gd gettext intl \
   mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
@@ -252,6 +252,7 @@ ENV EXTRA_EXT \
 
 ENV EXTRA_LIBS \
   autoconf \
+	$PHPIZE_DEPS \
 	libbz2 \
   libffi-dev \
 	zlib-dev \
@@ -260,6 +261,9 @@ ENV EXTRA_LIBS \
   libpq-dev \
   libxml2-dev \
   libzip-dev \
+	openssl \
+	git \
+	bash \
 	curl-dev \
 	linux-headers \
 	openssl-dev \
@@ -267,13 +271,6 @@ ENV EXTRA_LIBS \
 	pcre2-dev \
 	libintl \
 	gettext-dev \
-	brotli-dev \
-	sqlite-dev \
-	lz4 \
-	lz4-dev \
-	lz4-libs \
-	zstd-dev \
-	zstd-libs \
 	tidyhtml-dev \
 	c-ares-dev \
 	zlib-dev
@@ -300,22 +297,28 @@ RUN set -ex; \
 	 \
 	docker-php-ext-install sockets; \
 	docker-php-source extract; \
-	pecl install --configureoptions 'enable-sockets="no" enable-openssl="yes" \
-	enable-mysqlnd="no" enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes"\
-	enable-cares="yes" enable-brotli="yes" enable-swoole-pgsql="yes" \
-	with-swoole-odbc="no" with-swoole-oracle="no" enable-swoole-sqlite="yes" \
-	with-openssl-dir="/usr"' swoole; \
-	docker-php-ext-enable swoole; \
 	docker-php-source delete; \
+	# download
+ 	cd /tmp; \
+	curl -SL "https://github.com/swow/swow/archive/v1.0.0.tar.gz" -o swow.tar.gz; \
+	ls -alh; \
+	# php extension:swow
+	cd /tmp; \
+	mkdir -p swow; \
+	tar -xf swow.tar.gz -C swow --strip-components=1; \
+	( \
+			cd swow/ext; \
+			phpize; \
+			./configure --enable-swow --enable-swow-ssl --enable-swow-curl; \
+			make -s -j$(nproc); \
+			make install \
+	); \
+	echo "memory_limit=1G" >  /usr/local/etc/php/conf.d/00-default.ini; \
+	echo "opcache.enable_cli = 'On'" >>  /usr/local/etc/php/conf.d/50-opcache.ini; \
+	echo "extension=swow.so" > /usr/local/etc/php/conf.d/docker-php-ext-swow.ini; \
 	php --version; \
 	php -m; \
-	{ \
-	echo "[swoole]"; \
-	echo "extension=swoole"; \
-	echo "swoole.unixsock_buffer_size=512M"; \
-	echo "swoole.use_shortname=Off"; \
-	echo "swoole.enable_preemptive_scheduler=On"; \
-	} | tee /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
+	php --ri swow; \
 	apk del --no-network .build-deps; \
 	rm -rf /tmp/pear ~/.pearrc; \
 	rm -rf /tmp/*
