@@ -1,4 +1,4 @@
-name: GitHub CI
+name: Build and Push PHP Docker Images
 
 on:
   workflow_run:
@@ -48,13 +48,13 @@ jobs:
       - id: generate-jobs
         name: Generate Jobs
         run: |
-          # echo "$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
-          # strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
           strategy="$("./scripts/github-actions/generate.sh")"
+
           EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
           echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
           jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
+
   build:
     needs: generate-jobs
     strategy: ${{ fromJson(needs.generate-jobs.outputs.strategy) }}

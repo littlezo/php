@@ -2,7 +2,6 @@
 set -Eeuo pipefail
 
 image="${GITHUB_REPOSITORY##*/}" # "python", "golang", etc
-echo "$image"
 image=php
 REGISTRY=ghcr.io
 
