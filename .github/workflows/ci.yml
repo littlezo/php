@@ -78,10 +78,6 @@ jobs:
         run: ${{ matrix.runs.history }}
       - name: Test ${{ matrix.name }}
         run: ${{ matrix.runs.test }}
-      - name: Test Redis Extension
-        run: |
-          version="$(php --ri redis | grep 'Version')"
-          [ -n "$version" ]
       - name: '"Docker images"'
         run: ${{ matrix.runs.images }}
       - name: Push images ${{ matrix.name }}

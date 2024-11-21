@@ -164,13 +164,14 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
-# https://github.com/docker-library/php/pull/1259
-		--enable-phpdbg \
-		--enable-phpdbg-readline \
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
+		--disable-phpdbg \
 		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+		\
+		--disable-cgi \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -243,6 +244,84 @@ RUN docker-php-ext-enable sodium; \
 	sed -i "s@memory_limit = 128M@memory_limit = 2048M@g" "$PHP_INI_DIR/php.ini"; \
 	php --ri redis
 
+# swow
+ENV EXTRA_EXT \
+  bcmath bz2 calendar exif ffi gd gettext intl \
+  mysqli pcntl pdo_mysql pdo_pgsql shmop soap \
+  sockets sysvmsg sysvsem sysvshm tidy zip
+
+ENV EXTRA_LIBS \
+  autoconf \
+	$PHPIZE_DEPS \
+	libbz2 \
+  libffi-dev \
+	zlib-dev \
+  libpng-dev \
+	icu-dev \
+  libpq-dev \
+  libxml2-dev \
+  libzip-dev \
+	openssl \
+	git \
+	bash \
+	curl-dev \
+	linux-headers \
+	openssl-dev \
+	pcre-dev \
+	pcre2-dev \
+	libintl \
+	gettext-dev \
+	tidyhtml-dev \
+	c-ares-dev \
+	zlib-dev
+
+RUN set -eux; \
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --no-cache $runDeps; \
+	apk add --no-cache  --update --virtual .build-deps \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	autoconf $EXTRA_LIBS
+
+RUN set -ex; \
+	pecl channel-update pecl.php.net; \
+	docker-php-ext-install $EXTRA_EXT; \
+	docker-php-ext-enable redis; \
+	docker-php-ext-install sockets; \
+	docker-php-source extract; \
+	docker-php-source delete; \
+	# download
+ 	cd /tmp; \
+	curl -SL "https://github.com/swow/swow/archive/v1.0.0.tar.gz" -o swow.tar.gz; \
+	ls -alh; \
+	# php extension:swow
+	cd /tmp; \
+	mkdir -p swow; \
+	tar -xf swow.tar.gz -C swow --strip-components=1; \
+	( \
+			cd swow/ext; \
+			phpize; \
+			./configure --enable-swow --enable-swow-ssl --enable-swow-curl; \
+			make -s -j$(nproc); \
+			make install \
+	); \
+	echo "memory_limit=1G" >  /usr/local/etc/php/conf.d/00-default.ini; \
+	echo "opcache.enable_cli = 'On'" >>  /usr/local/etc/php/conf.d/50-opcache.ini; \
+	echo "extension=swow.so" > /usr/local/etc/php/conf.d/docker-php-ext-swow.ini; \
+	php --version; \
+	php -m; \
+	php --ri swow; \
+	apk del --no-network .build-deps; \
+	rm -rf /tmp/pear ~/.pearrc; \
+	rm -rf /tmp/*
 
 RUN set -eux; \
 	curl -o /usr/local/bin/composer https://mirrors.aliyun.com/composer/composer.phar; \
