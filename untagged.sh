@@ -7,10 +7,10 @@ TOKEN="$GITHUB_TOKEN"
 # 获取所有未标记的版本
 # untagged_versions=$(curl -H "Authorization: bearer $TOKEN" -H "Accept: application/vnd.github.v3+json" \
 # "https://api.github.com/user/packages/container/php/versions?per_page=200")
-
+page=1
 fctch(){
   echo $(curl -H "Authorization: bearer $TOKEN" -H "Accept: application/vnd.github.v3+json" \
-"https://api.github.com/user/packages/container/php/versions?per_page=100")
+"https://api.github.com/user/packages/container/php/versions?per_page=100&page=$page")
 }
 
 remove() {
@@ -31,6 +31,9 @@ test(){
       untagged_versions=($((echo $result) | jq -r '.[] | select(.metadata.container.tags | length == 0) | .id'))
       if [ "${#untagged_versions[@]}" -gt 0 ]; then
         remove $untagged_versions
+        test
+      else 
+        page=$((page+1))
         test
       fi
   fi
