@@ -304,7 +304,8 @@ RUN set -ex; \
 	enable-mysqlnd="no" enable-http2="yes" enable-swoole-json="yes" enable-swoole-curl="yes"\
 	enable-cares="yes" enable-brotli="yes" enable-swoole-pgsql="yes" \
 	with-swoole-odbc="no" with-swoole-oracle="no" enable-swoole-sqlite="yes" \
-	with-openssl-dir="/usr"' swoole; \
+	with-openssl-dir="/usr"' \
+	swoole-6.0.0RC1; \
 	docker-php-ext-enable swoole; \
 	docker-php-source delete; \
 	php --version; \
